@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1, maximum-scale=1">
+    <title></title>
+    <script src="js/jquery-2.1.1.min.js"></script>
+    <!--<script src="js/jquery-1.10.2.js"></script>-->
+    <!--<script src="js/jq.mobi.js"></script>-->
+    <script src="js/device.js"></script>
+    <script src="js/tgogo.js"></script>
+    <!--<script src="http://172.18.252.38:8082/target/target-script-min.js#anonymous"></script>-->
+
+
+    <style>
+        *{
+            padding:0;
+            margin: 0;
+        }
+        .banner{
+            width: 100%;
+            height: 200px;
+            overflow: hidden;
+        }
+        .banner img{
+            width:100%;
+            height: 100%;
+        }
+        .scroll_load{
+            width: 100%;
+        }
+        .marquee{
+            width: 600px;
+            height: 200px;
+            line-height: 20px;
+        }
+        .marquee span{
+            padding: 0 10px; margin: 0 10px; border: 1px solid #ccc;
+        }
+        .img_div{
+            width: 100px; height: 300px;
+        }
+        input[type='button']{
+            width: 200px; height: 30px; line-height: 30px;
+        }
+    </style>
+    <script>
+        var bindData = function(rs){
+            for(var i= 0,l=rs.length;i<l;i++){
+                $(".scroll_load").append("<div style='height: 100px;'>"+rs[i].Content+"</div>");
+            }
+        };
+
+        var _alert = function(){
+            alert(1)
+        };
+
+        $(document).ready(function(){
+            var div = $(".scroll_load");
+            $("#a").click(function(){
+                div.css({display:"none"})
+                div.eq(0).css({display:"block"})
+            })
+            $("#b").click(function(){
+                div.css({display:"none"})
+                div.eq(1).css({display:"block"})
+            })
+        })
+
+    </script>
+</head>
+<body>
+
+<input type="button" value="123" />
+
+
+
+<div class="__TGOGO__ banner" data-type="bannerScroll">
+    <a color="#eee" href="1.html"><img src="http://e.hiphotos.baidu.com/image/w%3D310/sign=a0b6e89c59b5c9ea62f305e2e538b622/b90e7bec54e736d1bb03529f99504fc2d5626911.jpg"  title="1"/></a>
+    <a color="#333" href="2.html"><img src="http://d.hiphotos.baidu.com/image/w%3D310/sign=05bd70b1fffaaf5184e387bebc5594ed/241f95cad1c8a78602b192996509c93d71cf508a.jpg"  title="2"/></a>
+    <a color="#666" href="3.html"><img src="http://h.hiphotos.baidu.com/image/w%3D310/sign=8bc2336d79cb0a4685228d385b62f63e/902397dda144ad34deb35610d2a20cf431ad851d.jpg"  title="3"/></a>
+    <a color="#999" href="4.html"><img src="http://d.hiphotos.baidu.com/image/w%3D310/sign=5ed00e5fd739b6004dce09b6d9513526/2e2eb9389b504fc29e7cbdb9e7dde71190ef6d6e.jpg"  title="4"/></a>
+</div>
+<div class="__TGOGO__ banner" data-type="bannerScroll">
+    <a color="#eee" href="1.html"><img src="http://e.hiphotos.baidu.com/image/w%3D310/sign=a0b6e89c59b5c9ea62f305e2e538b622/b90e7bec54e736d1bb03529f99504fc2d5626911.jpg"  title="1"/></a>
+    <a color="#333" href="2.html"><img src="http://d.hiphotos.baidu.com/image/w%3D310/sign=05bd70b1fffaaf5184e387bebc5594ed/241f95cad1c8a78602b192996509c93d71cf508a.jpg"  title="2"/></a>
+    <a color="#666" href="3.html"><img src="http://h.hiphotos.baidu.com/image/w%3D310/sign=8bc2336d79cb0a4685228d385b62f63e/902397dda144ad34deb35610d2a20cf431ad851d.jpg"  title="3"/></a>
+    <a color="#999" href="4.html"><img src="http://d.hiphotos.baidu.com/image/w%3D310/sign=5ed00e5fd739b6004dce09b6d9513526/2e2eb9389b504fc29e7cbdb9e7dde71190ef6d6e.jpg"  title="4"/></a>
+</div>
+
+
+<div class="__TGOGO__ img_div" data-type="imgAutoResize">
+    <img src="http://172.18.254.158:8021/image/game/pc/card/top-banner_02.jpg" />
+</div>
+
+
+<div class="__TGOGO__ marquee" data-type="marquee" data-direction="x" data-spd="30">
+    <span>忽而今夏 刮中 100积分</span>
+    <span>司医生的小助理 刮中 100积分</span>
+    <span>*****163.com 刮中 30碎片</span>
+    <span>糹莫。Moo 刮中 100积分</span>
+    <span>糹莫。Moo 刮中 100积分</span>
+    <span>蓝歆11 刮中 30碎片</span>
+    <span>54ruyan 刮中 100积分</span>
+    <span>123 刮中 30碎片</span>
+    <span>*****278896 刮中 100积分</span>
+    <span>兔斯基tutu 刮中 30碎片</span>
+</div>
+<div class="__TGOGO__ marquee" data-type="marquee" data-direction="x" data-spd="30">
+    <span>忽而今夏 刮中 100积分1111</span>
+    <span>司医生的小助理 刮中 100积分2222</span>
+    <span>*****163.com 刮中 30碎片3333</span>
+    <span>糹莫。Moo 刮中 100积分4444</span>
+    <span>糹莫。Moo 刮中 100积分5555</span>
+    <span>蓝歆11 刮中 30碎片6666</span>
+    <span>54ruyan 刮中 100积分7777</span>
+    <span>123 刮中 30碎片8888</span>
+    <span>*****278896 刮中 100积分9999</span>
+    <span>兔斯基tutu 刮中 30碎片0000</span>
+</div>
+
+
+
+<div id="a">显示1</div><div id="b">显示2</div>
+<div class="__TGOGO__ scroll_load"
+     data-type="scrollLoad"
+     data-bind_fn="bindData"
+     data-button_length = "100"
+     data-scroll_for_key = "ID"
+     data-search_data = "pageSize:10,productId:1"
+     data-ajax_url = "/test/StoreShare/CountDownComment"
+        >
+    a<br/>a<br/>a<br/>a<br/>a<br/>a<br/>a<br/>a<br/>a<br/>a<br/>a<br/>a<br/>a<br/>a<br/>
+    a<br/>a<br/>a<br/>a<br/>a<br/>a<br/>a<br/>a<br/>a<br/>a<br/>a<br/>a<br/>a<br/>a<br/>a<br/>
+    a<br/>a<br/>a<br/>a<br/>a<br/>a<br/>a<br/>a<br/>a<br/>
+</div>
+<div class="__TGOGO__ scroll_load"
+     data-type="scrollLoad"
+     data-bind_fn="bindData"
+     data-button_length = "100"
+     data-scroll_for_key = "ID"
+     data-search_data = "pageSize:10,productId:1,a:22"
+     data-ajax_url = "/test/StoreShare/CountDownComment"
+        style="display: none;">
+    b<br/>b<br/>b<br/>b<br/>b<br/>b<br/>b<br/>b<br/>b<br/>b<br/>b<br/>b<br/>b<br/>b<br/>
+    b<br/>b<br/>b<br/>b<br/>b<br/>b<br/>b<br/>b<br/>b<br/>b<br/>b<br/>b<br/>b<br/>b<br/>b<br/>
+    b<br/>b<br/>b<br/>b<br/>b<br/>b<br/>b<br/>b<br/>b<br/>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>
