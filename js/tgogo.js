@@ -111,7 +111,40 @@
 
 
 
-
+//*****************************************************
+//图片上传按钮
+//*****************************************************
+//说明：
+//class:　__TGOGO__　                       @必须写死
+//data-type: uploadImage                   @必须写死
+//data-server_url ="/test/api/product/UploadPictureByIframe"    @上传图片接口
+//data-show_picture_id="show_image_wrap"                        @显示上传图片div区
+//data-can_uplad_type="jpg,jpeg,png"                            @上传文件类型
+//data-can_upload_number = "5"                                  @上传最大数
+//data-show_picture_width = "100"                               @上传后显示图片大小
+//data-show_picture_height = "60"
+//                                                              @初始显示在上传区的图片，没有留空
+//data-has_pictures = "TempUpload/20140912/185dca975350458780d72b45d3cd79d9_72_72.png,TempUpload/20140912/c7e36a67f3054c579e4682d1ce14ad2e_215_215.png"
+//data-show_picture_url = "http://172.18.252.118:8023/"         @显示图片的服务器前缀
+//
+//
+//eg:
+//
+//<div class="__TGOGO__ uploadfile"
+//data-type="uploadImage"
+//data-server_url ="/test/api/product/UploadPictureByIframe"
+//data-show_picture_id="show_image_wrap"
+//data-can_uplad_type="jpg,jpeg,png"
+//data-can_upload_number = "5"
+//data-show_picture_width = "100"
+//data-show_picture_height = "60"
+//data-has_pictures = "TempUpload/20140912/185dca975350458780d72b45d3cd79d9_72_72.png,TempUpload/20140912/c7e36a67f3054c579e4682d1ce14ad2e_215_215.png"
+//data-show_picture_url = "http://172.18.252.118:8023/"
+//>
+//上传图片
+//</div>
+//
+//<div class="show_image_wrap" id="show_image_wrap"></div>
 
 
 
@@ -975,6 +1008,285 @@ TGOGO.imgAutoResize = function(obj){
 
 
 
+//*****************************************************
+//图片上传按钮
+//*****************************************************
+TGOGO.uploadImage_fn = (function(){
+    var upload_file = function(opt){
+        this.inputId = opt.id;
+        this.formId = opt.formId;
+        this.showImageWrapId = opt.showImageWrapId;
+        this.types = opt.types;
+        this.serverSrc = opt.serverSrc;
+        this.maxNumber = opt.maxNumber;
+        this.imgs = opt.imgs;
+        this.imgWidth = opt.pictureWidth;
+        this.imgHeight= opt.pictureHeight;
+        this.pictureShowUrl = opt.pictureShowUrl;
+
+        this.className = null;
+        this.upLoadNumber = 0;
+
+        this.init();
+    };
+    upload_file.prototype = {
+        init:function(){
+            this.addEvent();
+            this.showStartImage();
+        },
+        //获取自身类名,必须实例化为 window.XXX
+        getClassName:function(){
+            for(var a in window){
+                if(window[a] === this){
+                    this.className = a;
+                    break;
+                }
+            }
+        },
+        //事件绑定
+        addEvent: function () {
+            var _this = this;
+            $("#" + this.inputId).change(function (e) {
+                _this.inputChange(this, e);
+            });
+
+        },
+        //检查文件类型
+        checkFileType: function () {
+            var value = $("#" + this.inputId).val(),
+                type = value.substr(value.lastIndexOf(".") + 1).toLocaleLowerCase(),
+                types = "," + this.types + ",";
+
+            return (types.indexOf("," + type + ",") > -1);
+        },
+        //获取文件后
+        inputChange: function () {
+            if ($("#" + this.inputId).val() == "") {
+                return;
+            }
+
+            var pass = this.checkFileType();
+
+            if (!pass) {
+                alert("文件格式不对");
+                this.reCreateInput();
+                return;
+            }
+
+            if(this.upLoadNumber >= this.maxNumber){
+                alert("只能上传"+this.maxNumber+"张图片!");
+                this.reCreateInput();
+                return;
+            }
+
+            this.createIframe();
+        },
+        //创建iframe
+        createIframe: function () {
+            var iframe = $("<iframe name='__bens_iframe_name__' id='__bens_iframe__' width='0' height='0' frameborder='0' ></iframe>"),
+                form = $("#" + this.formId),
+                t = new Date().getTime();
+
+            this.getClassName();
+
+            form.attr({
+                target: "__bens_iframe_name__",
+                action: this.serverSrc + "?class="+this.className+"&t=" + t,
+                enctype: "multipart/form-data",
+                method: "post"
+            });
+            $("body").append(iframe);
+
+            //            $("#"+this.inputId).wrap(form);
+            //            $(form).append("<input type='text' value='123' name='test1'>");
+
+//            $.loadShow();
+            form.submit();
+        },
+        //提交成功回调
+        oldSuccess: function (rs) {
+//            $.loadHide();
+            if (rs.State != 1) {
+                //失败
+                alert(rs.Message);
+                this.reCreateInput();
+                return;
+            }
+
+            var src = rs.Data;
+
+//            src = "http://localhost:8023"+src;
+
+
+
+
+            this.reCreateInput();
+            this.upLoadNumber++;
+            $("#__bens_iframe__").remove();
+            this.showImg(src);
+
+        },
+        //重新生成input
+        reCreateInput: function () {
+            var _this = this,
+                input = $("#" + this.inputId),
+                clone = input.clone();
+
+            clone.insertBefore(input);
+            input.unbind("change");
+            input.remove();
+
+            clone.change(function (e) {
+                _this.inputChange(this, e);
+            });
+        },
+        //显示图片
+        showImg:function(src,callback){
+            src = this.pictureShowUrl+src;
+
+            var img = new Image(),
+                _this = this;
+
+            callback = callback || function(){};
+
+            var div = $("<div></div>");
+            div.css({
+                width: this.imgWidth+"px",
+                height: this.imgHeight+22+"px",
+                float: "left",
+                margin: "10px"
+            }).addClass("__upload_temp__");
+            var div1 = $("<div></div>"),
+                div2 = $("<div>删 除</div>"),
+                div3 = $("<div></div>");
+
+            div1.css({
+                width: "100%",
+                height: this.imgHeight+"px"
+            });
+            div2.css({
+                width: "100%",
+                height: "22px",
+                "text-align": "center",
+                "line-height": "22px",
+                background: "#ccc",
+                cursor: "pointer"
+            });
+            div3.css({
+                width: 0,
+                height: "2px",
+                background: "#f00"
+            }).addClass("__upload_temp_pro__");
+
+
+            div.append(div1).append(div3).append(div2);
+
+
+
+            div2.click(function () {
+                var temp_div = $(this).parent();
+
+                _this.delOne();
+
+
+                temp_div.remove();
+
+            });
+
+            $("#"+_this.showImageWrapId).append(div);
+            callback();
+            img.onload = function () {
+
+                var width = img.width,
+                    height = img.height,
+                    new_size = TGOGO.__getNewImageSize(width, height, _this.imgWidth, _this.imgHeight);
+
+                var imgs = $("<img src='" + src + "' width = '" + new_size.width + "' height = '" + new_size.height + "' />");
+
+
+                var temp_top = (_this.imgHeight - new_size.height) / 2,
+                    temp_left = (_this.imgWidth - new_size.width) / 2;
+                imgs.css({
+                    margin: temp_top + "px " + temp_left + "px"
+                });
+                div1.append(imgs);
+
+            };
+            img.src = src;
+        },
+        //初始显示图片
+        showStartImage:function(){
+            var data = this.imgs,
+                _this = this;
+
+            var go = function(){
+                if(data.length != 0){
+                    var this_src = data.shift();
+                    _this.upLoadNumber++;
+                    _this.showImg(this_src,go);
+                }
+            };
+
+            go();
+        },
+        //删除图片
+        delOne: function () {
+            this.upLoadNumber--;
+        }
+    };
+
+    return upload_file;
+
+})();
+TGOGO.uploadImage = function(obj){
+    var serverUrl = obj.data("server_url"),
+        show_picture_id = obj.data("show_picture_id"),
+        write_list = obj.data("can_uplad_type"),
+        max_number = obj.data("can_upload_number"),
+        picture_width = obj.data("show_picture_width"),
+        picture_height = obj.data("show_picture_height"),
+        picture_show_url = obj.data("show_picture_url"),
+        has_picture = obj.data("has_pictures"),
+        id = DEVICE.counter(),
+        form_id = "_temp_uploadImage_from_"+id,
+        input_id = "_temp_uploadImage_input_"+id,
+        form = $("<form id='"+form_id+"'></form>"),
+        input = $("<input hidefocus id='"+input_id+"' type='file' name='file' />");
+    has_picture = (!has_picture || $.trim(has_picture) == "")? [] : has_picture.split(",");
+
+    obj.css({
+        overflow:"hidden",
+        position:"relative"
+    });
+    input.css({
+        position:"absolute",
+        left:0,
+        top:0,
+        "outline":0,
+        "font-size":"300px",
+        width:"100%",
+        height:parseInt(obj.height())+"px",
+        opacity:0,
+        cursor:"pointer",
+        border:"none"
+    });
+    form.append(input);
+    obj.append(form);
+
+    window["_temp_uploadImage_fn_"+id] = new TGOGO.uploadImage_fn({
+        id:input_id,      //input[type='file']的 id   @param:str
+        formId:form_id,              //表单id                     @param:str
+        types:write_list,       //上传文件类型                @param:str
+        maxNumber:max_number,                //最大能上传好多张图片          @param:int
+        //服务器地址                  @param:str
+        serverSrc:serverUrl,
+        showImageWrapId:show_picture_id,      //图片上传完后显示区域id        @param:str
+        imgs:has_picture,                  //已存在的图片                 @param:array
+        pictureWidth:picture_width,        //显示图片大小
+        pictureHeight:picture_height,
+        pictureShowUrl:picture_show_url
+    });
+};
 
 
 
@@ -986,6 +1298,42 @@ TGOGO.imgAutoResize = function(obj){
 
 
 
+
+
+
+
+
+
+
+
+TGOGO.__getNewImageSize = function (imgwidth, imgheight, objwidth, objheight) {
+    var newimgwidth, newimgheight;
+
+    if (imgwidth > 0 && imgheight > 0) {
+        if (imgwidth / imgheight >= objwidth / objheight) {
+            if (imgwidth > objwidth) {
+                newimgwidth = objwidth;
+                newimgheight = imgheight * objwidth / imgwidth;
+            } else {
+                newimgwidth = imgwidth;
+                newimgheight = imgheight;
+            }
+        } else {
+            if (imgheight > objheight) {
+                newimgheight = objheight;
+                newimgwidth = imgwidth * objheight / imgheight;
+            } else {
+                newimgwidth = imgwidth;
+                newimgheight = imgheight;
+            }
+        }
+    }
+
+    return {
+        width: newimgwidth,
+        height: newimgheight
+    }
+};
 
 
 
