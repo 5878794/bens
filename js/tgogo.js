@@ -164,6 +164,7 @@
 //data-z_index="100"                        @弹出层的z-index 层级
 //data-before_show_run = "before_show"      @弹出层打开前执行函数名
 //data-after_close_run = "after_close"      @弹出层关闭后执行函数名
+//fn_name = ""  "实例化的名称"  @自动生成，取这个属性可取到函数名
 //
 //eg:
 //
@@ -1500,15 +1501,17 @@ TGOGO.showCenterDiv = function(obj){
         z_index = obj.data("z_index"),
         after_close_run = obj.data("after_close_run"),
         before_show_run = obj.data("before_show_run"),
-        _this = this;
+        _this = this,
+        _id = DEVICE.counter(),
+        fn_name = "_temp_showCenterDiv_fn_"+_id;
 
-
+    obj.attr({"fn_name":fn_name});
     after_close_run = (after_close_run)? window[after_close_run] : function(){};
     before_show_run = (before_show_run)? window[before_show_run] : function(){};
 
     DEVICE.addEvent(obj.get(0),event,function(){
         before_show_run();
-        new _this.showCenterDiv_fn({
+        window[fn_name] = new _this.showCenterDiv_fn({
             div:id,
             zIndex:z_index,
             closeRun:after_close_run
@@ -1525,13 +1528,35 @@ TGOGO.showCenterDiv = function(obj){
 //*****************************************************
 //ajax提交
 //*****************************************************
-TGOGO.ajaxSubmit_fn = function(){
+TGOGO.ajaxSubmit_fn = function(opt){
+    var src = opt.src,
+        type = opt.type || "post",
+        timeout = opt.timeout || 60000,
+        form = opt.form;
+
+
+
 
 };
 TGOGO.ajaxSubmit = function(obj){
     var ajax_src = obj.attr("action"),
         ajax_type = obj.data("ajax_type"),
-        ajax_timeout = obj.data("ajax_timeout");
+        ajax_timeout = obj.data("ajax_timeout"),
+        _this = this;
+
+
+    obj.submit(function(){
+        _this.ajaxSubmit_fn({
+            src:ajax_src,
+            type:ajax_type,
+            timeout:ajax_timeout,
+            form:obj
+        });
+        return false;
+    });
+
+
+
 };
 
 
