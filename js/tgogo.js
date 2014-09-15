@@ -230,8 +230,14 @@ $(document).ready(function(){
 
 var TGOGO = {};
 TGOGO.settings = {
-    loadShow: bodyLoading.show,     //调用的外部显示loading函数
-    loadHide: bodyLoading.close      //调用的外部关闭loading函数
+    //调用的外部显示loading函数
+    loadShow: function(){
+        bodyLoading.show.call(bodyLoading);
+    },
+    //调用的外部关闭loading函数
+    loadHide: function(){
+        bodyLoading.close.call(bodyLoading);
+    }
 };
 
 
@@ -1165,11 +1171,17 @@ TGOGO.uploadImage_fn = (function(){
             //            $(form).append("<input type='text' value='123' name='test1'>");
 
 //            $.loadShow();
+            if(TGOGO.settings && TGOGO.settings.loadShow){
+                TGOGO.settings.loadShow();
+            }
             form.submit();
         },
         //提交成功回调
         oldSuccess: function (rs) {
 //            $.loadHide();
+            if(TGOGO.settings && TGOGO.settings.loadHide){
+                TGOGO.settings.loadHide();
+            }
             if (rs.State != 1) {
                 //失败
                 alert(rs.Message);
@@ -1517,7 +1529,9 @@ TGOGO.ajaxSubmit_fn = function(){
 
 };
 TGOGO.ajaxSubmit = function(obj){
-
+    var ajax_src = obj.attr("action"),
+        ajax_type = obj.data("ajax_type"),
+        ajax_timeout = obj.data("ajax_timeout");
 };
 
 
