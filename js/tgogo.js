@@ -228,6 +228,13 @@ $(document).ready(function(){
 
 
 var TGOGO = {};
+TGOGO.settings = {
+    loadShow: bodyLoading.show,     //调用的外部显示loading函数
+    loadHide: bodyLoading.close      //调用的外部关闭loading函数
+};
+
+
+
 //监听的class
 TGOGO.className = "__TGOGO__";
 TGOGO.run = function(obj){
@@ -236,15 +243,11 @@ TGOGO.run = function(obj){
         var this_obj = $(this),
             type = this_obj.data("type");
 
-        if(this.__isRun__){
-            return
-        }else{
+        if(!this.__isRun__){
             this.__isRun__ = true;
-        }
-
-
-        if(type && _this.hasOwnProperty(type)){
-            _this[type](this_obj);
+            if(type && _this.hasOwnProperty(type)){
+                _this[type](this_obj);
+            }
         }
     });
 };
@@ -1359,7 +1362,7 @@ TGOGO.uploadImage = function(obj){
 
 
 //*****************************************************
-//弹出居中层  有问题
+//弹出居中层
 //*****************************************************
 TGOGO.showCenterDiv_fn = (function(){
     var wrap_bg = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH3gkMDRAo1IkjzgAAAA1JREFUCNdj+P//fwMACXwDfrW+dCcAAAAASUVORK5CYII=";
@@ -1461,11 +1464,11 @@ TGOGO.showCenterDiv = function(obj){
         _this = this;
 
 
-    after_close_run = window[after_close_run];
-
+    after_close_run = (after_close_run)? window[after_close_run] : function(){};
+    before_show_run = (before_show_run)? window[before_show_run] : function(){};
 
     DEVICE.addEvent(obj.get(0),event,function(){
-        window[before_show_run]();
+        before_show_run();
         new _this.showCenterDiv_fn({
             div:id,
             zIndex:z_index,
@@ -1477,6 +1480,18 @@ TGOGO.showCenterDiv = function(obj){
 
 
 
+
+
+
+//*****************************************************
+//ajax提交
+//*****************************************************
+TGOGO.ajaxSubmit_fn = function(){
+
+};
+TGOGO.ajaxSubmit = function(obj){
+
+};
 
 
 
