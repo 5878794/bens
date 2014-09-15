@@ -123,6 +123,7 @@
 //data-can_upload_number = "5"                                  @上传最大数
 //data-show_picture_width = "100"                               @上传后显示图片大小
 //data-show_picture_height = "60"
+//data-hide_input_name = "upload_files"                         @存放取值的type=hidden的input的 name
 //                                                              @初始显示在上传区的图片，没有留空
 //data-has_pictures = "TempUpload/20140912/185dca975350458780d72b45d3cd79d9_72_72.png,TempUpload/20140912/c7e36a67f3054c579e4682d1ce14ad2e_215_215.png"
 //data-show_picture_url = "http://172.18.252.118:8023/"         @显示图片的服务器前缀
@@ -138,9 +139,9 @@
 //data-can_upload_number = "5"
 //data-show_picture_width = "100"
 //data-show_picture_height = "60"
-//data-has_pictures = "TempUpload/20140912/185dca975350458780d72b45d3cd79d9_72_72.png,TempUpload/20140912/c7e36a67f3054c579e4682d1ce14ad2e_215_215.png"
-//data-show_picture_url = "http://172.18.252.118:8023/"
-//>
+//data-hide_input_name = "upload_files"
+//data-has_pictures = "aaa.jpg,bbb.jpg"
+//data-show_picture_url = "http://172.18.252.118:8023/">
 //上传图片
 //</div>
 //
@@ -1084,9 +1085,11 @@ TGOGO.uploadImage_fn = (function(){
         this.imgWidth = opt.pictureWidth;
         this.imgHeight= opt.pictureHeight;
         this.pictureShowUrl = opt.pictureShowUrl;
+        this.hideInput = opt.hideInput;
 
         this.className = null;
         this.upLoadNumber = 0;
+
 
         this.init();
     };
@@ -1262,18 +1265,22 @@ TGOGO.uploadImage_fn = (function(){
                     height = img.height,
                     new_size = TGOGO.__getNewImageSize(width, height, _this.imgWidth, _this.imgHeight);
 
-                var imgs = $("<img src='" + src + "' width = '" + new_size.width + "' height = '" + new_size.height + "' />");
 
 
                 var temp_top = (_this.imgHeight - new_size.height) / 2,
                     temp_left = (_this.imgWidth - new_size.width) / 2;
-                imgs.css({
-                    margin: temp_top + "px " + temp_left + "px"
+
+                $(img).css({
+                    margin: temp_top + "px " + temp_left + "px",
+                    width:new_size.width+"px",
+                    height:new_size.height+"px"
                 });
-                div1.append(imgs);
+
 
             };
             img.src = src;
+            div1.append(img);
+            this.setHideInputVal();
         },
         //初始显示图片
         showStartImage:function(){
@@ -1293,10 +1300,27 @@ TGOGO.uploadImage_fn = (function(){
         //删除图片
         delOne: function () {
             this.upLoadNumber--;
+            this.setHideInputVal();
         },
         delAll:function(){
             this.upLoadNumber = 0;
             $("#"+this.showImageWrapId).html("");
+            this.setHideInputVal();
+
+        },
+        setHideInputVal:function(){
+            var input = this.hideInput,
+                imgs = $("#"+this.showImageWrapId).find("img"),
+                vals = [];
+
+            imgs.each(function(){
+                var name = $(this).attr("src");
+                name = name.substr(name.lastIndexOf("\/")+1);
+                vals.push(name);
+            });
+
+            input.val(vals.join(","));
+
         }
     };
 
@@ -1312,10 +1336,12 @@ TGOGO.uploadImage = function(obj){
         picture_height = obj.data("show_picture_height"),
         picture_show_url = obj.data("show_picture_url"),
         has_picture = obj.data("has_pictures"),
+        hide_input_name = obj.data("hide_input_name") || "_togogo_upload_files_",
         id = DEVICE.counter(),
         form_id = "_temp_uploadImage_from_"+id,
         input_id = "_temp_uploadImage_input_"+id,
         form = $("<form id='"+form_id+"'></form>"),
+        hide_input = $("<input type='hidden' name='"+hide_input_name+"'  value='"+has_picture+"'>"),
         input = $("<input hidefocus id='"+input_id+"' type='file' name='file' />");
     has_picture = (!has_picture || $.trim(has_picture) == "")? [] : has_picture.split(",");
 
@@ -1335,7 +1361,7 @@ TGOGO.uploadImage = function(obj){
         cursor:"pointer",
         border:"none"
     });
-    form.append(input);
+    form.append(input).append(hide_input);
     obj.append(form);
 
     var _temp_name = "_temp_uploadImage_fn_"+id;
@@ -1352,7 +1378,8 @@ TGOGO.uploadImage = function(obj){
         imgs:has_picture,                  //已存在的图片                 @param:array
         pictureWidth:picture_width,        //显示图片大小
         pictureHeight:picture_height,
-        pictureShowUrl:picture_show_url
+        pictureShowUrl:picture_show_url,    //图片显示地址
+        hideInput:hide_input                //隐藏文本框保存当前的图片地址
     });
 };
 
