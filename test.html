@@ -50,6 +50,12 @@
         .show_image_wrap{
             width: 100%; height: 300px; background: #eee;
         }
+        .div2{
+            width: 150px; height: 30px; line-height: 30px; text-align: center; background: #eee;
+        }
+        #center_div1{
+            width: 200px;  background: #fff; display: none;
+        }
     </style>
     <script>
         var bindData = function(rs){
@@ -72,26 +78,67 @@
                 div.css({display:"none"})
                 div.eq(1).css({display:"block"})
             })
+            $("#aa1").click(function(){
+                alert("center div click aa1")
+            })
+            $("#aa2").click(function(){
+                alert("center div click aa2")
+            })
+
+            $("#bbb").click(function(){
+                alert("bbb")
+            })
+
         })
+
+        var before_show = function(){
+
+        };
+        var after_close = function(){
+            $("#aaa").val("");
+            var fn = $("#center_div1").find(".uploadfile").attr("fn_name");
+            window[fn].delAll();
+        };
 
     </script>
 </head>
 <body>
 
-<div class="__TGOGO__ uploadfile"
-     data-type="uploadImage"
-     data-server_url ="/test/api/product/UploadPictureByIframe"
-     data-show_picture_id="show_image_wrap"
-     data-can_uplad_type="jpg,jpeg,png"
-     data-can_upload_number = "5"
-     data-show_picture_width = "100"
-     data-show_picture_height = "60"
-     data-has_pictures = "TempUpload/20140912/185dca975350458780d72b45d3cd79d9_72_72.png,TempUpload/20140912/c7e36a67f3054c579e4682d1ce14ad2e_215_215.png"
-     data-show_picture_url = "http://172.18.252.118:8023/">
-    上传图片
+
+<div class="__TGOGO__ div2"
+        data-type="showCenterDiv"
+        data-center_div_id="center_div1"
+        data-show_event="click"
+        data-z_index="100"
+        data-before_show_run = "before_show"
+        data-after_close_run = "after_close"
+        >
+    显示居中弹出层
 </div>
 
-<div class="show_image_wrap" id="show_image_wrap"></div>
+<div id="center_div1">
+    <input type="text" id="aaa" />
+    <div id="bbb">aaaaa</div>
+    <div class="__TGOGO__ uploadfile"
+         data-type="uploadImage"
+         data-server_url ="/test/api/product/UploadPictureByIframe"
+         data-show_picture_id="show_image_wrap"
+         data-can_uplad_type="jpg,jpeg,png"
+         data-can_upload_number = "5"
+         data-show_picture_width = "100"
+         data-show_picture_height = "60"
+         data-has_pictures = ""
+         data-show_picture_url = "http://172.18.252.118:8023/">
+        上传图片
+    </div>
+
+    <div class="show_image_wrap" id="show_image_wrap"></div>
+</div>
+
+
+
+
+
 
 
 <br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>

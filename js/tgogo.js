@@ -126,7 +126,7 @@
 //                                                              @初始显示在上传区的图片，没有留空
 //data-has_pictures = "TempUpload/20140912/185dca975350458780d72b45d3cd79d9_72_72.png,TempUpload/20140912/c7e36a67f3054c579e4682d1ce14ad2e_215_215.png"
 //data-show_picture_url = "http://172.18.252.118:8023/"         @显示图片的服务器前缀
-//
+//fn_name = "实例化的名称"  @自动生成，取这个属性可取到函数名
 //
 //eg:
 //
@@ -145,6 +145,64 @@
 //</div>
 //
 //<div class="show_image_wrap" id="show_image_wrap"></div>
+
+
+
+
+
+
+//*****************************************************
+//弹出居中层
+//*****************************************************
+//注意：弹出层内的事件先自己绑定，弹出层关闭后在打开会保持关闭前的样子，要变动在关闭后的事件内执行
+//说明：
+//class:　__TGOGO__　                       @必须写死
+//data-type: showCenterDiv                 @必须写死
+//data-center_div_id="center_div1"          @要弹出的div的id
+//data-show_event="click"                   @触发弹出层的事件名
+//data-z_index="100"                        @弹出层的z-index 层级
+//data-before_show_run = "before_show"      @弹出层打开前执行函数名
+//data-after_close_run = "after_close"      @弹出层关闭后执行函数名
+//
+//eg:
+//
+//<div class="__TGOGO__ div2"
+//data-type="showCenterDiv"
+//data-center_div_id="center_div1"
+//data-show_event="click"
+//data-z_index="100"
+//data-before_show_run = "before_show"
+//data-after_close_run = "after_close"
+//>
+//显示居中弹出层
+//</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -1232,6 +1290,10 @@ TGOGO.uploadImage_fn = (function(){
         //删除图片
         delOne: function () {
             this.upLoadNumber--;
+        },
+        delAll:function(){
+            this.upLoadNumber = 0;
+            $("#"+this.showImageWrapId).html("");
         }
     };
 
@@ -1273,7 +1335,10 @@ TGOGO.uploadImage = function(obj){
     form.append(input);
     obj.append(form);
 
-    window["_temp_uploadImage_fn_"+id] = new TGOGO.uploadImage_fn({
+    var _temp_name = "_temp_uploadImage_fn_"+id;
+    obj.attr({fn_name:_temp_name});
+
+    window[_temp_name] = new TGOGO.uploadImage_fn({
         id:input_id,      //input[type='file']的 id   @param:str
         formId:form_id,              //表单id                     @param:str
         types:write_list,       //上传文件类型                @param:str
@@ -1293,6 +1358,122 @@ TGOGO.uploadImage = function(obj){
 
 
 
+//*****************************************************
+//弹出居中层  有问题
+//*****************************************************
+TGOGO.showCenterDiv_fn = (function(){
+    var wrap_bg = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH3gkMDRAo1IkjzgAAAA1JREFUCNdj+P//fwMACXwDfrW+dCcAAAAASUVORK5CYII=";
+    var showDiv = function(opt){
+        this.wrap = null;
+        this.zz = null;
+        this.div = opt.div;
+        this.closeRun = opt.closeRun;
+
+        if(typeof(this.div) === "string"){
+            this.div = $("#"+this.div).css({display:"block"});
+        }else{
+            this.div = this.div.css({display:"block"});
+        }
+
+
+        this.zIndex = opt.zIndex || 1000;
+        this.init();
+    };
+    showDiv.prototype = {
+        init:function(){
+            this.createZZ();
+            this.createWrap();
+
+            this.wrap.append(this.div);
+            this.addEvent();
+            this.show();
+
+        },
+        createWrap:function(){
+            var div = $("<div></div>");
+            div.css(DEVICE.fixObjCss({
+                padding: "10px",
+                background: "url("+wrap_bg+")",
+                "border-radius": "5px",
+                "z-index":this.zIndex+1,
+                position:"fixed",
+                left:"50%",
+                top:"50%"
+            }));
+            this.wrap = div;
+        },
+        createZZ:function(){
+            var div = $("<div></div>");
+            div.css({
+                width:"100%",
+                height:"100%",
+                background:"#000",
+                opacity:0,
+                position:"fixed",
+                left:0,
+                top:0,
+                "z-index":this.zIndex
+            });
+            this.zz = div;
+        },
+        addEvent:function(){
+            var _this = this;
+            this.zz.click(function(){
+                 _this.destroy();
+            });
+            this.wrap.click(function(e){
+                e.stopPropagation();
+//                e.preventDefault();
+            });
+        },
+        show:function(){
+            $("body").append(this.zz).append(this.wrap);
+            this.zz.animate({
+                opacity:0.4
+            },500);
+            var width = parseInt(this.div.width())+20,
+                height = parseInt(this.div.height())+20;
+            this.wrap.css({
+                "margin-top":-height/2+"px",
+                "margin-left":-width/2+"px"
+            })
+        },
+        destroy:function(){
+            this.zz.unbind("click");
+            this.wrap.unbind("click");
+            $("body").append(this.div.css({display:"none"}));
+            this.zz.remove();
+            this.wrap.remove();
+            this.zz = null;
+            this.wrap = null;
+            this.div = null;
+            this.closeRun();
+        }
+    };
+    return showDiv;
+})();
+TGOGO.showCenterDiv = function(obj){
+    var event = obj.data("show_event"),
+        id = obj.data("center_div_id"),
+        z_index = obj.data("z_index"),
+        after_close_run = obj.data("after_close_run"),
+        before_show_run = obj.data("before_show_run"),
+        _this = this;
+
+
+    after_close_run = window[after_close_run];
+
+
+    DEVICE.addEvent(obj.get(0),event,function(){
+        window[before_show_run]();
+        new _this.showCenterDiv_fn({
+            div:id,
+            zIndex:z_index,
+            closeRun:after_close_run
+        });
+    });
+
+};
 
 
 
