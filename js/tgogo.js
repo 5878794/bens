@@ -1482,11 +1482,19 @@ TGOGO.showCenterDiv_fn = (function(){
             })
         },
         destroy:function(){
-            this.zz.unbind("click");
-            this.wrap.unbind("click");
-            $("body").append(this.div.css({display:"none"}));
-            this.zz.remove();
-            this.wrap.remove();
+            if(this.zz){
+                this.zz.unbind("click");
+                this.zz.remove();
+            }
+            if(this.wrap){
+                this.wrap.unbind("click");
+                this.wrap.remove();
+            }
+
+            if(this.div){
+                $("body").append(this.div.css({display:"none"}));
+            }
+
             this.zz = null;
             this.wrap = null;
             this.div = null;
