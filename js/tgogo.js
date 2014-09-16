@@ -1482,6 +1482,10 @@ TGOGO.showCenterDiv_fn = (function(){
             })
         },
         destroy:function(){
+            if(this.div){
+                $("body").append(this.div.css({display:"none"}));
+            }
+
             if(this.zz){
                 this.zz.unbind("click");
                 this.zz.remove();
@@ -1491,9 +1495,7 @@ TGOGO.showCenterDiv_fn = (function(){
                 this.wrap.remove();
             }
 
-            if(this.div){
-                $("body").append(this.div.css({display:"none"}));
-            }
+
 
             this.zz = null;
             this.wrap = null;
