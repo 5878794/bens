@@ -8,6 +8,8 @@
  * Email:5878794@qq.com
  * =====================================
  * Desc:  依赖　　jq.js    device.js
+ * TODO
+ * tab切换 表单提交  表单验证
  */
 
 
@@ -112,7 +114,7 @@
 
 
 //*****************************************************
-//图片上传按钮
+//图片上传按钮 后端程序需要集成进来
 //*****************************************************
 //说明：
 //class:　__TGOGO__　                       @必须写死
@@ -555,7 +557,7 @@ TGOGO.banner_scroll_fn = (function () {
                 left: t_left + "px"
             });
         },
-        endEvent: function (e) {
+        endEvent: function () {
             if (this.touchStartTime == 0) { this.scrollBack(); return; }
             if (this.touchPoints.length < 2) { this.scrollBack(); return; }
 
@@ -906,7 +908,7 @@ TGOGO.scrollLoad = function(obj){
                         msg = "无法连接服务器";
                     }
 
-                    __obj.ajaxError();
+                    __obj.ajaxError(msg);
                 }
             });
         }
@@ -1245,7 +1247,7 @@ TGOGO.imgFixedDiv = function(obj){
 
 
 //*****************************************************
-//图片上传按钮
+//图片上传按钮  后端程序需要集成进来
 //*****************************************************
 TGOGO.uploadImage_fn = (function(){
     var upload_file = function(opt){
@@ -1429,12 +1431,8 @@ TGOGO.uploadImage_fn = (function(){
 
             div2.click(function () {
                 var temp_div = $(this).parent();
-
-                _this.delOne();
-
-
                 temp_div.remove();
-
+                _this.delOne();
             });
 
             $("#"+_this.showImageWrapId).append(div);
