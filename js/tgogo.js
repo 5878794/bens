@@ -183,11 +183,44 @@
 
 
 
+//*****************************************************
+//图片自适应div大小  一个div内一个图片的情况
+//*****************************************************
+//说明：
+//class:　__TGOGO__　                       @必须写死
+//data-type: imgFixedDiv                   @必须写死
+//
+//eg:
+//
+//<div class="__TGOGO__" data-type="imgFixedDiv" style="width:100px; height: 200px; background: teal">
+//    <img src="http://e.hiphotos.baidu.com/image/w%3D310/sign=a0b6e89c59b5c9ea62f305e2e538b622/b90e7bec54e736d1bb03529f99504fc2d5626911.jpg" />
+//</div>
 
 
 
-
-
+//*****************************************************
+//富文本编辑器
+//需要挂载
+//<link rel="stylesheet" href="js/plus/doc_edit/themes/default/default.css" />
+//<script charset="utf-8" src="js/plus/doc_edit/kindeditor-min.js"></script>
+//<script charset="utf-8" src="js/plus/doc_edit/lang/zh_CN.js"></script>
+//*****************************************************
+//说明：
+//class:　__TGOGO__　                       @必须写死
+//data-type: editDiv                       @必须写死
+//data-val="123"                            @初始值
+//data-fn_name="abceee"                     @实例化类名，取值用  window["abceee"].html()
+//
+//eg:
+//
+//<textarea
+//class="__TGOGO__"
+//data-type="editDiv"
+//data-val="123"
+//data-fn_name="abceee"
+//style="width: 600px;height: 300px;">
+//
+//</textarea>
 
 
 
@@ -238,7 +271,8 @@ TGOGO.settings = {
     //调用的外部关闭loading函数
     loadHide: function(){
         bodyLoading.close.call(bodyLoading);
-    }
+    },
+    alert:TGO.winMsg
 };
 
 
@@ -598,6 +632,40 @@ TGOGO.bannerScroll = function(obj){
 
 
 //*****************************************************
+//富文本编辑器
+//*****************************************************
+TGOGO.editDiv = function(obj){
+    var name = obj.attr("name"),
+        fn_name = obj.data("fn_name"),
+        val = obj.data("val") || "",
+        width = parseInt(obj.width()),
+        height = parseInt(obj.height());
+
+    name = name || "__temp__divedit_"+DEVICE.counter();
+    obj.attr({name:name});
+
+    fn_name = fn_name || "__temp__divedit_fn_"+DEVICE.counter();
+
+    KindEditor.ready(function(K) {
+        window[fn_name] = K.create('textarea[name="'+name+'"]', {
+            minHeight:height+"px",
+            minWidth:width+"px",
+            items:[ 'source', '|', 'undo', 'redo', '|', 'preview', 'cut', 'copy', 'paste',
+                'plainpaste', 'wordpaste', '|', 'justifyleft', 'justifycenter', 'justifyright',
+                'justifyfull', 'insertorderedlist', 'insertunorderedlist', 'indent', 'outdent', 'subscript',
+                'superscript', 'clearhtml', 'quickformat', 'selectall', '|', 'fullscreen', '/',
+                'formatblock', 'fontname', 'fontsize', '|', 'forecolor', 'hilitecolor', 'bold',
+                'italic', 'underline', 'strikethrough', 'lineheight', 'removeformat', '|', 'image', 'table', 'hr', 'emoticons', 'baidumap', 'pagebreak',
+                'anchor', 'link', 'unlink']
+        });
+        window[fn_name].html(val.toString());
+    });
+};
+
+
+
+
+//*****************************************************
 //滚动加载
 //*****************************************************
 TGOGO.scroll_load_fn = (function(){
@@ -878,7 +946,13 @@ TGOGO.marquee_fn = (function(){
     marquee.prototype = {
         init:function(){
             this.addDom();
+
+            if(!this.canMove){
+                return;
+            }
+
             this.setCss();
+
             if(this.direction == "x"){
                 this.run_x();
             }else{
@@ -891,13 +965,34 @@ TGOGO.marquee_fn = (function(){
             var main = $("<div></div>"),
                 body = $("<div></div>"),
                 span = this.div.find("span"),
-                main1;
+                main1,
+                w = 0,
+                h = 0;
+
+            span.each(function(){
+                w += parseInt($(this).width());
+                h += parseInt($(this).height());
+            });
+
+            if(this.direction == "x" && this.width > w){
+                this.canMove = false;
+                return;
+            }
+            if(this.direction == "y" && this.height > h){
+                this.canMove = false;
+                return;
+            }
+
+
+
 
             main.append(span);
-            main1 = main.clone();
-            body.append(main).append(main1);
-            this.div.append(body);
+            body.append(main);
 
+            main1 = main.clone();
+            body.append(main1);
+
+            this.div.append(body);
             this.obj1 = main;
             this.obj2 = main1;
             this.body = body;
@@ -1071,6 +1166,78 @@ TGOGO.imgAutoResize_fn = function(obj){
 };
 TGOGO.imgAutoResize = function(obj){
     TGOGO.imgAutoResize_fn(obj);
+};
+
+
+
+
+
+//*****************************************************
+//图片自适应div大小  一个div内一个图片的情况
+//*****************************************************
+TGOGO.imgFixedDiv_fn = function(obj){
+    var imgs = obj.find("img");
+
+    var setImg = function(img){
+        var src = img.attr("src"),
+            new_img = new Image();
+
+        img.attr({ src: "" });
+
+        new_img.onload = function () {
+            var main_width = parseInt(obj.width()),
+                main_height = parseInt(obj.height());
+
+            var width = new_img.width,
+                height = new_img.height,
+                new_size = TGOGO.__getNewImageSize(width,height,main_width,main_height);
+
+            img.css({
+                width: new_size.width + "px",
+                height: new_size.height + "px",
+                position: "relative",
+                left: (main_width-new_size.width)/2 + "px",
+                top: (main_height-new_size.height)/2 + "px"
+            }).attr({
+                src: src,
+                my_width: width,
+                my_height: height
+            });
+        };
+        new_img.src = src;
+    };
+
+    imgs.each(function () {
+        var this_img = $(this);
+        setImg(this_img);
+    });
+
+    $(window).resize(function(){
+        imgs.each(function(){
+            var this_img = $(this),
+                width = this_img.attr("my_width"),
+                height = this_img.attr("my_height");
+
+            if(width){
+                var main_width = parseInt(obj.width()),
+                    main_height = parseInt(obj.height()),
+                    new_size = TGOGO.__getNewImageSize(width,height,main_width,main_height);
+
+                this_img.css({
+                    width: new_size.width + "px",
+                    height: new_size.height + "px",
+                    position: "relative",
+                    left: (main_width-new_size.width)/2 + "px",
+                    top: (main_height-new_size.height)/2 + "px"
+                })
+            }
+        });
+    })
+
+
+};
+TGOGO.imgFixedDiv = function(obj){
+    TGOGO.imgFixedDiv_fn(obj);
 };
 
 
@@ -1536,7 +1703,7 @@ TGOGO.showCenterDiv = function(obj){
 
 
 //*****************************************************
-//ajax提交
+//ajax提交   TODO
 //*****************************************************
 TGOGO.ajaxSubmit_fn = function(opt){
     var src = opt.src,
@@ -1568,6 +1735,10 @@ TGOGO.ajaxSubmit = function(obj){
 
 
 };
+
+
+
+
 
 
 
