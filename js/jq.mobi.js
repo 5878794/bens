@@ -1584,6 +1584,7 @@ if (!window.jq || typeof (jq) !== "function") {
                         settings.data = JSON.stringify(settings.data);
                     }else{
                         settings.data = $.param(settings.data);
+
                     }
 //bens mdf -------------------------------------------------------------
                 if (settings.type.toLowerCase() === "get" && settings.data) {
@@ -2512,3 +2513,245 @@ if (!window.jq || typeof (jq) !== "function") {
         }
     }
 }
+
+
+
+//获取因css而动画中当前的css   type为类型 如：top,left等
+$.fn.androidGetStyle=function(type){
+    var obj=$(this).get(0);
+    var thisStyle=document.defaultView.getComputedStyle(obj,null);
+    return thisStyle.getPropertyValue(type);
+};
+
+
+//获取元素的宽度
+$.fn.width=function(){
+    var w=$(this).androidGetStyle("width");
+    if(!parseInt(w) || w.indexOf("%")>-1){
+        var temp_a=$(this).clone();
+        temp_a.css({display:"block",visibility:"hidden"}).insertAfter(this);
+        w=temp_a.androidGetStyle("width");
+        temp_a.remove();
+    }
+    return w;
+};
+//获取元素的高度
+$.fn.height=function(){
+    var h=$(this).androidGetStyle("height");
+    if(!parseInt(h) || h.indexOf("%")>-1){
+        var temp_a=$(this).clone();
+        temp_a.css({display:"block",visibility:"hidden"}).insertAfter(this);
+        h=temp_a.androidGetStyle("height");
+        temp_a.remove();
+    }
+    return h;
+};
+
+
+$.trim = function(str){
+    str = str || "";
+    return str.replace(/(^\s*)|(\s*$)/g, "");
+};
+
+
+//css动画   依赖 DEVICE  .js
+$.fn.cssAnimate=(function(){
+
+    var cssanimagefn = {},
+        counter = (function(){
+            var a = 0;
+            return function(){
+                a += 1;
+                return a;
+            }
+        })(),
+        device = DEVICE,
+        clearfn = function(obj,keyname){
+            obj.removeEventListener(device.TRNEND_EV,cssanimagefn[keyname],false);
+            delete cssanimagefn[keyname];
+            delete obj.__bens_cssfn_id__;
+        };
+
+    return function(data,time,callback,is_3d){
+        var _this=$(this),
+            _that = _this.get(0),
+            _thatstyle = _that.style;
+
+        data = device.fixObjCss(data);
+        time = time || 1000;
+        callback = callback || function(){};
+        is_3d = (typeof(is_3d) == "boolean")?  is_3d : false;
+
+        if(_that.__bens_cssfn_id__){
+            var temp_key = _that.__bens_cssfn_id__;
+            clearfn(_that,temp_key);
+        }
+
+        var thiskey = counter();
+        _that.__bens_cssfn_id__ = thiskey;
+
+
+        cssanimagefn[thiskey]=function(e){
+            var p_name = e.propertyName;
+            if(e.target == _that && data.hasOwnProperty(p_name)){
+
+                //_this.get(0).style["webkitTransition"]="all 0 ease";
+                _thatstyle[device._transitionProperty] = "";
+                _thatstyle[device._transitionDuration] = "";
+                _thatstyle[device._transitionTimingFunction] = "";
+                _thatstyle["webkitTransformStyle"]="";
+                _thatstyle["webkitBackfaceVisibility"]="";
+
+                callback();
+                clearfn(_that,thiskey);
+            }
+        };
+
+        _thatstyle[device._transitionProperty] = "all";
+        _thatstyle[device._transitionDuration] = time+"ms";
+        _thatstyle[device._transitionTimingFunction] = "linear";
+
+        _thatstyle["webkitTransformStyle"]="preserve-3d";   //webkit私有
+        if(!is_3d){
+            _thatstyle["webkitBackfaceVisibility"]="hidden";    //webkit私有
+        }else{
+            _thatstyle["webkitBackfaceVisibility"]="visible";    //webkit私有
+        }
+
+
+        setTimeout(function(){
+            _that.addEventListener(device.TRNEND_EV,cssanimagefn[thiskey],false);
+            _this.css(data);
+        },1);
+
+    }
+})();
+
+
+
+
+//判断是否是数字
+$.isNumber = function(val){
+    return typeof val === 'number';
+};
+//判断是否是字符串
+$.isString = function(val){
+    return typeof val === 'string';
+};
+//判断是否是布尔
+$.isBoolean = function(val){
+    return typeof val === 'boolean';
+};
+//判断是否是对象   jqmobi有
+$.isObject = function(str){
+    if(str === null || typeof str === 'undefined' || $.isArray(str))
+    {
+        return false;
+    }
+    return typeof str === 'object';
+};
+//判断是否是数组   jqmobi有
+$.isArray = function (arr){
+    return arr.constructor === Array;
+};
+//判断是函数    jqmobi有
+$.isFunction = function(fn){
+    return typeof fn === 'function'
+};
+//判断定义值没
+$.isUndefined = function(val){
+    return typeof val === 'undefined'
+};
+//判断是否是网址
+$.isUrl = function(url){
+
+
+//    var strRegex = "^((https|http|ftp|rtsp|mms)?://)"
+//        + "?(([0-9a-z_!~*'().&=+$%-]+: )?[0-9a-z_!~*'().&=+$%-]+@)?" //ftp的user@
+//        + "(([0-9]{1,3}\.){3}[0-9]{1,3}" // IP形式的URL- 199.194.52.184
+//        + "|" // 允许IP和DOMAIN（域名）
+//        + "([0-9a-z_!~*'()-]+\.)*" // 域名- www.
+//        + "([0-9a-z][0-9a-z-]{0,61})?[0-9a-z]\." // 二级域名
+//        + "[a-z]{2,6})" // first level domain- .com or .museum
+//        + "(:[0-9]{1,4})?" // 端口- :80
+//        + "((/?)|" // a slash isn't required if there is no file name
+//        + "(/[0-9a-z_!~*'().;?:@&=+$,%#-]+)+/?)$";
+
+    var strRegex = "[a-zA-z]+://[^s]*";
+
+
+    var re=new RegExp(strRegex);
+    //re.test()
+    return re.test(url);
+};
+
+
+$.getDom = function(obj){
+    var returnobj;
+
+    if(!obj){return returnobj;}
+
+    if($.isString(obj)){
+        returnobj = document.getElementById(obj);
+    }else if($.isObject(obj)){
+        if($.is$(obj)){
+            returnobj = obj.get(0);
+        }
+        if(obj.nodeType == 1){
+            returnobj = obj;
+        }
+    }
+
+    return returnobj;
+};
+$.getArray = function(str){
+    return ($.isArray(str))? str : [];
+};
+$.getFunction = function(fn){
+    return ($.isFunction(fn))? fn : function(){};
+};
+$.getBloom = function(str){
+    return ($.isBoolean(str))? str : false;
+};
+$.getObj = function(obj){
+    return ($.isObject(obj))? obj : {};
+};
+$.getNumber = function(str){
+    str = parseInt(str);
+    str = str || 0;
+    return str;
+};
+
+$.cloneJson = function(obj){
+    return JSON.parse(JSON.stringify(obj));
+};
+
+
+$.getNewImageSize = function(imgwidth,imgheight,objwidth,objheight){
+    var newimgwidth,newimgheight;
+
+    if(imgwidth>0 && imgheight>0){
+        if(imgwidth/imgheight>=objwidth/objheight){
+            if(imgwidth>objwidth){
+                newimgwidth = objwidth;
+                newimgheight = imgheight*objwidth/imgwidth;
+            }else{
+                newimgwidth = imgwidth;
+                newimgheight = imgheight;
+            }
+        }else{
+            if(imgheight>objheight){
+                newimgheight = objheight;
+                newimgwidth = imgwidth*objheight/imgheight;
+            }else{
+                newimgwidth = imgwidth;
+                newimgheight = imgheight;
+            }
+        }
+    }
+
+    return {
+        width:newimgwidth,
+        height:newimgheight
+    }
+};

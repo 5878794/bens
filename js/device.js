@@ -140,6 +140,13 @@ var DEVICE = {};
         hasTouch = (webkitTouch || windowTouch),
         hasTransform = vendor !== false,
 
+        _transform = prefixStyle('transform'),
+        _transitionProperty = prefixStyle('transitionProperty'),
+        _transitionDuration = prefixStyle('transitionDuration'),
+        _transformOrigin = prefixStyle('transformOrigin'),
+        _transitionTimingFunction = prefixStyle('transitionTimingFunction'),
+        _transitionDelay = prefixStyle('transitionDelay'),
+
 
         RESIZE_EV = 'onorientationchange' in window ? 'orientationchange' : 'resize',
         START_EV = webkitTouch ? 'touchstart' : windowTouch? 'MSPointerDown' : 'mousedown',
@@ -203,9 +210,9 @@ var DEVICE = {};
         })(),
         getCssName = function(style){
             return (style in dummyStyle)? style :
-                   (t_v+style in dummyStyle)? t_v+style : style;
+                (t_v+style in dummyStyle)? t_v+style : style;
         },
-        //判断盒子模型的版本 2009版 2011版  2013版
+    //判断盒子模型的版本 2009版 2011版  2013版
         boxVendors = "",
         boxType = (function(){
             if("flexBasis" in dummyStyle){return 2013;}
@@ -218,38 +225,38 @@ var DEVICE = {};
             if(t_v+"box-pack" in dummyStyle){boxVendors = t_v; return 2009;}
         })(),
 
-        //（值）定义盒子模型 display:flex
+    //（值）定义盒子模型 display:flex
         box =  (boxType == 2013)? boxVendors + "flex" :
-                (boxType == 2011)? boxVendors + "flexbox" :
+            (boxType == 2011)? boxVendors + "flexbox" :
                 (boxType == 2009)? boxVendors + "box" : "flex",
-        //与盒子内布局方向相同，  start  end 。。。
+    //与盒子内布局方向相同，  start  end 。。。
         align_items = (boxType == 2013)? boxVendors + "align-items" :
-                      (boxType == 2011)? boxVendors + "flex-pack" :
-                      (boxType == 2009)? boxVendors + "box-pack" : "align-items",
-        //与盒子内布局方向相反，  start  end 。。。
+            (boxType == 2011)? boxVendors + "flex-pack" :
+                (boxType == 2009)? boxVendors + "box-pack" : "align-items",
+    //与盒子内布局方向相反，  start  end 。。。
         justify_content = (boxType == 2013)? boxVendors + "justify-content" :
-                        (boxType == 2011)? boxVendors + "flex-align" :
-                        (boxType == 2009)? boxVendors + "box-align" : "justify-content",
+            (boxType == 2011)? boxVendors + "flex-align" :
+                (boxType == 2009)? boxVendors + "box-align" : "justify-content",
 
-        //盒子子元素所占比例
+    //盒子子元素所占比例
         flex = (boxType == 2013)? boxVendors + "flex" :
-               (boxType == 2011)? boxVendors + "flex" :
-               (boxType == 2009)? boxVendors + "box-flex" : "flex",
+            (boxType == 2011)? boxVendors + "flex" :
+                (boxType == 2009)? boxVendors + "box-flex" : "flex",
 
-        //盒子方向
+    //盒子方向
         flex_direction = (boxType == 2013)? boxVendors + "flex-direction" :
-                         (boxType == 2011)? boxVendors + "flex-direction" :
-                         (boxType == 2009)? boxVendors + "box-orient" : "flex-direction",
+            (boxType == 2011)? boxVendors + "flex-direction" :
+                (boxType == 2009)? boxVendors + "box-orient" : "flex-direction",
 
-        //（值）横向排列
+    //（值）横向排列
         flex_direction_row = (boxType == 2013)?  "row" :
-                             (boxType == 2011)?  "row" :
-                             (boxType == 2009)?  "horizontal" : "row",
+            (boxType == 2011)?  "row" :
+                (boxType == 2009)?  "horizontal" : "row",
 
-        //（值）纵向排列
+    //（值）纵向排列
         flex_direction_column = (boxType == 2013)?  "column" :
-                                (boxType == 2011)?  "column" :
-                                (boxType == 2009)?  "vertical" : "column",
+            (boxType == 2011)?  "column" :
+                (boxType == 2009)?  "vertical" : "column",
 
 
 
@@ -298,14 +305,15 @@ var DEVICE = {};
         gz = (function(){
             var reg,a=[];
             for(var key in css){
-                if(key == "box" || key == "transition"){
-                    a.push("([^-]"+key+"[^-])");
-                }else if(key == "row" || key == "column"){
-                    a.push(key);
-                }else{
-                    a.push("([^-]"+key+")");
+                if(css.hasOwnProperty(key)){
+                    if(key == "box" || key == "transition" || key == "flex"){
+                        a.push("([^-]"+key+"[^-])");
+                    }else if(key == "row" || key == "column"){
+                        a.push(key);
+                    }else{
+                        a.push("([^-]"+key+")");
+                    }
                 }
-
             }
             reg = a.join("|");
             return new RegExp(reg,"ig");
@@ -313,12 +321,13 @@ var DEVICE = {};
         css_prefix = function(data){
             var text = JSON.stringify(data),
                 newtext = cssfile_prefix(text);
+
             return JSON.parse(newtext);
         },
         cssfile_prefix = function(data){
             return  data.replace(gz,function(a){
                 var str = a.substr(1, a.length-2);
-                if(str == "box" || str == "transition"){
+                if(str == "box" || str == "transition" || str=="flex"){
                     var newstr = css[str];
                     return a.substr(0,1)+newstr+ a.substr(a.length-1);
                 }else if(a == "row" || a == "column"){
@@ -333,7 +342,6 @@ var DEVICE = {};
             return cssfile_prefix(css);
         };
 
-
     dummyStyle = null;
 
 
@@ -341,6 +349,15 @@ var DEVICE = {};
     DEVICE.has3d = has3d;         //是否支持3d
     DEVICE.hasTouch = hasTouch;  //是否是触摸屏
     DEVICE.hasTransform = hasTransform;  //是否支持变形
+
+
+    DEVICE._transform = transform;        //自动添加前缀
+    DEVICE._transitionProperty = _transitionProperty;
+    DEVICE._transitionDuration = _transitionDuration;
+    DEVICE._transformOrigin =_transformOrigin;
+    DEVICE._transitionTimingFunction = _transitionTimingFunction;
+    DEVICE._transitionDelay = _transitionDelay;
+
 
 
     DEVICE.RESIZE_EV = RESIZE_EV;    //窗口变化

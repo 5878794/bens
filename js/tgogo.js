@@ -211,6 +211,7 @@
 //class:　__TGOGO__　                       @必须写死
 //data-type: editDiv                       @必须写死
 //data-val="123"                            @初始值
+//data-level = "2"                          @功能等级  1：精简的   2：比较全
 //data-fn_name="abceee"                     @实例化类名，取值用  window["abceee"].html()
 //
 //eg:
@@ -227,8 +228,25 @@
 
 
 
-
-
+//*****************************************************
+//时间选择控件
+//需要挂载
+//<link rel="stylesheet" href="js/plus/datepicker/jquery-ui-1.10.4.custom.min.css" />
+//<script src="js/plus/datepicker/jquery-ui-1.10.4.custom.min.js" type="text/javascript"></script>
+//*****************************************************
+//说明：
+//class:　__TGOGO__　                        @必须写死
+//data-type: dataInput                      @必须写死
+//data-min_year = "1994"                    @显示的最小年份
+//data-max_year = "2009"                    @显示的最大年份   不填默认是到当前年
+//
+//eg:
+//
+//<input type="text" class="__TGOGO__"
+//data-type = "dataInput"
+//data-min_year = "1994"
+//data-max_year = "2009"
+///>
 
 
 
@@ -266,15 +284,17 @@ $(document).ready(function(){
 
 var TGOGO = {};
 TGOGO.settings = {
+    //要加载的图片地址前缀  想对于html地址
+    resourceSrc:"image/",
     //调用的外部显示loading函数
     loadShow: function(){
-        bodyLoading.show.call(bodyLoading);
+        TGOGO.loading.show();
     },
     //调用的外部关闭loading函数
     loadHide: function(){
-        bodyLoading.close.call(bodyLoading);
+        TGOGO.loading.hide();
     },
-    alert:TGO.winMsg
+    alert:window.alert
 };
 
 
@@ -641,7 +661,25 @@ TGOGO.editDiv = function(obj){
         fn_name = obj.data("fn_name"),
         val = obj.data("val") || "",
         width = parseInt(obj.width()),
+        level = obj.data("level"),
         height = parseInt(obj.height());
+
+    var myLevel = {
+        "2":[ 'source', '|', 'undo', 'redo', '|', 'preview', 'cut', 'copy', 'paste',
+            'plainpaste', 'wordpaste', '|', 'justifyleft', 'justifycenter', 'justifyright',
+            'justifyfull', 'insertorderedlist', 'insertunorderedlist', 'indent', 'outdent', 'subscript',
+            'superscript', 'clearhtml', 'quickformat', 'selectall', '|', 'fullscreen', '/',
+            'formatblock', 'fontname', 'fontsize', '|', 'forecolor', 'hilitecolor', 'bold',
+            'italic', 'underline', 'strikethrough', 'lineheight', 'removeformat', '|', 'image', 'table', 'hr', 'emoticons', 'baidumap', 'pagebreak',
+            'anchor', 'link', 'unlink'],
+        "1":[ 'undo', 'redo', '|',  'justifyleft', 'justifycenter', 'justifyright',
+            'justifyfull', 'clearhtml', 'quickformat', '|',
+            'emoticons', 'fontsize', 'forecolor', 'hilitecolor', 'bold',
+            'italic', 'underline', 'strikethrough', 'lineheight', 'removeformat', '|', 'hr',
+             'link', 'unlink']
+    };
+    level = myLevel[level] || myLevel[2];
+
 
     name = name || "__temp__divedit_"+DEVICE.counter();
     obj.attr({name:name});
@@ -652,13 +690,7 @@ TGOGO.editDiv = function(obj){
         window[fn_name] = K.create('textarea[name="'+name+'"]', {
             minHeight:height+"px",
             minWidth:width+"px",
-            items:[ 'source', '|', 'undo', 'redo', '|', 'preview', 'cut', 'copy', 'paste',
-                'plainpaste', 'wordpaste', '|', 'justifyleft', 'justifycenter', 'justifyright',
-                'justifyfull', 'insertorderedlist', 'insertunorderedlist', 'indent', 'outdent', 'subscript',
-                'superscript', 'clearhtml', 'quickformat', 'selectall', '|', 'fullscreen', '/',
-                'formatblock', 'fontname', 'fontsize', '|', 'forecolor', 'hilitecolor', 'bold',
-                'italic', 'underline', 'strikethrough', 'lineheight', 'removeformat', '|', 'image', 'table', 'hr', 'emoticons', 'baidumap', 'pagebreak',
-                'anchor', 'link', 'unlink']
+            items:level
         });
         window[fn_name].html(val.toString());
     });
@@ -1697,6 +1729,31 @@ TGOGO.showCenterDiv = function(obj){
 
 
 
+//*****************************************************
+//时间选择控件
+//*****************************************************
+TGOGO.dataInput = function(obj){
+    var min_year = obj.data("min_year"),
+        max_year = obj.data("max_year"),
+        now_year = 1900 + new Date().getYear();
+
+    max_year = max_year || now_year;
+    min_year = min_year - now_year + "Y";
+    max_year = max_year - now_year + "Y";
+
+
+    obj.datepicker({
+        dateFormat: "yy-mm-dd",
+        minDate: min_year,
+        maxDate: max_year,
+        changeMonth: true,
+        changeYear: true,
+        yearRange: 'c-100:c+100'
+    });
+};
+
+
+
 
 
 
@@ -1707,32 +1764,39 @@ TGOGO.ajaxSubmit_fn = function(opt){
     var src = opt.src,
         type = opt.type || "post",
         timeout = opt.timeout || 60000,
-        form = opt.form;
+        form = opt.form,
+        inputs = form.find("input"),
+        select = form.find("select"),
+        textarea = form.find("textarea");
 
 
-
-
-};
-TGOGO.ajaxSubmit = function(obj){
-    var ajax_src = obj.attr("action"),
-        ajax_type = obj.data("ajax_type"),
-        ajax_timeout = obj.data("ajax_timeout"),
-        _this = this;
-
-
-    obj.submit(function(){
-        _this.ajaxSubmit_fn({
-            src:ajax_src,
-            type:ajax_type,
-            timeout:ajax_timeout,
-            form:obj
-        });
-        return false;
+    //生成要提交的数据
+    inputs.each(function(){
+        var key = $(this).attr("name"),
+            val = $(this).val();
     });
 
 
 
 };
+TGOGO.ajaxSubmit = function(obj){
+    var ajax_src = obj.data("ajax_src"),
+        ajax_type = obj.data("ajax_type"),
+        ajax_timeout = obj.data("ajax_timeout"),
+        ajax_form = obj.data("wrap_id"),
+        _this = this,
+        form = $("#"+ajax_form);
+
+
+    obj.click(function(){
+        _this.ajaxSubmit_fn({
+            src:ajax_src,
+            type:ajax_type,
+            timeout:ajax_timeout,
+            form:form
+        })
+    });
+};
 
 
 
@@ -1747,6 +1811,18 @@ TGOGO.ajaxSubmit = function(obj){
 
 
 
+
+
+
+
+
+
+
+
+
+//*****************************************************
+//获取图片要显示的大小
+//*****************************************************
 TGOGO.__getNewImageSize = function (imgwidth, imgheight, objwidth, objheight) {
     var newimgwidth, newimgheight;
 
@@ -1776,6 +1852,106 @@ TGOGO.__getNewImageSize = function (imgwidth, imgheight, objwidth, objheight) {
     }
 };
 
+
+
+//*****************************************************
+//loading
+//*****************************************************
+TGOGO.loading = {
+    imgSrc:TGOGO.settings.resourceSrc + "loading.gif",  //图片地址
+    showWidth:110,          //要显示loading区域的大小
+    showHeight:110,
+    imgWidth:400,           //图片实际尺寸
+    imgHeight:300,
+    imgScale:0.5,             //图片缩放比例
+    imgX:145,              //图片定位坐标
+    imgY:71,
+    padding:20,             //中间div的padding
+    background:"#DEE1E2",      //背景颜色
+    color:"#000",           //文字颜色
+    obj:null,
+    zz:null,
+    createZZ:function(){
+        var obj = $("<div></div>");
+        obj.css({
+            width:"100%",
+            height:"100%",
+            display:"block",
+            position:"fixed",
+            left:0,
+            top:0,
+            "z-index":300000,
+            background:"#000"
+        });
+        this.zz = obj;
+    },
+    createLoading:function(info){
+        var main = this.zz.clone().css({background:"none",display:"block","z-index":300001});
+        info = info || "loading...";
+
+        var load = $("<div></div>"),
+            img_div = $("<div></div>"),
+            img = $("<img src='"+this.imgSrc+"' />"),
+            text = $("<div>"+info+"</div>"),
+            width = (this.showWidth * this.imgScale > 110)? this.showWidth * this.imgScale : 110,
+            height = this.showHeight * this.imgScale + 40;
+        load.css(DEVICE.fixObjCss({
+            padding:this.padding + "px",
+            width:width + "px",
+            height:height + "px",
+            position:"absolute",
+            left:"50%",
+            top:"50%",
+            "margin-left":-(width/2 + this.padding) + "px",
+            "margin-top":-(height/2 + this.padding) + "px",
+            background:this.background,
+            "border-radius":"5px"
+        }));
+        img_div.css({
+            position:"relative",
+            width:this.showWidth * this.imgScale + "px",
+            height:this.showHeight * this.imgScale + "px",
+            margin:"0 auto",
+            overflow:"hidden"
+        });
+        img.css({
+            position:"absolute",
+            width:this.imgWidth * this.imgScale + "px",
+            height:this.imgHeight * this.imgScale + "px",
+            left:- this.imgX * this.imgScale + "px",
+            top:- this.imgY * this.imgScale + "px"
+        });
+        text.css({
+            width:"100%",
+            height:"40px",
+            "line-height":"40px",
+            "text-align":"center",
+            color:this.color
+        });
+        img_div.append(img);
+        load.append(img_div).append(text);
+        main.append(load);
+        this.obj = main;
+    },
+    show:function(info){
+        if(this.obj){return;}
+        this.createZZ();
+        this.createLoading(info);
+
+        this.zz.css({opacity:0});
+        this.zz.animate({
+            opacity:0.5
+        },500);
+        $("body").append(this.zz).append(this.obj);
+
+    },
+    hide:function(){
+        this.obj.remove();
+        this.zz.remove();
+        this.obj = null;
+        this.zz = null;
+    }
+};
 
 
 
