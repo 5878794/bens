@@ -255,11 +255,53 @@
 
 
 
+//*****************************************************
+//数据提交及检查
+//*****************************************************
+//数据提交  说明：
+//class:　__TGOGO__　                        @必须写死
+//data-type: "ajaxSubmit"                      @必须写死
+//data-ajax_src="/"                            @数据提交地址
+//data-ajax_type="post"                         @数据提交方式
+//data-ajax_timeout="60000"                     @ajax超时时间
+//data-ajax_success_fn = "test_ajax"            @ajax成功执行函数名（需要放到window对象下）
+//data-ajax_error_fn = "test_ajax_err"          @ajax失败执行函数名（需要放到window对象下）
+//data-check_error_fn = "test_check_err"        @表单检查失败执行函数名（需要放到window对象下）
+//data-check_before_fn = "test_check_before"    @ajax提交前执行函数名（需要放到window对象下）
 
 
+//表单检查   说明:
+//需要放到表单提交html内
+//data-err_msg=""                               @数据验证失败提示文字
+//name=""                                       @数据提交时的key
+//data-rule="username,must,max:10,min:1"        @数据验证规则 （,隔开）
+//      rule有： 见  TGOGO.__rule_list_fn  对象, 外加：must,min:10,max:10,规则前3个字母不能是min或max
 
 
-
+//eg:
+//<div class="__TGOGO__"
+//data-type="ajaxSubmit"
+//data-ajax_src="/"
+//data-ajax_type="post"
+//data-ajax_timeout="60000"
+//data-ajax_success_fn = "test_ajax"
+//data-ajax_error_fn = "test_ajax_err"
+//data-check_error_fn = "test_check_err"
+//data-check_before_fn = "test_check_before"
+//>
+//    <input type="text" data-rule="username,must,max:10,min:1" data-err_msg="请输入6位用户名" name="aa" /></br>
+//<select name="bb" data-rule="must" data-err_msg = "请选择">
+//    <option value="">请选择</option>
+//    <option value="1">a</option>
+//<option value="2">b</option>
+//<option value="3">c</option>
+//</select></br>
+//<textarea name="cc" data-rule="must">123</textarea></br>
+//<input type="checkbox" data-rule="must" name="dd" value="123"/>123</br>
+//<input type="radio" name="ee" value="222" />222</br>
+//<input type="radio" name="ee" value="333" />333</br>
+//<input type="submit" value="submit" />
+//</div>
 
 
 
@@ -286,6 +328,7 @@ var TGOGO = {};
 TGOGO.settings = {
     //要加载的图片地址前缀  想对于html地址
     resourceSrc:"image/",
+    ajaxTimeOut:60000,
     //调用的外部显示loading函数
     loadShow: function(){
         TGOGO.loading.show();
@@ -294,7 +337,9 @@ TGOGO.settings = {
     loadHide: function(){
         TGOGO.loading.hide();
     },
-    alert:window.alert
+    alert:function(msg){
+        alert(msg)
+    }
 };
 
 
@@ -1758,44 +1803,220 @@ TGOGO.dataInput = function(obj){
 
 
 //*****************************************************
-//ajax提交   TODO
+//ajax提交
+//只检查input  textarea select
 //*****************************************************
-TGOGO.ajaxSubmit_fn = function(opt){
+TGOGO.__rule_list_fn = {
+    username:/^[a-zA-Z0-9][a-zA-Z0-9_]*$/,
+    nickname:/^.+$/,
+    password:/^[a-zA-Z0-9]*$/,
+    mobile:/^[1]\d*$/,
+    email:/^[a-zA-Z0-9][a-zA-Z0-9-_\.]*@[a-zA-Z0-9_-]*\.[a-zA-Z0-9]*$/,
+    number:/^[0-9]*$/
+};
+TGOGO.__checkForm_fn = function(obj,opt,opt1){
+    var data = {},
+        err = [],
+        _this = this;
+
+    for(var i= 0,l=opt.length;i<l;i++){
+        opt[i].each(function(){
+            var back = _this.__checkInput_fn($(this));
+            if(!back){
+                err.push({
+                    obj:$(this),
+                    msg:$(this).data("err_msg") || "输入的数据格式不正确！"
+                })
+            }else{
+                var name = $(this).attr("name");
+                data[name] = $.trim($(this).val());
+            }
+        });
+    }
+
+    //处理checkbox和radio
+    //获取name
+    var name = {};
+    for(var z = 0, zl=opt1.length;z<zl;z++){
+        opt1[z].each(function(){
+            var this_name = $(this).attr("name");
+            if(this_name && !name.hasOwnProperty(this_name)){
+                name[this_name] = true;
+            }
+        })
+    }
+    //按名字
+    for(var key in name){
+        if(name.hasOwnProperty(key)){
+            var this_obj = obj.find("input[name='"+key+"']"),
+                this_data = [];
+            this_obj.each(function(){
+                if($(this).get(0).checked){
+                    this_data.push($.trim($(this).val()));
+                }
+            });
+            data[key] = this_data.join(",");
+        }
+    }
+
+
+
+    return {
+        err:err,
+        data:data
+    }
+
+};
+TGOGO.__checkInput_fn = function(obj){
+    var rule = obj.data("rule") || null,
+        val = $.trim(obj.val()),
+        rule_text = ","+rule+",";
+
+    if(!rule){return true;}
+
+    rule = rule.split(",");
+
+    //如果值为空
+    if(val == ""){
+        return (!(rule_text.indexOf(",must,") > -1));
+    }
+
+    //如果值不为空
+    for(var i= 0,l=rule.length;i<l;i++){
+        var this_rule = rule[i];
+        if(this_rule == "must"){ continue;}
+
+        //检查长度
+        if(this_rule.substr(0,3) == "max"){
+            var max = this_rule.split(":");
+            max = (max.length == 2)? max[1] : 0;
+            if(val.length > max){
+                return false;
+            }
+        }
+        if(this_rule.substr(0,3) == "min"){
+            var min = this_rule.split(":");
+            min = (min.length == 2)? min[1] : 0;
+            if(val.length < min){
+                return false;
+            }
+        }
+
+        //检查正则
+        this_rule = this.__rule_list_fn[this_rule];
+        if(this_rule){
+            if(!this_rule.test(val)){
+                return false;
+            }
+        }
+    }
+
+    return true;
+};
+TGOGO.__submitForm_fn = function(opt){
     var src = opt.src,
-        type = opt.type || "post",
-        timeout = opt.timeout || 60000,
-        form = opt.form,
-        inputs = form.find("input"),
-        select = form.find("select"),
-        textarea = form.find("textarea");
+        type = opt.ajax_type,
+        timeout = opt.ajax_timeout,
+        success = opt.success,
+        error = opt.error,
+        data = opt.data;
 
+    TGOGO.loading.show("loading...");
+    $.ajax({
+        type:type,
+        cache: false,
+        url:src,
+        data:data,
+//        headers:header,
+        contentType:"application/json",
+        dataType:"json",
+        timeout:timeout,
+        success:function(rs){
+            TGOGO.loading.hide();
+            success(rs);
+        },
+        error:function(e){
+            TGOGO.loading.hide();
+            var state = e.status,
+                msg = "";
 
-    //生成要提交的数据
-    inputs.each(function(){
-        var key = $(this).attr("name"),
-            val = $(this).val();
+            if(state == "500"){
+                msg = "服务器繁忙,请稍后在试!";
+            }else{
+                msg = "无法连接服务器";
+            }
+
+            error(msg);
+        }
     });
+
 
 
 
 };
 TGOGO.ajaxSubmit = function(obj){
-    var ajax_src = obj.data("ajax_src"),
-        ajax_type = obj.data("ajax_type"),
-        ajax_timeout = obj.data("ajax_timeout"),
-        ajax_form = obj.data("wrap_id"),
+    var ajax_src = obj.data("ajax_src") || "/",
+        ajax_type = obj.data("ajax_type") || "post",
+        ajax_timeout = obj.data("ajax_timeout") || TGOGO.settings.ajaxTimeOut,
+        ajax_success_fn = obj.data("ajax_success_fn"),
+        ajax_error_fn = obj.data("ajax_error_fn"),
+        check_error_fn = obj.data("check_error_fn"),
+        check_before_fn = obj.data("check_before_fn"),
         _this = this,
-        form = $("#"+ajax_form);
+        submit = obj.find("input[type='submit']");
 
 
-    obj.click(function(){
-        _this.ajaxSubmit_fn({
-            src:ajax_src,
-            type:ajax_type,
-            timeout:ajax_timeout,
-            form:form
-        })
-    });
+    var check_fn = function(){
+        var text = obj.find("input[type='text']"),
+            textarea = obj.find("textarea"),
+            select = obj.find("select"),
+            checkbox = obj.find("input[type='checkbox']"),
+            radio = obj.find("input[type='radio']");
+
+
+        if(window[check_before_fn]){
+            var result = window[check_before_fn]();
+            if(!result){
+                return;
+            }
+        }
+
+        var return_obj = _this.__checkForm_fn(obj,[text,textarea,select],[checkbox,radio]);
+
+        if(return_obj.err.length == 0){
+            //提交数据
+            var data = return_obj.data;
+            _this.__submitForm_fn({
+                data:data,
+                src:ajax_src,
+                ajax_type:ajax_type,
+                ajax_timeout:ajax_timeout,
+                success:function(rs){
+                    if(window[ajax_success_fn]){
+                        window[ajax_success_fn](rs);
+                    }
+                },
+                error:function(msg){
+                    if(window[ajax_error_fn]){
+                        window[ajax_error_fn](msg);
+                    }
+                }
+            })
+        }else{
+            //检查出错
+            var err = return_obj.err;
+            if(window[check_error_fn]){
+                window[check_error_fn](err);
+            }
+        }
+    };
+
+
+    if(submit.length !=0){
+        submit.click(function(){
+            check_fn();
+        });
+    }
 };
 
 
