@@ -308,6 +308,23 @@
 
 
 
+//*****************************************************
+//鼠标悬停显示右浮动层  处理顶部和底部自适应
+//*****************************************************
+//说明：
+//class:　__TGOGO__　                        　@必须写死
+//data-type: "showFloatDiv"                   @必须写死
+//data-show_div_id="aabb"                     @要显示的ｄｉｖ的ｉｄ
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -2024,8 +2041,101 @@ TGOGO.ajaxSubmit = function(obj){
 
 
 
+//*****************************************************
+//鼠标悬停显示右浮动层  处理顶部和底部自适应
+//*****************************************************
+TGOGO.__showFloatDiv = (function(){
+    var showFloat = function(obj,div){
+        this.obj = obj;
+        this.div = div;
+
+        this.obj_height = parseInt(this.obj.height());
+        this.obj_width = parseInt(this.obj.width());
+//        this.div_width = parseInt(this.div.width());
+        this.div_height = parseInt(this.div.height());
+
+        this.init();
+    };
+    showFloat.prototype = {
+        init:function(){
+            this.setDiv();
+            this.eventBind();
+        },
+        setDiv:function(){
+            this.div.css({
+                position:"absolute"
+            });
+            this.obj.css({
+                position:"relative"
+            })
+        },
+        eventBind:function(){
+            var _this = this;
+            this.obj.hover(function(){
+                _this.showDiv();
+            },function(){
+                _this.hideDiv();
+            });
+        },
+        showDiv:function(){
+            var y = this.getPosition();
+            this.obj.append(this.div);
+            this.div.css({
+                top:y+"px",
+                display:"block",
+                left:this.obj_width+"px"
+            })
 
 
+        },
+        hideDiv:function(){
+            this.div.css({
+                display:"none"
+            })
+        },
+        getPosition:function(){
+            var scroll_top = parseInt($(document).scrollTop()),
+                obj_top = parseInt(this.obj.offset().top),
+                win_height = parseInt($(window).height()),
+                obj_bottom;
+            //元素中心点对屏幕顶部距离
+            obj_top = obj_top - scroll_top + this.obj_height/2;
+            obj_bottom = win_height - obj_top;
+            //居中显示
+            if(obj_top >= this.div_height/2 && obj_bottom >= this.div_height/2){
+                return -(this.div_height - this.obj_height)/2;
+            }
+
+
+            //距屏幕底部显示
+            if(obj_top >= this.div_height/2 && obj_bottom <= this.div_height/2){
+                return -(this.div_height - obj_bottom - this.obj_height/2);
+            }
+
+
+            //距屏幕顶部显示
+            if(obj_top <= this.div_height/2 && obj_bottom >= this.div_height/2){
+                return  -(obj_top - this.obj_height/2) ;
+            }
+
+
+            //div窗口高度高于window高度  距离顶部显示
+            return obj_top - this.obj_height/2;
+        }
+    };
+
+    return showFloat;
+})();
+TGOGO.showFloatDiv = function(obj){
+    var div_id = obj.data("show_div_id");
+    if(!div_id){return;}
+    var show_div = $("#"+div_id);
+    if(show_div.length != 1){
+        return;
+    }
+
+    new TGOGO.__showFloatDiv(obj,show_div);
+};
 
 
 
