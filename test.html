@@ -22,7 +22,7 @@
     <script src="js/plus/datepicker/jquery-ui-1.10.4.custom.min.js" type="text/javascript"></script>
 
 
-    <!--TODO   -->
+    <!--TODO   省市区级联  tab切换-->
     <style>
         *{
             padding:0;
@@ -131,6 +131,47 @@
 
 
 
+<style>
+    .header{ position: fixed; left: 0; top: 0; width: 100%; height: 20px; padding: 8px 0;}
+    .header_body{ width: 1200px; height: 20px; line-height: 20px; margin: 0 auto;}
+    .header_left{ float:left; width: 400px; height: 20px;}
+    .header_left span{display: inline-block; width: 20px; height: 20px; background: darkcyan;}
+    .header_left a{display: inline-block; width: 140px; height: 20px; position: relative; top: -4px;}
+    .header_list{float: right; width: 400px; height: 20px; }
+    .header_list_a{ padding: 0 10px; border-right: 1px solid #666;}
+    .header_no_border{ border: none;}
+    .header_login{ width: 200px; height: 20px; float: right;}
+    .tab_select{ color: red;}
+</style>
+<div class="header">
+    <div class="header_body">
+        <!--收藏==-->
+        <div class="header_left">
+            <span></span>
+            <a>收藏本站</a>
+            <span></span>
+            <a>手机下单更优惠</a>
+        </div>
+
+        <!--个人中心＝＝＝-->
+        <div class="header_list">
+            <a class="header_list_a">个人中心</a>
+            <a class="header_list_a">服务中心</a>
+            <a class="header_list_a">分享返利</a>
+            <a class="header_list_a header_no_border">企业进驻</a>
+        </div>
+        <!--登陆注册-->
+        <div class="header_login">
+            <a>[登录]</a>
+            <a>[注册]</a>
+        </div>
+    </div>
+</div>
+
+
+
+
+<br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
 
 <div style="width: 100px; height: 30px; line-height: 30px; background: #f00;"
      class="__TGOGO__"
@@ -139,9 +180,24 @@
 >显示啥子东东</div>
 
 <div id="aabb" style="display: none; line-height: 30px;  border: 1px solid #000">
-    adf<br/><a onclick="alert(1)">123adfasdfasdf</a>
+    阿斯顿发卡机的开发了就啊社ｋｄｊ法拉克
 </div>
 
+
+
+<div  class="__TGOGO__"
+      data-type="tabChange"
+      data-add_event_class="tab"
+      data-select_class="tab_select"
+      data-selected="0"
+      data-get_id_attr = "show_id"
+        >
+    <span class="tab" data-show_id="div1">tab1</span>
+    <span class="tab" data-show_id="div2">tab2</span>
+</div>
+
+<div id="div1">a</div>
+<div id="div2">b</div>
 
 
 <a
@@ -156,6 +212,8 @@
         data-type="showFloatDiv"
         data-show_div_id="aabb"
         >测试显示3</a>
+
+
 
 
 

@@ -321,6 +321,32 @@
 
 
 
+//*****************************************************
+//tab切换
+//*****************************************************
+//说明：
+//class:　__TGOGO__　                        　@必须写死
+//data-type: "tabChange"                     @必须写死
+//data-add_event_class="tab"                  @触发点击的dom元素的class
+//data-select_class="tab_select"               ＠dom元素选中后添加的class
+//data-selected="0"                            @初始选中第几个　0开始
+//data-get_id_attr = "show_id"                  ＠点中元素要显示的div的id获取属性
+
+//eg:
+//
+//<div  class="__TGOGO__"
+//data-type="tabChange"
+//data-add_event_class="tab"
+//data-select_class="tab_select"
+//data-selected="0"
+//data-get_id_attr = "show_id"
+//>
+//<span class="tab" data-show_id="div1">tab1</span>
+//<span class="tab" data-show_id="div2">tab2</span>
+//</div>
+//
+//<div id="div1">a</div>
+//<div id="div2">b</div>
 
 
 
@@ -1817,8 +1843,6 @@ TGOGO.dataInput = function(obj){
 
 
 
-
-
 //*****************************************************
 //ajax提交
 //只检查input  textarea select
@@ -2136,6 +2160,74 @@ TGOGO.showFloatDiv = function(obj){
 
     new TGOGO.__showFloatDiv(obj,show_div);
 };
+
+
+
+
+
+
+
+//*****************************************************
+//鼠标悬停显示右浮动层  处理顶部和底部自适应
+//*****************************************************
+TGOGO.tabChange = function(obj){
+    var divs = obj.data("add_event_class"),
+        select_class = obj.data("select_class"),
+        start_select = obj.data("selected") || 0,
+        get_div_id_from = obj.data("get_id_attr");
+    divs = obj.find("."+divs);
+    divs.css({
+        cursor:"pointer"
+    });
+
+    if(divs.length == 0){return;}
+
+
+    var show = function(div){
+        var id = div.data(get_div_id_from);
+        $("#"+id).css({
+            display:"block"
+        });
+        div.addClass(select_class);
+    };
+
+    var hide = function(div){
+        var id = div.data(get_div_id_from);
+        $("#"+id).css({
+            display:"none"
+        });
+        div.removeClass(select_class);
+    };
+
+    var go = function(div){
+        divs.each(function(){
+            hide($(this));
+        });
+        show(div);
+    };
+
+    divs.click(function(){
+        go($(this));
+    });
+
+
+    var start_div = divs.eq(start_select);
+
+    go(start_div);
+
+};
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
