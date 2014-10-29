@@ -315,6 +315,7 @@
 //class:　__TGOGO__　                        　@必须写死
 //data-type: "showFloatDiv"                   @必须写死
 //data-show_div_id="aabb"                     @要显示的ｄｉｖ的ｉｄ
+//data-direction = "top"                      @弹出层显示方向：　默认right
 
 
 
@@ -2102,13 +2103,14 @@ TGOGO.ajaxSubmit = function(obj){
 //鼠标悬停显示右浮动层  处理顶部和底部自适应
 //*****************************************************
 TGOGO.__showFloatDiv = (function(){
-    var showFloat = function(obj,div){
+    var showFloat = function(obj,div,direction){
         this.obj = obj;
         this.div = div;
+        this.direction = direction;
 
         this.obj_height = parseInt(this.obj.height());
         this.obj_width = parseInt(this.obj.width());
-//        this.div_width = parseInt(this.div.width());
+        this.div_width = parseInt(this.div.width());
         this.div_height = parseInt(this.div.height());
 
         this.init();
@@ -2135,12 +2137,15 @@ TGOGO.__showFloatDiv = (function(){
             });
         },
         showDiv:function(){
-            var y = this.getPosition();
+            var y = this.getPositionY(),
+                x = this.getPositionX();
+
+
             this.obj.append(this.div);
             this.div.css({
                 top:y+"px",
                 display:"block",
-                left:this.obj_width+"px"
+                left:x+"px"
             })
 
 
@@ -2150,48 +2155,85 @@ TGOGO.__showFloatDiv = (function(){
                 display:"none"
             })
         },
-        getPosition:function(){
+        getPositionY:function(){
             var scroll_top = parseInt($(document).scrollTop()),
+                scroll_left = parseInt($(document).scrollLeft()),
                 obj_top = parseInt(this.obj.offset().top),
+                obj_left = parseInt(this.obj.offset().left),
                 win_height = parseInt($(window).height()),
-                obj_bottom;
+                win_width = parseInt($(window).width()),
+                obj_bottom,obj_right;
+
             //元素中心点对屏幕顶部距离
             obj_top = obj_top - scroll_top + this.obj_height/2;
             obj_bottom = win_height - obj_top;
-            //居中显示
-            if(obj_top >= this.div_height/2 && obj_bottom >= this.div_height/2){
-                return -(this.div_height - this.obj_height)/2;
+            obj_left = obj_left - scroll_left + this.obj_width/2;
+            obj_right = win_width - obj_left;
+
+
+            if(this.direction == "right" || this.direction == "left"){
+                //居中显示
+                if(obj_top >= this.div_height/2 && obj_bottom >= this.div_height/2){
+                    return -(this.div_height - this.obj_height)/2;
+                }
+
+
+                //距屏幕底部显示
+                if(obj_top >= this.div_height/2 && obj_bottom <= this.div_height/2){
+                    return -(this.div_height - obj_bottom - this.obj_height/2);
+                }
+
+
+                //距屏幕顶部显示
+                if(obj_top <= this.div_height/2 && obj_bottom >= this.div_height/2){
+                    return  -(obj_top - this.obj_height/2) ;
+                }
+
+
+                //div窗口高度高于window高度  距离顶部显示
+                return obj_top - this.obj_height/2;
+            }
+
+            if(this.direction == "top"){
+                return - this.div_height;
+            }
+
+            if(this.direction == "bottom"){
+                return this.obj_height;
             }
 
 
-            //距屏幕底部显示
-            if(obj_top >= this.div_height/2 && obj_bottom <= this.div_height/2){
-                return -(this.div_height - obj_bottom - this.obj_height/2);
+        },
+        getPositionX:function(){
+            if(this.direction == "right"){
+                return this.obj_width;
             }
 
-
-            //距屏幕顶部显示
-            if(obj_top <= this.div_height/2 && obj_bottom >= this.div_height/2){
-                return  -(obj_top - this.obj_height/2) ;
+            if(this.direction == "left"){
+                return -this.div_width;
             }
 
+            //左右　返回0
+            return 0;
 
-            //div窗口高度高于window高度  距离顶部显示
-            return obj_top - this.obj_height/2;
         }
+
+
     };
 
     return showFloat;
 })();
 TGOGO.showFloatDiv = function(obj){
-    var div_id = obj.data("show_div_id");
+    var div_id = obj.data("show_div_id"),
+        direction = obj.data("direction") || "right";
+
     if(!div_id){return;}
     var show_div = $("#"+div_id);
     if(show_div.length != 1){
         return;
     }
 
-    new TGOGO.__showFloatDiv(obj,show_div);
+    new TGOGO.__showFloatDiv(obj,show_div,direction);
 };
 
 
@@ -2201,7 +2243,7 @@ TGOGO.showFloatDiv = function(obj){
 
 
 //*****************************************************
-//鼠标悬停显示右浮动层  处理顶部和底部自适应
+//tab切换显示
 //*****************************************************
 TGOGO.tabChange = function(obj){
     var divs = obj.data("add_event_class"),
