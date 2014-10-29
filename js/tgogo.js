@@ -351,6 +351,39 @@
 
 
 
+//*****************************************************
+//级联菜单   关联的ｊｓ  area.js　　　　检查部分需要使用自动提交的插件　　否则自己写检查程序
+// 生成的select会放在div里面
+//*****************************************************
+//说明：
+//class:　__TGOGO__　                        　          @必须写死
+//data-type: "cascadeSelect"                            @必须写死
+//data-source="areaData"                                @级联菜单数据对象存放的名字　window对象下
+//data-select_name = "jl1,jl2,jl3"                      @级联菜单的name　（多个用,分割）
+//data-select_value = "4524503,4524504,4524510"         @级联菜单的value  （多个用,分割）
+//data-empty_val = "请选择省份,请选择城市,请选择地区"      　@级联菜单的默认值　　（多个用,分割）
+//data-must_select = "true"                             @是否必填. 只检查最后一个select
+//data-error_info = "请选择完整的地域信息"                 @未选择的提示信息(必须带ａｊａｘ自动提交使用)
+
+
+//eg:
+//<div
+//class = "__TGOGO__"
+//data-type = "cascadeSelect"
+//data-source="areaData"
+//data-select_name = "jl1,jl2,jl3"
+//data-select_value = "4524503,4524504,4524510"
+//data-empty_val = "请选择省份,请选择城市,请选择地区"
+//data-must_select = "true"
+//data-error_info = "请选择完整的地域信息"
+//>
+//
+//</div>
+
+
+
+
+
 
 
 
@@ -2221,8 +2254,131 @@ TGOGO.tabChange = function(obj){
 
 
 
+//*****************************************************
+//级联菜单   关联的ｊｓ  area.js　　　　检查部分需要使用自动提交的插件　　否则自己写检查程序
+//*****************************************************
+TGOGO.__cascadeSelectFn = (function(){
+    var _select = function(rs){
+        this.data = rs.data;
+        this.name = rs.name;
+        this.value = rs.value;
+        this.ts = rs.ts;
+        this.body = rs.obj;
+        this.must = rs.must;        //需要使用ajax提交插件
+        this.errInfo = rs.err;
+
+        this.selects = [];
+        this.init();
+    };
+
+    _select.prototype = {
+        init:function(){
+            this.createElement();
+            this.clearOption();
+            this.createOption();
+            this.addEvent();
+        },
+        createElement:function(){
+            for(var i= 0,l=this.name.length;i<l;i++){
+                var this_name = this.name[i],
+                    this_select = $("<select name='"+this_name+"'></select>");
+
+                //最后一个select 添加检查
+                if(i == this.name.length - 1){
+                    this_select.data({rule:"must"});
+                    if(this.errInfo != ""){
+                        this_select.data({err_msg:this.errInfo});
+                    }
+                }
+
+                this.selects.push(this_select);
+                this.body.append(this_select);
+            }
+        },
+        clearOption:function(){
+            for(var i= 0,l=this.selects.length;i<l;i++){
+                this.selects[i].html("");
+            }
+        },
+        createOption:function(){
+            var data = this.data,
+                now_data = [];
+
+            for(var i= 0,l=this.selects.length;i<l;i++){
+                var this_select = this.selects[i],
+                    this_val = this.value[i] || "",
+                    this_ts = this.ts[i] || "请选择",
+                    this_html = [];
+
+                this_html.push("<option value=''>"+this_ts+"</option>");
+                for(var z = 0,zl=data.length;z<zl;z++){
+                    var this_id = data[z].id,
+                        this_name = data[z].areaName;
+
+                    if(this_id == this_val){
+                        this_html.push("<option value='"+this_id+"' selected>"+this_name+"</option>");
+                        now_data = data[z].children;
+                    }else{
+                        this_html.push("<option value='"+this_id+"'>"+this_name+"</option>");
+                    }
+                }
+
+                this_select.html(this_html.join(""));
+
+                data = now_data;
+            }
+        },
+        addEvent:function(){
+            var _this = this;
+
+            for(var i= 0,l=this.selects.length-1;i<l;i++){
+                this.selects[i].attr({my_no:i});
+                this.selects[i].change(function(){
+                    var my_no = $(this).attr("my_no");
+                    _this.value[my_no] = $(this).val();
+                    _this.clearOption();
+                    _this.createOption();
+                });
+            }
+        }
+    };
+
+    return _select;
+})();
+TGOGO.cascadeSelect = function(obj){
+    var data = obj.data("source") || "",
+        select_name = obj.data("select_name") || "",
+        select_value = obj.data("select_value") || "",
+        empty_val = obj.data("empty_val") || "",
+        rule = (obj.data("must_select") == "true"),
+        err = obj.data("error_info") || "";
 
 
+    if(data == "" || select_name == ""){
+        return;
+    }
+
+
+    select_name = select_name.split(",");
+    select_value = select_value.split(",");
+    empty_val = empty_val.split(",");
+
+
+    if(!window[data]){return;}
+    data = window[data];
+
+    new this.__cascadeSelectFn({
+        data:data,
+        name:select_name,
+        value:select_value,
+        ts:empty_val,
+        obj:obj,
+        must:rule,
+        err:err
+    })
+
+
+};
 
 
 
