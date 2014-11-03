@@ -387,6 +387,34 @@
 
 
 
+//*****************************************************
+//验证码倒计时
+//*****************************************************
+//说明：
+//class:　__TGOGO__　                        　          @必须写死
+//data-type: "countdownButton"                            @必须写死
+//data-click_run_fn = "aaa"                             @点击执行的函数名，window对象下
+//data-input_id = "ddd"                                 @要录入的input的id,检查表单用
+//data-show_text = "剩余x秒"                             @点击后倒计时的显示文字，x为动态数字（写死）
+//data-hover_class = "aa_hover"                         @按钮hover的样式
+//data-can_not_click_class = "aa_not"                   @按钮不可点击时的样式
+//data-countdown_time = "10"                            @倒计时时间 秒
+//data-fn_name = ""                                     @实例化后的名字 window[].ajaxSuccess();
+
+//eg:
+//<div style="width: 100px; height: 30px;"
+//id = "test_bu"
+//class="__TGOGO__"
+//data-type="countdownButton"
+//data-click_run_fn = "aaa"
+//data-input_id = "ddd"
+//data-show_text = "剩余x秒"
+//data-hover_class = "aa_hover"
+//data-can_not_click_class = "aa_not"
+//data-countdown_time = "10"
+//>获取验证码</div>
+//<input type="text" data-rule="must,username" data-error_info="格式不对" id="ddd" />
+
 
 
 
@@ -2426,7 +2454,117 @@ TGOGO.cascadeSelect = function(obj){
 
 
 
+//*****************************************************
+//验证码倒计时
+//*****************************************************
+TGOGO.__countdownButtonFn = (function(){
+    var countdownButton = function(opt){
+        this.obj = opt.obj;
+        this.runFn = opt.runFn || function(){};
+        this.countdownTime = opt.countdownTime || 10;
+        this.getValueId = opt.getValueId;
+        this.hoverClass = opt.hoverClass;
+        this.canNotClickClass = opt.canNotClickClass;
+        this.showText = "剩余x秒";
 
+
+        this.input = $("#"+this.getValueId);
+        if(this.input.length == 0){
+            return;
+        }
+
+
+        this.text = this.obj.text();
+        this.canClick = true;
+        this.interval = null;
+        this.now_t = this.countdownTime;
+
+
+
+        if(this.obj.length == 0 ){return;}
+
+        this.init();
+
+    };
+    countdownButton.prototype = {
+        init:function(){
+            this.addEvent();
+        },
+        addEvent:function(){
+            var _this = this;
+            this.obj.click(function(){
+                //检查输入框
+                var pass = TGOGO.__checkInput_fn(_this.input);
+                if(!pass){
+                    var text = _this.input.data("error_info");
+                    TGOGO.settings.alert(text);
+                    return;
+                }
+
+                //是否在倒计时
+                if(!_this.canClick){return;}
+
+
+                //ajax请求
+                _this.runFn();
+
+            });
+            this.obj.hover(function(){
+                $(this).addClass(_this.hoverClass);
+            },function(){
+                $(this).removeClass(_this.hoverClass);
+            });
+        },
+
+        showCountdown:function(){
+            var _this = this;
+            this.interval = setInterval(function(){
+                if(_this.now_t == 0){
+                    clearInterval(_this.interval);
+                    _this.canClick = true;
+                    _this.obj.removeClass(_this.canNotClickClass);
+                    _this.obj.text(_this.text);
+                    _this.now_t = _this.countdownTime;
+                }else{
+                    _this.now_t --;
+                    var text = _this.showText.replace("x",_this.now_t);
+                    _this.obj.text(text);
+                }
+            },1000);
+        },
+        ajaxSuccess:function(){
+            this.obj.addClass(this.canNotClickClass);
+            this.canClick = false;
+            this.showCountdown();
+        }
+    };
+
+    return countdownButton;
+
+})();
+TGOGO.countdownButton = function(obj){
+    var ajaxFn = obj.data("click_run_fn"),
+        inputId = obj.data("input_id"),
+        show_text = obj.data("show_text"),
+        hover_class = obj.data("hover_class"),
+        can_not_click_class = obj.data("can_not_click_class"),
+        countdown_time = obj.data("countdown_time"),
+        fn_name = "__countdownButton__"+DEVICE.counter();
+
+    obj.data({fn_name:fn_name});
+    ajaxFn = window[ajaxFn];
+
+    window[fn_name] = new TGOGO.__countdownButtonFn({
+        obj:obj,
+        runFn:ajaxFn,
+        countdownTime:countdown_time,
+        getValueId:inputId,
+        show_text:show_text,
+        hoverClass:hover_class,
+        canNotClickClass:can_not_click_class
+    });
+
+};
 
 
 
