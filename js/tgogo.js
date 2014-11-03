@@ -289,8 +289,8 @@
 //data-check_error_fn = "test_check_err"
 //data-check_before_fn = "test_check_before"
 //>
-//    <input type="text" data-rule="username,must,max:10,min:1" data-err_msg="请输入6位用户名" name="aa" /></br>
-//<select name="bb" data-rule="must" data-err_msg = "请选择">
+//    <input type="text" data-rule="username,must,max:10,min:1" data-error_info="请输入6位用户名" name="aa" /></br>
+//<select name="bb" data-rule="must" data-error_info = "请选择">
 //    <option value="">请选择</option>
 //    <option value="1">a</option>
 //<option value="2">b</option>
@@ -1928,7 +1928,7 @@ TGOGO.__checkForm_fn = function(obj,opt,opt1){
             if(!back){
                 err.push({
                     obj:$(this),
-                    msg:$(this).data("err_msg") || "输入的数据格式不正确！"
+                    msg:$(this).data("error_info") || "输入的数据格式不正确！"
                 })
             }else{
                 var name = $(this).attr("name");
@@ -1948,6 +1948,8 @@ TGOGO.__checkForm_fn = function(obj,opt,opt1){
             }
         })
     }
+
+
     //按名字
     for(var key in name){
         if(name.hasOwnProperty(key)){
