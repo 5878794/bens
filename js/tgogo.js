@@ -37,9 +37,6 @@
 //</div>
 
 
-
-
-
 //*****************************************************
 //滚动加载
 //*****************************************************
@@ -68,8 +65,6 @@
 //</div>
 
 
-
-
 //*****************************************************
 //跑马灯
 //*****************************************************
@@ -95,8 +90,6 @@
 //</div>
 
 
-
-
 //*****************************************************
 //商品详情内图片自适应
 //*****************************************************
@@ -109,8 +102,6 @@
 //<div class="__TGOGO__ img_div" data-type="imgAutoResize">
 //    <img src="http://172.18.254.158:8021/image/game/pc/card/top-banner_02.jpg" />
 //</div>
-
-
 
 
 //*****************************************************
@@ -150,10 +141,6 @@
 //<div class="show_image_wrap" id="show_image_wrap"></div>
 
 
-
-
-
-
 //*****************************************************
 //弹出居中层
 //*****************************************************
@@ -182,9 +169,6 @@
 //</div>
 
 
-
-
-
 //*****************************************************
 //图片自适应div大小  一个div内一个图片的情况
 //*****************************************************
@@ -197,7 +181,6 @@
 //<div class="__TGOGO__" data-type="imgFixedDiv" style="width:100px; height: 200px; background: teal">
 //    <img src="http://e.hiphotos.baidu.com/image/w%3D310/sign=a0b6e89c59b5c9ea62f305e2e538b622/b90e7bec54e736d1bb03529f99504fc2d5626911.jpg" />
 //</div>
-
 
 
 //*****************************************************
@@ -226,8 +209,6 @@
 //</textarea>
 
 
-
-
 //*****************************************************
 //时间选择控件
 //需要挂载
@@ -247,12 +228,6 @@
 //data-min_year = "1994"
 //data-max_year = "2009"
 ///>
-
-
-
-
-
-
 
 
 //*****************************************************
@@ -304,10 +279,6 @@
 //</div>
 
 
-
-
-
-
 //*****************************************************
 //鼠标悬停显示右浮动层  处理顶部和底部自适应
 //*****************************************************
@@ -316,10 +287,6 @@
 //data-type: "showFloatDiv"                   @必须写死
 //data-show_div_id="aabb"                     @要显示的ｄｉｖ的ｉｄ
 //data-direction = "top"                      @弹出层显示方向：　默认right
-
-
-
-
 
 
 //*****************************************************
@@ -331,6 +298,7 @@
 //data-add_event_class="tab"                  @触发点击的dom元素的class
 //data-select_class="tab_select"               ＠dom元素选中后添加的class
 //data-selected="0"                            @初始选中第几个　0开始
+//data-event_name="hover"                       @触发tab切换方式  默认click
 //data-get_id_attr = "show_id"                  ＠点中元素要显示的div的id获取属性
 
 //eg:
@@ -348,8 +316,6 @@
 //
 //<div id="div1">a</div>
 //<div id="div2">b</div>
-
-
 
 
 //*****************************************************
@@ -382,11 +348,6 @@
 //</div>
 
 
-
-
-
-
-
 //*****************************************************
 //验证码倒计时
 //*****************************************************
@@ -416,56 +377,46 @@
 //<input type="text" data-rule="must,username" data-error_info="格式不对" id="ddd" />
 
 
-
-
-
-
-$(document).ready(function(){
+$(document).ready(function () {
     TGOGO.run($("body"));
 });
-
-
-
-
 
 
 var TGOGO = {};
 TGOGO.settings = {
     //要加载的图片地址前缀  想对于html地址
-    resourceSrc:"image/",
-    ajaxTimeOut:60000,
+    resourceSrc: "image/",
+    ajaxTimeOut: 60000,
     //调用的外部显示loading函数
-    loadShow: function(){
+    loadShow: function () {
         TGOGO.loading.show();
     },
     //调用的外部关闭loading函数
-    loadHide: function(){
+    loadHide: function () {
         TGOGO.loading.hide();
     },
-    alert:function(msg){
+    alert: function (msg) {
         alert(msg)
     }
 };
 
 
-
 //监听的class
 TGOGO.className = "__TGOGO__";
-TGOGO.run = function(obj){
+TGOGO.run = function (obj) {
     var _this = this;
-    obj.find("."+_this.className).each(function(){
+    obj.find("." + _this.className).each(function () {
         var this_obj = $(this),
             type = this_obj.data("type");
 
-        if(!this.__isRun__){
+        if (!this.__isRun__) {
             this.__isRun__ = true;
-            if(type && _this.hasOwnProperty(type)){
+            if (type && _this.hasOwnProperty(type)) {
                 _this[type](this_obj);
             }
         }
     });
 };
-
 
 
 //*****************************************************
@@ -613,7 +564,6 @@ TGOGO.banner_scroll_fn = (function () {
             })
 
 
-
         },
         //添加事件
         addEvent: function () {
@@ -634,7 +584,6 @@ TGOGO.banner_scroll_fn = (function () {
             };
 
 
-
             if (!device.hasTouch) {
                 this.win.hover(function () {
                     _this.body.stop(true);
@@ -651,7 +600,6 @@ TGOGO.banner_scroll_fn = (function () {
                     _this.page = $(this).attr("n");
                     _this.animate();
                 });
-
 
 
                 temp_fn();
@@ -720,7 +668,9 @@ TGOGO.banner_scroll_fn = (function () {
             this.savePoint(e);
         },
         moveEvent: function (e, pointsx) {
-            if (this.touchStartTime == 0) { return; }
+            if (this.touchStartTime == 0) {
+                return;
+            }
 
             var t_left = this.leftPx + pointsx;
             this.body.css({
@@ -728,8 +678,14 @@ TGOGO.banner_scroll_fn = (function () {
             });
         },
         endEvent: function () {
-            if (this.touchStartTime == 0) { this.scrollBack(); return; }
-            if (this.touchPoints.length < 2) { this.scrollBack(); return; }
+            if (this.touchStartTime == 0) {
+                this.scrollBack();
+                return;
+            }
+            if (this.touchPoints.length < 2) {
+                this.scrollBack();
+                return;
+            }
 
             var end_time = new Date().getTime(),
                 use_time = end_time - this.touchStartTime,
@@ -782,7 +738,7 @@ TGOGO.banner_scroll_fn = (function () {
     };
     return scrollBanner;
 })();
-TGOGO.bannerScroll = function(obj){
+TGOGO.bannerScroll = function (obj) {
     var body = $("<div></div>");
     obj.append(body);
     body.append(obj.find("a"));
@@ -793,20 +749,19 @@ TGOGO.bannerScroll = function(obj){
         animateTime = obj.data("animateTime") || 1000;
 
     new this.banner_scroll_fn({
-        win:obj,
-        body:body,
-        direction:direction,
-        time:changeTime,
-        animateTime:animateTime
+        win: obj,
+        body: body,
+        direction: direction,
+        time: changeTime,
+        animateTime: animateTime
     });
 };
-
 
 
 //*****************************************************
 //富文本编辑器
 //*****************************************************
-TGOGO.editDiv = function(obj){
+TGOGO.editDiv = function (obj) {
     var name = obj.attr("name"),
         fn_name = obj.data("fn_name"),
         val = obj.data("val") || "",
@@ -815,47 +770,46 @@ TGOGO.editDiv = function(obj){
         height = parseInt(obj.height());
 
     var myLevel = {
-        "2":[ 'source', '|', 'undo', 'redo', '|', 'preview', 'cut', 'copy', 'paste',
+        "2": [ 'source', '|', 'undo', 'redo', '|', 'preview', 'cut', 'copy', 'paste',
             'plainpaste', 'wordpaste', '|', 'justifyleft', 'justifycenter', 'justifyright',
             'justifyfull', 'insertorderedlist', 'insertunorderedlist', 'indent', 'outdent', 'subscript',
             'superscript', 'clearhtml', 'quickformat', 'selectall', '|', 'fullscreen', '/',
             'formatblock', 'fontname', 'fontsize', '|', 'forecolor', 'hilitecolor', 'bold',
             'italic', 'underline', 'strikethrough', 'lineheight', 'removeformat', '|', 'image', 'table', 'hr', 'emoticons', 'baidumap', 'pagebreak',
             'anchor', 'link', 'unlink'],
-        "1":[ 'undo', 'redo', '|',  'justifyleft', 'justifycenter', 'justifyright',
+        "1": [ 'undo', 'redo', '|', 'justifyleft', 'justifycenter', 'justifyright',
             'justifyfull', 'clearhtml', 'quickformat', '|',
             'emoticons', 'fontsize', 'forecolor', 'hilitecolor', 'bold',
             'italic', 'underline', 'strikethrough', 'lineheight', 'removeformat', '|', 'hr',
-             'link', 'unlink']
+            'link', 'unlink']
     };
     level = myLevel[level] || myLevel[2];
 
 
-    name = name || "__temp__divedit_"+DEVICE.counter();
-    obj.attr({name:name});
+    name = name || "__temp__divedit_" + DEVICE.counter();
+    obj.attr({name: name});
 
-    fn_name = fn_name || "__temp__divedit_fn_"+DEVICE.counter();
+    fn_name = fn_name || "__temp__divedit_fn_" + DEVICE.counter();
 
-    KindEditor.ready(function(K) {
-        window[fn_name] = K.create('textarea[name="'+name+'"]', {
-            minHeight:height+"px",
-            minWidth:width+"px",
-            items:level
+    KindEditor.ready(function (K) {
+        window[fn_name] = K.create('textarea[name="' + name + '"]', {
+            minHeight: height + "px",
+            minWidth: width + "px",
+            items: level
         });
         window[fn_name].html(val.toString());
     });
 };
 
 
-
-
 //*****************************************************
 //滚动加载
 //*****************************************************
-TGOGO.scroll_load_fn = (function(){
+TGOGO.scroll_load_fn = (function () {
     var device = DEVICE;
     var scroll_load = function (data) {
-        this.ajaxFn = data.ajaxFn || function () { };
+        this.ajaxFn = data.ajaxFn || function () {
+        };
         this.buttonLength = data.buttonLength || 100;
 
         //是否加载中
@@ -909,7 +863,7 @@ TGOGO.scroll_load_fn = (function(){
 
         this.scrollFn = new scroll_load({
             ajaxFn: function () {
-                if(_this.mainDiv.css("display") != "none"){
+                if (_this.mainDiv.css("display") != "none") {
                     _this.ajaxStart.call(_this);
                 }
             },
@@ -1004,7 +958,8 @@ TGOGO.scroll_load_fn = (function(){
             this.hideLoad();
             this.mainDiv = null;
             this.showLoading = null;
-            this.ajaxFn = function () {  };
+            this.ajaxFn = function () {
+            };
         },
         //设置是否触发滚动加载
         setActive: function (state) {
@@ -1016,7 +971,7 @@ TGOGO.scroll_load_fn = (function(){
 
     return _scrollLoad;
 })();
-TGOGO.scrollLoad = function(obj){
+TGOGO.scrollLoad = function (obj) {
     var button_length = obj.data("button_length") || 100,
         bind_data_fn = obj.data("bind_fn"),
         scroll_id = 0,
@@ -1027,7 +982,7 @@ TGOGO.scrollLoad = function(obj){
         __obj;
 
     search_data = search_data.split(",");
-    for(var i= 0,l=search_data.length;i<l;i++){
+    for (var i = 0, l = search_data.length; i < l; i++) {
         var this_s_d = search_data[i].split(":"),
             this_s_k = this_s_d[0];
         _search_data[this_s_k] = this_s_d[1];
@@ -1045,19 +1000,19 @@ TGOGO.scrollLoad = function(obj){
 
 
             $.ajax({
-                type:type,
-                cache:false,
-                url:ajax_url,
-                data:data,
-                contentType:"application/json",
-                dataType:"json",
-                timeout:600000,
-                headers:{
-                    "X-Requested-With":"XMLHttpRequest"
+                type: type,
+                cache: false,
+                url: ajax_url,
+                data: data,
+                contentType: "application/json",
+                dataType: "json",
+                timeout: 600000,
+                headers: {
+                    "X-Requested-With": "XMLHttpRequest"
                 },
-                success:function(rs){
+                success: function (rs) {
                     var state = rs.State;
-                    if(state == 1){
+                    if (state == 1) {
                         //成功
                         var result = rs.Data || [];
                         result = result.Channel || {};
@@ -1074,19 +1029,19 @@ TGOGO.scrollLoad = function(obj){
                             __obj.ajaxSuccess();
                             window[bind_data_fn](result);
                         }
-                    }else{
+                    } else {
                         //失败
                         var msg = rs.Message;
                         __obj.ajaxError();
                     }
                 },
-                error:function(e){
+                error: function (e) {
                     var state = e.status,
                         msg = "";
 
-                    if(state == "404" || state == "500"){
+                    if (state == "404" || state == "500") {
                         msg = "服务器繁忙,请稍后在试!";
-                    }else{
+                    } else {
                         msg = "无法连接服务器";
                     }
 
@@ -1097,18 +1052,16 @@ TGOGO.scrollLoad = function(obj){
     };
 
 
-
     __obj = new this.scroll_load_fn(param);
     __obj.ajaxStart();
 };
 
 
-
 //*****************************************************
 //跑马灯
 //*****************************************************
-TGOGO.marquee_fn = (function(){
-    var marquee = function(opt){
+TGOGO.marquee_fn = (function () {
+    var marquee = function (opt) {
         this.div = opt.div;
         this.direction = opt.direction;
         this.spd = opt.spd || 100;
@@ -1128,24 +1081,24 @@ TGOGO.marquee_fn = (function(){
         this.init();
     };
     marquee.prototype = {
-        init:function(){
+        init: function () {
             this.addDom();
 
-            if(!this.canMove){
+            if (!this.canMove) {
                 return;
             }
 
             this.setCss();
 
-            if(this.direction == "x"){
+            if (this.direction == "x") {
                 this.run_x();
-            }else{
+            } else {
                 this.run_y();
             }
 
 
         },
-        addDom:function(){
+        addDom: function () {
             var main = $("<div></div>"),
                 body = $("<div></div>"),
                 span = this.div.find("span"),
@@ -1153,21 +1106,19 @@ TGOGO.marquee_fn = (function(){
                 w = 0,
                 h = 0;
 
-            span.each(function(){
+            span.each(function () {
                 w += parseInt($(this).width());
                 h += parseInt($(this).height());
             });
 
-            if(this.direction == "x" && this.width > w){
+            if (this.direction == "x" && this.width > w) {
                 this.canMove = false;
                 return;
             }
-            if(this.direction == "y" && this.height > h){
+            if (this.direction == "y" && this.height > h) {
                 this.canMove = false;
                 return;
             }
-
-
 
 
             main.append(span);
@@ -1181,18 +1132,18 @@ TGOGO.marquee_fn = (function(){
             this.obj2 = main1;
             this.body = body;
         },
-        setCss:function(){
+        setCss: function () {
             var span = this.obj1.find("span"),
                 _height = 5,
                 _width = 5;
 
 
             this.body.find("span").css({
-                display:"block",
-                float:(this.direction == "x")? "left" : "none"
+                display: "block",
+                float: (this.direction == "x") ? "left" : "none"
             });
 
-            span.each(function(){
+            span.each(function () {
                 _width += parseInt($(this).outerWidth(true));
                 _height += parseInt($(this).outerHeight(true));
             });
@@ -1200,61 +1151,61 @@ TGOGO.marquee_fn = (function(){
             this.allWidth = _width;
             this.allHeight = _height;
 
-            var body_w = (this.direction == "x")? _width*2 : this.width,
-                body_h = (this.direction == "x")? this.height : _height* 2,
-                obj_w = (this.direction == "x")? _width : this.width,
-                obj_h = (this.direction == "x")? this.height : _height;
+            var body_w = (this.direction == "x") ? _width * 2 : this.width,
+                body_h = (this.direction == "x") ? this.height : _height * 2,
+                obj_w = (this.direction == "x") ? _width : this.width,
+                obj_h = (this.direction == "x") ? this.height : _height;
 
 
             this.div.css({
-                position:"relative",
-                overflow:"hidden",
-                width:this.width+"px",
-                height:this.height+"px"
+                position: "relative",
+                overflow: "hidden",
+                width: this.width + "px",
+                height: this.height + "px"
             });
             this.body.css({
-                position:"absolute",
-                left:0,
-                top:0,
-                width:body_w+"px",
-                height:body_h+"px"
+                position: "absolute",
+                left: 0,
+                top: 0,
+                width: body_w + "px",
+                height: body_h + "px"
             });
 
             this.obj1.css({
-                float:(this.direction == "x")? "left" : "none",
-                width:obj_w+"px",
-                height:obj_h+"px"
+                float: (this.direction == "x") ? "left" : "none",
+                width: obj_w + "px",
+                height: obj_h + "px"
             });
             this.obj2.css({
-                float:(this.direction == "x")? "left" : "none",
-                width:obj_w+"px",
-                height:obj_h+"px"
+                float: (this.direction == "x") ? "left" : "none",
+                width: obj_w + "px",
+                height: obj_h + "px"
             });
         },
-        run_x:function(){
-            var time = this.allWidth/this.spd * 1000,
+        run_x: function () {
+            var time = this.allWidth / this.spd * 1000,
                 _this = this;
 
 
-            var fn = function(){
+            var fn = function () {
                 _this.body.animate({
-                    left:-_this.allWidth+"px"
-                },time,"linear",function(){
-                    _this.body.css({left:0});
+                    left: -_this.allWidth + "px"
+                }, time, "linear", function () {
+                    _this.body.css({left: 0});
                     fn();
                 })
             };
             fn();
         },
-        run_y:function(){
-            var time = this.allHeight/this.spd * 1000,
+        run_y: function () {
+            var time = this.allHeight / this.spd * 1000,
                 _this = this;
 
-            var fn = function(){
+            var fn = function () {
                 _this.body.animate({
-                    top:-_this.allHeight+"px"
-                },time,"linear",function(){
-                    _this.body.css({top:0});
+                    top: -_this.allHeight + "px"
+                }, time, "linear", function () {
+                    _this.body.css({top: 0});
                     fn();
                 })
             };
@@ -1264,27 +1215,26 @@ TGOGO.marquee_fn = (function(){
 
     return marquee;
 })();
-TGOGO.marquee = function(obj){
+TGOGO.marquee = function (obj) {
     var direction = obj.data("direction"),
         spd = obj.data("spd");
 
     new this.marquee_fn({
-        div:obj,
-        direction:direction,
-        spd:spd
+        div: obj,
+        direction: direction,
+        spd: spd
     });
 
 };
 
 
-
 //*****************************************************
 //商品详情内图片自适应
 //*****************************************************
-TGOGO.imgAutoResize_fn = function(obj){
+TGOGO.imgAutoResize_fn = function (obj) {
     var imgs = obj.find("img");
 
-    var setImg = function(img){
+    var setImg = function (img) {
         var src = img.attr("src"),
             new_img = new Image();
 
@@ -1321,13 +1271,13 @@ TGOGO.imgAutoResize_fn = function(obj){
         setImg(this_img);
     });
 
-    $(window).resize(function(){
-        imgs.each(function(){
+    $(window).resize(function () {
+        imgs.each(function () {
             var this_img = $(this),
                 width = this_img.attr("my_width"),
                 height = this_img.attr("my_height");
 
-            if(width){
+            if (width) {
                 var main_width = parseInt(obj.width()),
                     new_size = main_width * height / width;
 
@@ -1348,21 +1298,18 @@ TGOGO.imgAutoResize_fn = function(obj){
 
 
 };
-TGOGO.imgAutoResize = function(obj){
+TGOGO.imgAutoResize = function (obj) {
     TGOGO.imgAutoResize_fn(obj);
 };
-
-
-
 
 
 //*****************************************************
 //图片自适应div大小  一个div内一个图片的情况
 //*****************************************************
-TGOGO.imgFixedDiv_fn = function(obj){
+TGOGO.imgFixedDiv_fn = function (obj) {
     var imgs = obj.find("img");
 
-    var setImg = function(img){
+    var setImg = function (img) {
         var src = img.attr("src"),
             new_img = new Image();
 
@@ -1374,14 +1321,14 @@ TGOGO.imgFixedDiv_fn = function(obj){
 
             var width = new_img.width,
                 height = new_img.height,
-                new_size = TGOGO.__getNewImageSize(width,height,main_width,main_height);
+                new_size = TGOGO.__getNewImageSize(width, height, main_width, main_height);
 
             img.css({
                 width: new_size.width + "px",
                 height: new_size.height + "px",
                 position: "relative",
-                left: (main_width-new_size.width)/2 + "px",
-                top: (main_height-new_size.height)/2 + "px"
+                left: (main_width - new_size.width) / 2 + "px",
+                top: (main_height - new_size.height) / 2 + "px"
             }).attr({
                 src: src,
                 my_width: width,
@@ -1396,23 +1343,23 @@ TGOGO.imgFixedDiv_fn = function(obj){
         setImg(this_img);
     });
 
-    $(window).resize(function(){
-        imgs.each(function(){
+    $(window).resize(function () {
+        imgs.each(function () {
             var this_img = $(this),
                 width = this_img.attr("my_width"),
                 height = this_img.attr("my_height");
 
-            if(width){
+            if (width) {
                 var main_width = parseInt(obj.width()),
                     main_height = parseInt(obj.height()),
-                    new_size = TGOGO.__getNewImageSize(width,height,main_width,main_height);
+                    new_size = TGOGO.__getNewImageSize(width, height, main_width, main_height);
 
                 this_img.css({
                     width: new_size.width + "px",
                     height: new_size.height + "px",
                     position: "relative",
-                    left: (main_width-new_size.width)/2 + "px",
-                    top: (main_height-new_size.height)/2 + "px"
+                    left: (main_width - new_size.width) / 2 + "px",
+                    top: (main_height - new_size.height) / 2 + "px"
                 })
             }
         });
@@ -1420,19 +1367,16 @@ TGOGO.imgFixedDiv_fn = function(obj){
 
 
 };
-TGOGO.imgFixedDiv = function(obj){
+TGOGO.imgFixedDiv = function (obj) {
     TGOGO.imgFixedDiv_fn(obj);
 };
-
-
-
 
 
 //*****************************************************
 //图片上传按钮  后端程序需要集成进来
 //*****************************************************
-TGOGO.uploadImage_fn = (function(){
-    var upload_file = function(opt){
+TGOGO.uploadImage_fn = (function () {
+    var upload_file = function (opt) {
         this.inputId = opt.id;
         this.formId = opt.formId;
         this.showImageWrapId = opt.showImageWrapId;
@@ -1441,7 +1385,7 @@ TGOGO.uploadImage_fn = (function(){
         this.maxNumber = opt.maxNumber;
         this.imgs = opt.imgs;
         this.imgWidth = opt.pictureWidth;
-        this.imgHeight= opt.pictureHeight;
+        this.imgHeight = opt.pictureHeight;
         this.pictureShowUrl = opt.pictureShowUrl;
         this.hideInput = opt.hideInput;
 
@@ -1452,14 +1396,14 @@ TGOGO.uploadImage_fn = (function(){
         this.init();
     };
     upload_file.prototype = {
-        init:function(){
+        init: function () {
             this.addEvent();
             this.showStartImage();
         },
         //获取自身类名,必须实例化为 window.XXX
-        getClassName:function(){
-            for(var a in window){
-                if(window[a] === this){
+        getClassName: function () {
+            for (var a in window) {
+                if (window[a] === this) {
                     this.className = a;
                     break;
                 }
@@ -1495,8 +1439,8 @@ TGOGO.uploadImage_fn = (function(){
                 return;
             }
 
-            if(this.upLoadNumber >= this.maxNumber){
-                alert("只能上传"+this.maxNumber+"张图片!");
+            if (this.upLoadNumber >= this.maxNumber) {
+                alert("只能上传" + this.maxNumber + "张图片!");
                 this.reCreateInput();
                 return;
             }
@@ -1513,7 +1457,7 @@ TGOGO.uploadImage_fn = (function(){
 
             form.attr({
                 target: "__bens_iframe_name__",
-                action: this.serverSrc + "?class="+this.className+"&t=" + t,
+                action: this.serverSrc + "?class=" + this.className + "&t=" + t,
                 enctype: "multipart/form-data",
                 method: "post"
             });
@@ -1523,7 +1467,7 @@ TGOGO.uploadImage_fn = (function(){
             //            $(form).append("<input type='text' value='123' name='test1'>");
 
 //            $.loadShow();
-            if(TGOGO.settings && TGOGO.settings.loadShow){
+            if (TGOGO.settings && TGOGO.settings.loadShow) {
                 TGOGO.settings.loadShow();
             }
             form.submit();
@@ -1531,7 +1475,7 @@ TGOGO.uploadImage_fn = (function(){
         //提交成功回调
         oldSuccess: function (rs) {
 //            $.loadHide();
-            if(TGOGO.settings && TGOGO.settings.loadHide){
+            if (TGOGO.settings && TGOGO.settings.loadHide) {
                 TGOGO.settings.loadHide();
             }
             if (rs.State != 1) {
@@ -1544,8 +1488,6 @@ TGOGO.uploadImage_fn = (function(){
             var src = rs.Data;
 
 //            src = "http://localhost:8023"+src;
-
-
 
 
             this.reCreateInput();
@@ -1569,18 +1511,19 @@ TGOGO.uploadImage_fn = (function(){
             });
         },
         //显示图片
-        showImg:function(src,callback){
-            src = this.pictureShowUrl+src;
+        showImg: function (src, callback) {
+            src = this.pictureShowUrl + src;
 
             var img = new Image(),
                 _this = this;
 
-            callback = callback || function(){};
+            callback = callback || function () {
+            };
 
             var div = $("<div></div>");
             div.css({
-                width: this.imgWidth+"px",
-                height: this.imgHeight+22+"px",
+                width: this.imgWidth + "px",
+                height: this.imgHeight + 22 + "px",
                 float: "left",
                 margin: "10px"
             }).addClass("__upload_temp__");
@@ -1590,7 +1533,7 @@ TGOGO.uploadImage_fn = (function(){
 
             div1.css({
                 width: "100%",
-                height: this.imgHeight+"px"
+                height: this.imgHeight + "px"
             });
             div2.css({
                 width: "100%",
@@ -1610,14 +1553,13 @@ TGOGO.uploadImage_fn = (function(){
             div.append(div1).append(div3).append(div2);
 
 
-
             div2.click(function () {
                 var temp_div = $(this).parent();
                 temp_div.remove();
                 _this.delOne();
             });
 
-            $("#"+_this.showImageWrapId).append(div);
+            $("#" + _this.showImageWrapId).append(div);
             callback();
             img.onload = function () {
 
@@ -1626,14 +1568,13 @@ TGOGO.uploadImage_fn = (function(){
                     new_size = TGOGO.__getNewImageSize(width, height, _this.imgWidth, _this.imgHeight);
 
 
-
                 var temp_top = (_this.imgHeight - new_size.height) / 2,
                     temp_left = (_this.imgWidth - new_size.width) / 2;
 
                 $(img).css({
                     margin: temp_top + "px " + temp_left + "px",
-                    width:new_size.width+"px",
-                    height:new_size.height+"px"
+                    width: new_size.width + "px",
+                    height: new_size.height + "px"
                 });
 
 
@@ -1643,15 +1584,15 @@ TGOGO.uploadImage_fn = (function(){
             this.setHideInputVal();
         },
         //初始显示图片
-        showStartImage:function(){
+        showStartImage: function () {
             var data = this.imgs,
                 _this = this;
 
-            var go = function(){
-                if(data.length != 0){
+            var go = function () {
+                if (data.length != 0) {
                     var this_src = data.shift();
                     _this.upLoadNumber++;
-                    _this.showImg(this_src,go);
+                    _this.showImg(this_src, go);
                 }
             };
 
@@ -1662,20 +1603,20 @@ TGOGO.uploadImage_fn = (function(){
             this.upLoadNumber--;
             this.setHideInputVal();
         },
-        delAll:function(){
+        delAll: function () {
             this.upLoadNumber = 0;
-            $("#"+this.showImageWrapId).html("");
+            $("#" + this.showImageWrapId).html("");
             this.setHideInputVal();
 
         },
-        setHideInputVal:function(){
+        setHideInputVal: function () {
             var input = this.hideInput,
-                imgs = $("#"+this.showImageWrapId).find("img"),
+                imgs = $("#" + this.showImageWrapId).find("img"),
                 vals = [];
 
-            imgs.each(function(){
+            imgs.each(function () {
                 var name = $(this).attr("src");
-                name = name.substr(name.lastIndexOf("\/")+1);
+                name = name.substr(name.lastIndexOf("\/") + 1);
                 vals.push(name);
             });
 
@@ -1687,7 +1628,7 @@ TGOGO.uploadImage_fn = (function(){
     return upload_file;
 
 })();
-TGOGO.uploadImage = function(obj){
+TGOGO.uploadImage = function (obj) {
     var serverUrl = obj.data("server_url"),
         show_picture_id = obj.data("show_picture_id"),
         write_list = obj.data("can_uplad_type"),
@@ -1698,71 +1639,67 @@ TGOGO.uploadImage = function(obj){
         has_picture = obj.data("has_pictures"),
         hide_input_name = obj.data("hide_input_name") || "_togogo_upload_files_",
         id = DEVICE.counter(),
-        form_id = "_temp_uploadImage_from_"+id,
-        input_id = "_temp_uploadImage_input_"+id,
-        form = $("<form id='"+form_id+"'></form>"),
-        hide_input = $("<input type='hidden' name='"+hide_input_name+"'  value='"+has_picture+"'>"),
-        input = $("<input hidefocus id='"+input_id+"' type='file' name='file' />");
-    has_picture = (!has_picture || $.trim(has_picture) == "")? [] : has_picture.split(",");
+        form_id = "_temp_uploadImage_from_" + id,
+        input_id = "_temp_uploadImage_input_" + id,
+        form = $("<form id='" + form_id + "'></form>"),
+        hide_input = $("<input type='hidden' name='" + hide_input_name + "'  value='" + has_picture + "'>"),
+        input = $("<input hidefocus id='" + input_id + "' type='file' name='file' />");
+    has_picture = (!has_picture || $.trim(has_picture) == "") ? [] : has_picture.split(",");
 
     obj.css({
-        overflow:"hidden",
-        position:"relative"
+        overflow: "hidden",
+        position: "relative"
     });
     input.css({
-        position:"absolute",
-        left:0,
-        top:0,
-        "outline":0,
-        "font-size":"300px",
-        width:"100%",
-        height:parseInt(obj.height())+"px",
-        opacity:0,
-        cursor:"pointer",
-        border:"none"
+        position: "absolute",
+        left: 0,
+        top: 0,
+        "outline": 0,
+        "font-size": "300px",
+        width: "100%",
+        height: parseInt(obj.height()) + "px",
+        opacity: 0,
+        cursor: "pointer",
+        border: "none"
     });
     form.append(input).append(hide_input);
     obj.append(form);
 
-    var _temp_name = "_temp_uploadImage_fn_"+id;
-    obj.attr({fn_name:_temp_name});
+    var _temp_name = "_temp_uploadImage_fn_" + id;
+    obj.attr({fn_name: _temp_name});
 
     window[_temp_name] = new TGOGO.uploadImage_fn({
-        id:input_id,      //input[type='file']的 id   @param:str
-        formId:form_id,              //表单id                     @param:str
-        types:write_list,       //上传文件类型                @param:str
-        maxNumber:max_number,                //最大能上传好多张图片          @param:int
+        id: input_id,      //input[type='file']的 id   @param:str
+        formId: form_id,              //表单id                     @param:str
+        types: write_list,       //上传文件类型                @param:str
+        maxNumber: max_number,                //最大能上传好多张图片          @param:int
         //服务器地址                  @param:str
-        serverSrc:serverUrl,
-        showImageWrapId:show_picture_id,      //图片上传完后显示区域id        @param:str
-        imgs:has_picture,                  //已存在的图片                 @param:array
-        pictureWidth:picture_width,        //显示图片大小
-        pictureHeight:picture_height,
-        pictureShowUrl:picture_show_url,    //图片显示地址
-        hideInput:hide_input                //隐藏文本框保存当前的图片地址
+        serverSrc: serverUrl,
+        showImageWrapId: show_picture_id,      //图片上传完后显示区域id        @param:str
+        imgs: has_picture,                  //已存在的图片                 @param:array
+        pictureWidth: picture_width,        //显示图片大小
+        pictureHeight: picture_height,
+        pictureShowUrl: picture_show_url,    //图片显示地址
+        hideInput: hide_input                //隐藏文本框保存当前的图片地址
     });
 };
-
-
-
-
 
 
 //*****************************************************
 //弹出居中层
 //*****************************************************
-TGOGO.showCenterDiv_fn = (function(){
+TGOGO.showCenterDiv_fn = (function () {
     var wrap_bg = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH3gkMDRAo1IkjzgAAAA1JREFUCNdj+P//fwMACXwDfrW+dCcAAAAASUVORK5CYII=";
-    var showDiv = function(opt){
+    var showDiv = function (opt) {
         this.wrap = null;
         this.zz = null;
         this.div = opt.div;
         this.closeRun = opt.closeRun;
 
-        if(typeof(this.div) === "string"){
-            this.div = $("#"+this.div).css({display:"block"});
-        }else{
-            this.div = this.div.css({display:"block"});
+        if (typeof(this.div) === "string") {
+            this.div = $("#" + this.div).css({display: "block"});
+        } else {
+            this.div = this.div.css({display: "block"});
         }
 
 
@@ -1770,7 +1707,7 @@ TGOGO.showCenterDiv_fn = (function(){
         this.init();
     };
     showDiv.prototype = {
-        init:function(){
+        init: function () {
             this.createZZ();
             this.createWrap();
 
@@ -1779,69 +1716,68 @@ TGOGO.showCenterDiv_fn = (function(){
             this.show();
 
         },
-        createWrap:function(){
+        createWrap: function () {
             var div = $("<div></div>");
             div.css(DEVICE.fixObjCss({
                 padding: "10px",
-                background: "url("+wrap_bg+")",
+                background: "url(" + wrap_bg + ")",
                 "border-radius": "5px",
-                "z-index":this.zIndex+1,
-                position:"fixed",
-                left:"50%",
-                top:"50%"
+                "z-index": this.zIndex + 1,
+                position: "fixed",
+                left: "50%",
+                top: "50%"
             }));
             this.wrap = div;
         },
-        createZZ:function(){
+        createZZ: function () {
             var div = $("<div></div>");
             div.css({
-                width:"100%",
-                height:"100%",
-                background:"#000",
-                opacity:0,
-                position:"fixed",
-                left:0,
-                top:0,
-                "z-index":this.zIndex
+                width: "100%",
+                height: "100%",
+                background: "#000",
+                opacity: 0,
+                position: "fixed",
+                left: 0,
+                top: 0,
+                "z-index": this.zIndex
             });
             this.zz = div;
         },
-        addEvent:function(){
+        addEvent: function () {
             var _this = this;
-            this.zz.click(function(){
-                 _this.destroy();
+            this.zz.click(function () {
+                _this.destroy();
             });
-            this.wrap.click(function(e){
+            this.wrap.click(function (e) {
                 e.stopPropagation();
 //                e.preventDefault();
             });
         },
-        show:function(){
+        show: function () {
             $("body").append(this.zz).append(this.wrap);
             this.zz.animate({
-                opacity:0.4
-            },500);
-            var width = parseInt(this.div.width())+20,
-                height = parseInt(this.div.height())+20;
+                opacity: 0.4
+            }, 500);
+            var width = parseInt(this.div.width()) + 20,
+                height = parseInt(this.div.height()) + 20;
             this.wrap.css({
-                "margin-top":-height/2+"px",
-                "margin-left":-width/2+"px"
+                "margin-top": -height / 2 + "px",
+                "margin-left": -width / 2 + "px"
             })
         },
-        destroy:function(){
-            if(this.div){
-                $("body").append(this.div.css({display:"none"}));
+        destroy: function () {
+            if (this.div) {
+                $("body").append(this.div.css({display: "none"}));
             }
 
-            if(this.zz){
+            if (this.zz) {
                 this.zz.unbind("click");
                 this.zz.remove();
             }
-            if(this.wrap){
+            if (this.wrap) {
                 this.wrap.unbind("click");
                 this.wrap.remove();
             }
-
 
 
             this.zz = null;
@@ -1852,7 +1788,7 @@ TGOGO.showCenterDiv_fn = (function(){
     };
     return showDiv;
 })();
-TGOGO.showCenterDiv = function(obj){
+TGOGO.showCenterDiv = function (obj) {
     var event = obj.data("show_event"),
         id = obj.data("center_div_id"),
         z_index = obj.data("z_index"),
@@ -1860,29 +1796,30 @@ TGOGO.showCenterDiv = function(obj){
         before_show_run = obj.data("before_show_run"),
         _this = this,
         _id = DEVICE.counter(),
-        fn_name = "_temp_showCenterDiv_fn_"+_id;
+        fn_name = "_temp_showCenterDiv_fn_" + _id;
 
-    obj.attr({"fn_name":fn_name});
-    after_close_run = (after_close_run)? window[after_close_run] : function(){};
-    before_show_run = (before_show_run)? window[before_show_run] : function(){};
+    obj.attr({"fn_name": fn_name});
+    after_close_run = (after_close_run) ? window[after_close_run] : function () {
+    };
+    before_show_run = (before_show_run) ? window[before_show_run] : function () {
+    };
 
-    DEVICE.addEvent(obj.get(0),event,function(){
+    DEVICE.addEvent(obj.get(0), event, function () {
         before_show_run();
         window[fn_name] = new _this.showCenterDiv_fn({
-            div:id,
-            zIndex:z_index,
-            closeRun:after_close_run
+            div: id,
+            zIndex: z_index,
+            closeRun: after_close_run
         });
     });
 
 };
 
 
-
 //*****************************************************
 //时间选择控件
 //*****************************************************
-TGOGO.dataInput = function(obj){
+TGOGO.dataInput = function (obj) {
     var min_year = obj.data("min_year"),
         max_year = obj.data("max_year"),
         now_year = 1900 + new Date().getYear();
@@ -1903,34 +1840,32 @@ TGOGO.dataInput = function(obj){
 };
 
 
-
-
 //*****************************************************
 //ajax提交
 //只检查input  textarea select
 //*****************************************************
 TGOGO.__rule_list_fn = {
-    username:/^[a-zA-Z0-9][a-zA-Z0-9_]*$/,
-    nickname:/^.+$/,
-    password:/^[a-zA-Z0-9]*$/,
-    mobile:/^[1]\d*$/,
-    email:/^[a-zA-Z0-9][a-zA-Z0-9-_\.]*@[a-zA-Z0-9_-]*\.[a-zA-Z0-9]*$/,
-    number:/^[0-9]*$/
+    username: /^[a-zA-Z0-9][a-zA-Z0-9_]*$/,
+    nickname: /^.+$/,
+    password: /^[a-zA-Z0-9]*$/,
+    mobile: /^[1]\d*$/,
+    email: /^[a-zA-Z0-9][a-zA-Z0-9-_\.]*@[a-zA-Z0-9_-]*\.[a-zA-Z0-9]*$/,
+    number: /^[0-9]*$/
 };
-TGOGO.__checkForm_fn = function(obj,opt,opt1){
+TGOGO.__checkForm_fn = function (obj, opt, opt1) {
     var data = {},
         err = [],
         _this = this;
 
-    for(var i= 0,l=opt.length;i<l;i++){
-        opt[i].each(function(){
+    for (var i = 0, l = opt.length; i < l; i++) {
+        opt[i].each(function () {
             var back = _this.__checkInput_fn($(this));
-            if(!back){
+            if (!back) {
                 err.push({
-                    obj:$(this),
-                    msg:$(this).data("error_info") || "输入的数据格式不正确！"
+                    obj: $(this),
+                    msg: $(this).data("error_info") || "输入的数据格式不正确！"
                 })
-            }else{
+            } else {
                 var name = $(this).attr("name");
                 data[name] = $.trim($(this).val());
             }
@@ -1940,10 +1875,10 @@ TGOGO.__checkForm_fn = function(obj,opt,opt1){
     //处理checkbox和radio
     //获取name
     var name = {};
-    for(var z = 0, zl=opt1.length;z<zl;z++){
-        opt1[z].each(function(){
+    for (var z = 0, zl = opt1.length; z < zl; z++) {
+        opt1[z].each(function () {
             var this_name = $(this).attr("name");
-            if(this_name && !name.hasOwnProperty(this_name)){
+            if (this_name && !name.hasOwnProperty(this_name)) {
                 name[this_name] = true;
             }
         })
@@ -1951,12 +1886,12 @@ TGOGO.__checkForm_fn = function(obj,opt,opt1){
 
 
     //按名字
-    for(var key in name){
-        if(name.hasOwnProperty(key)){
-            var this_obj = obj.find("input[name='"+key+"']"),
+    for (var key in name) {
+        if (name.hasOwnProperty(key)) {
+            var this_obj = obj.find("input[name='" + key + "']"),
                 this_data = [];
-            this_obj.each(function(){
-                if($(this).get(0).checked){
+            this_obj.each(function () {
+                if ($(this).get(0).checked) {
                     this_data.push($.trim($(this).val()));
                 }
             });
@@ -1965,52 +1900,55 @@ TGOGO.__checkForm_fn = function(obj,opt,opt1){
     }
 
 
-
     return {
-        err:err,
-        data:data
+        err: err,
+        data: data
     }
 
 };
-TGOGO.__checkInput_fn = function(obj){
+TGOGO.__checkInput_fn = function (obj) {
     var rule = obj.data("rule") || null,
         val = $.trim(obj.val()),
-        rule_text = ","+rule+",";
+        rule_text = "," + rule + ",";
 
-    if(!rule){return true;}
+    if (!rule) {
+        return true;
+    }
 
     rule = rule.split(",");
 
     //如果值为空
-    if(val == ""){
+    if (val == "") {
         return (!(rule_text.indexOf(",must,") > -1));
     }
 
     //如果值不为空
-    for(var i= 0,l=rule.length;i<l;i++){
+    for (var i = 0, l = rule.length; i < l; i++) {
         var this_rule = rule[i];
-        if(this_rule == "must"){ continue;}
+        if (this_rule == "must") {
+            continue;
+        }
 
         //检查长度
-        if(this_rule.substr(0,3) == "max"){
+        if (this_rule.substr(0, 3) == "max") {
             var max = this_rule.split(":");
-            max = (max.length == 2)? max[1] : 0;
-            if(val.length > max){
+            max = (max.length == 2) ? max[1] : 0;
+            if (val.length > max) {
                 return false;
             }
         }
-        if(this_rule.substr(0,3) == "min"){
+        if (this_rule.substr(0, 3) == "min") {
             var min = this_rule.split(":");
-            min = (min.length == 2)? min[1] : 0;
-            if(val.length < min){
+            min = (min.length == 2) ? min[1] : 0;
+            if (val.length < min) {
                 return false;
             }
         }
 
         //检查正则
         this_rule = this.__rule_list_fn[this_rule];
-        if(this_rule){
-            if(!this_rule.test(val)){
+        if (this_rule) {
+            if (!this_rule.test(val)) {
                 return false;
             }
         }
@@ -2018,7 +1956,7 @@ TGOGO.__checkInput_fn = function(obj){
 
     return true;
 };
-TGOGO.__submitForm_fn = function(opt){
+TGOGO.__submitForm_fn = function (opt) {
     var src = opt.src,
         type = opt.ajax_type,
         timeout = opt.ajax_timeout,
@@ -2028,26 +1966,26 @@ TGOGO.__submitForm_fn = function(opt){
 
     TGOGO.loading.show("loading...");
     $.ajax({
-        type:type,
+        type: type,
         cache: false,
-        url:src,
-        data:data,
+        url: src,
+        data: data,
 //        headers:header,
-        contentType:"application/json",
-        dataType:"json",
-        timeout:timeout,
-        success:function(rs){
+        contentType: "application/json",
+        dataType: "json",
+        timeout: timeout,
+        success: function (rs) {
             TGOGO.loading.hide();
             success(rs);
         },
-        error:function(e){
+        error: function (e) {
             TGOGO.loading.hide();
             var state = e.status,
                 msg = "";
 
-            if(state == "500"){
+            if (state == "500") {
                 msg = "服务器繁忙,请稍后在试!";
-            }else{
+            } else {
                 msg = "无法连接服务器";
             }
 
@@ -2056,10 +1994,8 @@ TGOGO.__submitForm_fn = function(opt){
     });
 
 
-
-
 };
-TGOGO.ajaxSubmit = function(obj){
+TGOGO.ajaxSubmit = function (obj) {
     var ajax_src = obj.data("ajax_src") || "/",
         ajax_type = obj.data("ajax_type") || "post",
         ajax_timeout = obj.data("ajax_timeout") || TGOGO.settings.ajaxTimeOut,
@@ -2071,7 +2007,7 @@ TGOGO.ajaxSubmit = function(obj){
         submit = obj.find("input[type='submit']");
 
 
-    var check_fn = function(){
+    var check_fn = function () {
         var text = obj.find("input[type='text']"),
             textarea = obj.find("textarea"),
             select = obj.find("select"),
@@ -2079,61 +2015,57 @@ TGOGO.ajaxSubmit = function(obj){
             radio = obj.find("input[type='radio']");
 
 
-        if(window[check_before_fn]){
+        if (window[check_before_fn]) {
             var result = window[check_before_fn]();
-            if(!result){
+            if (!result) {
                 return;
             }
         }
 
-        var return_obj = _this.__checkForm_fn(obj,[text,textarea,select],[checkbox,radio]);
+        var return_obj = _this.__checkForm_fn(obj, [text, textarea, select], [checkbox, radio]);
 
-        if(return_obj.err.length == 0){
+        if (return_obj.err.length == 0) {
             //提交数据
             var data = return_obj.data;
             _this.__submitForm_fn({
-                data:data,
-                src:ajax_src,
-                ajax_type:ajax_type,
-                ajax_timeout:ajax_timeout,
-                success:function(rs){
-                    if(window[ajax_success_fn]){
+                data: data,
+                src: ajax_src,
+                ajax_type: ajax_type,
+                ajax_timeout: ajax_timeout,
+                success: function (rs) {
+                    if (window[ajax_success_fn]) {
                         window[ajax_success_fn](rs);
                     }
                 },
-                error:function(msg){
-                    if(window[ajax_error_fn]){
+                error: function (msg) {
+                    if (window[ajax_error_fn]) {
                         window[ajax_error_fn](msg);
                     }
                 }
             })
-        }else{
+        } else {
             //检查出错
             var err = return_obj.err;
-            if(window[check_error_fn]){
+            if (window[check_error_fn]) {
                 window[check_error_fn](err);
             }
         }
     };
 
 
-    if(submit.length !=0){
-        submit.click(function(){
+    if (submit.length != 0) {
+        submit.click(function () {
             check_fn();
         });
     }
 };
 
 
-
-
-
-
 //*****************************************************
 //鼠标悬停显示右浮动层  处理顶部和底部自适应
 //*****************************************************
-TGOGO.__showFloatDiv = (function(){
-    var showFloat = function(obj,div,direction){
+TGOGO.__showFloatDiv = (function () {
+    var showFloat = function (obj, div, direction) {
         this.obj = obj;
         this.div = div;
         this.direction = direction;
@@ -2146,100 +2078,100 @@ TGOGO.__showFloatDiv = (function(){
         this.init();
     };
     showFloat.prototype = {
-        init:function(){
+        init: function () {
             this.setDiv();
             this.eventBind();
         },
-        setDiv:function(){
+        setDiv: function () {
             this.div.css({
-                position:"absolute"
+                position: "absolute"
             });
             this.obj.css({
-                position:"relative"
+                position: "relative"
             })
         },
-        eventBind:function(){
+        eventBind: function () {
             var _this = this;
-            this.obj.hover(function(){
+            this.obj.hover(function () {
                 _this.showDiv();
-            },function(){
+            }, function () {
                 _this.hideDiv();
             });
         },
-        showDiv:function(){
+        showDiv: function () {
             var y = this.getPositionY(),
                 x = this.getPositionX();
 
 
             this.obj.append(this.div);
             this.div.css({
-                top:y+"px",
-                display:"block",
-                left:x+"px"
+                top: y + "px",
+                display: "block",
+                left: x + "px"
             })
 
 
         },
-        hideDiv:function(){
+        hideDiv: function () {
             this.div.css({
-                display:"none"
+                display: "none"
             })
         },
-        getPositionY:function(){
+        getPositionY: function () {
             var scroll_top = parseInt($(document).scrollTop()),
                 scroll_left = parseInt($(document).scrollLeft()),
                 obj_top = parseInt(this.obj.offset().top),
                 obj_left = parseInt(this.obj.offset().left),
                 win_height = parseInt($(window).height()),
                 win_width = parseInt($(window).width()),
-                obj_bottom,obj_right;
+                obj_bottom, obj_right;
 
             //元素中心点对屏幕顶部距离
-            obj_top = obj_top - scroll_top + this.obj_height/2;
+            obj_top = obj_top - scroll_top + this.obj_height / 2;
             obj_bottom = win_height - obj_top;
-            obj_left = obj_left - scroll_left + this.obj_width/2;
+            obj_left = obj_left - scroll_left + this.obj_width / 2;
             obj_right = win_width - obj_left;
 
 
-            if(this.direction == "right" || this.direction == "left"){
+            if (this.direction == "right" || this.direction == "left") {
                 //居中显示
-                if(obj_top >= this.div_height/2 && obj_bottom >= this.div_height/2){
-                    return -(this.div_height - this.obj_height)/2;
+                if (obj_top >= this.div_height / 2 && obj_bottom >= this.div_height / 2) {
+                    return -(this.div_height - this.obj_height) / 2;
                 }
 
 
                 //距屏幕底部显示
-                if(obj_top >= this.div_height/2 && obj_bottom <= this.div_height/2){
-                    return -(this.div_height - obj_bottom - this.obj_height/2);
+                if (obj_top >= this.div_height / 2 && obj_bottom <= this.div_height / 2) {
+                    return -(this.div_height - obj_bottom - this.obj_height / 2);
                 }
 
 
                 //距屏幕顶部显示
-                if(obj_top <= this.div_height/2 && obj_bottom >= this.div_height/2){
-                    return  -(obj_top - this.obj_height/2) ;
+                if (obj_top <= this.div_height / 2 && obj_bottom >= this.div_height / 2) {
+                    return  -(obj_top - this.obj_height / 2);
                 }
 
 
                 //div窗口高度高于window高度  距离顶部显示
-                return obj_top - this.obj_height/2;
+                return obj_top - this.obj_height / 2;
             }
 
-            if(this.direction == "top"){
-                return - this.div_height;
+            if (this.direction == "top") {
+                return -this.div_height;
             }
 
-            if(this.direction == "bottom"){
+            if (this.direction == "bottom") {
                 return this.obj_height;
             }
 
 
         },
-        getPositionX:function(){
-            if(this.direction == "right"){
+        getPositionX: function () {
+            if (this.direction == "right") {
                 return this.obj_width;
             }
 
-            if(this.direction == "left"){
+            if (this.direction == "left") {
                 return -this.div_width;
             }
 
@@ -2253,65 +2185,65 @@ TGOGO.__showFloatDiv = (function(){
 
     return showFloat;
 })();
-TGOGO.showFloatDiv = function(obj){
+TGOGO.showFloatDiv = function (obj) {
     var div_id = obj.data("show_div_id"),
         direction = obj.data("direction") || "right";
 
-    if(!div_id){return;}
-    var show_div = $("#"+div_id);
-    if(show_div.length != 1){
+    if (!div_id) {
+        return;
+    }
+    var show_div = $("#" + div_id);
+    if (show_div.length != 1) {
         return;
     }
 
-    new TGOGO.__showFloatDiv(obj,show_div,direction);
+    new TGOGO.__showFloatDiv(obj, show_div, direction);
 };
-
-
-
-
-
 
 
 //*****************************************************
 //tab切换显示
 //*****************************************************
-TGOGO.tabChange = function(obj){
+TGOGO.tabChange = function (obj) {
     var divs = obj.data("add_event_class"),
         select_class = obj.data("select_class"),
         start_select = obj.data("selected") || 0,
+        event_name = obj.data("event_name") || "click",
         get_div_id_from = obj.data("get_id_attr");
-    divs = obj.find("."+divs);
+    divs = obj.find("." + divs);
     divs.css({
-        cursor:"pointer"
+        cursor: "pointer"
     });
 
-    if(divs.length == 0){return;}
+    if (divs.length == 0) {
+        return;
+    }
 
 
-    var show = function(div){
+    var show = function (div) {
         var id = div.data(get_div_id_from);
-        $("#"+id).css({
-            display:"block"
+        $("#" + id).css({
+            display: "block"
         });
         div.addClass(select_class);
     };
 
-    var hide = function(div){
+    var hide = function (div) {
         var id = div.data(get_div_id_from);
-        $("#"+id).css({
-            display:"none"
+        $("#" + id).css({
+            display: "none"
         });
         div.removeClass(select_class);
     };
 
-    var go = function(div){
-        divs.each(function(){
+    var go = function (div) {
+        divs.each(function () {
             hide($(this));
         });
         show(div);
     };
 
-    divs.click(function(){
+    divs[event_name](function () {
         go($(this));
     });
 
@@ -2323,14 +2255,11 @@ TGOGO.tabChange = function(obj){
 };
 
 
-
-
-
 //*****************************************************
 //级联菜单   关联的ｊｓ  area.js　　　　检查部分需要使用自动提交的插件　　否则自己写检查程序
 //*****************************************************
-TGOGO.__cascadeSelectFn = (function(){
-    var _select = function(rs){
+TGOGO.__cascadeSelectFn = (function () {
+    var _select = function (rs) {
         this.data = rs.data;
         this.name = rs.name;
         this.value = rs.value;
@@ -2344,22 +2273,22 @@ TGOGO.__cascadeSelectFn = (function(){
     };
 
     _select.prototype = {
-        init:function(){
+        init: function () {
             this.createElement();
             this.clearOption();
             this.createOption();
             this.addEvent();
         },
-        createElement:function(){
-            for(var i= 0,l=this.name.length;i<l;i++){
+        createElement: function () {
+            for (var i = 0, l = this.name.length; i < l; i++) {
                 var this_name = this.name[i],
-                    this_select = $("<select name='"+this_name+"'></select>");
+                    this_select = $("<select name='" + this_name + "'></select>");
 
                 //最后一个select 添加检查
-                if(i == this.name.length - 1){
-                    this_select.data({rule:"must"});
-                    if(this.errInfo != ""){
-                        this_select.data({err_msg:this.errInfo});
+                if (i == this.name.length - 1) {
+                    this_select.data({rule: "must"});
+                    if (this.errInfo != "") {
+                        this_select.data({err_msg: this.errInfo});
                     }
                 }
 
@@ -2367,31 +2296,31 @@ TGOGO.__cascadeSelectFn = (function(){
                 this.body.append(this_select);
             }
         },
-        clearOption:function(){
-            for(var i= 0,l=this.selects.length;i<l;i++){
+        clearOption: function () {
+            for (var i = 0, l = this.selects.length; i < l; i++) {
                 this.selects[i].html("");
             }
         },
-        createOption:function(){
+        createOption: function () {
             var data = this.data,
                 now_data = [];
 
-            for(var i= 0,l=this.selects.length;i<l;i++){
+            for (var i = 0, l = this.selects.length; i < l; i++) {
                 var this_select = this.selects[i],
                     this_val = this.value[i] || "",
                     this_ts = this.ts[i] || "请选择",
                     this_html = [];
 
-                this_html.push("<option value=''>"+this_ts+"</option>");
-                for(var z = 0,zl=data.length;z<zl;z++){
+                this_html.push("<option value=''>" + this_ts + "</option>");
+                for (var z = 0, zl = data.length; z < zl; z++) {
                     var this_id = data[z].id,
                         this_name = data[z].areaName;
 
-                    if(this_id == this_val){
-                        this_html.push("<option value='"+this_id+"' selected>"+this_name+"</option>");
+                    if (this_id == this_val) {
+                        this_html.push("<option value='" + this_id + "' selected>" + this_name + "</option>");
                         now_data = data[z].children;
-                    }else{
-                        this_html.push("<option value='"+this_id+"'>"+this_name+"</option>");
+                    } else {
+                        this_html.push("<option value='" + this_id + "'>" + this_name + "</option>");
                     }
                 }
 
@@ -2400,12 +2329,12 @@ TGOGO.__cascadeSelectFn = (function(){
                 data = now_data;
             }
         },
-        addEvent:function(){
+        addEvent: function () {
             var _this = this;
 
-            for(var i= 0,l=this.selects.length-1;i<l;i++){
-                this.selects[i].attr({my_no:i});
-                this.selects[i].change(function(){
+            for (var i = 0, l = this.selects.length - 1; i < l; i++) {
+                this.selects[i].attr({my_no: i});
+                this.selects[i].change(function () {
                     var my_no = $(this).attr("my_no");
                     _this.value[my_no] = $(this).val();
                     _this.clearOption();
@@ -2417,7 +2346,7 @@ TGOGO.__cascadeSelectFn = (function(){
 
     return _select;
 })();
-TGOGO.cascadeSelect = function(obj){
+TGOGO.cascadeSelect = function (obj) {
     var data = obj.data("source") || "",
         select_name = obj.data("select_name") || "",
         select_value = obj.data("select_value") || "",
@@ -2426,7 +2355,7 @@ TGOGO.cascadeSelect = function(obj){
         err = obj.data("error_info") || "";
 
 
-    if(data == "" || select_name == ""){
+    if (data == "" || select_name == "") {
         return;
     }
 
@@ -2436,33 +2365,33 @@ TGOGO.cascadeSelect = function(obj){
     empty_val = empty_val.split(",");
 
 
-    if(!window[data]){return;}
+    if (!window[data]) {
+        return;
+    }
     data = window[data];
 
     new this.__cascadeSelectFn({
-        data:data,
-        name:select_name,
-        value:select_value,
-        ts:empty_val,
-        obj:obj,
-        must:rule,
-        err:err
+        data: data,
+        name: select_name,
+        value: select_value,
+        ts: empty_val,
+        obj: obj,
+        must: rule,
+        err: err
     })
 
 
 };
 
 
-
-
-
 //*****************************************************
 //验证码倒计时
 //*****************************************************
-TGOGO.__countdownButtonFn = (function(){
-    var countdownButton = function(opt){
+TGOGO.__countdownButtonFn = (function () {
+    var countdownButton = function (opt) {
         this.obj = opt.obj;
-        this.runFn = opt.runFn || function(){};
+        this.runFn = opt.runFn || function () {
+        };
         this.countdownTime = opt.countdownTime || 10;
         this.getValueId = opt.getValueId;
         this.hoverClass = opt.hoverClass;
@@ -2470,8 +2399,8 @@ TGOGO.__countdownButtonFn = (function(){
         this.showText = "剩余x秒";
 
 
-        this.input = $("#"+this.getValueId);
-        if(this.input.length == 0){
+        this.input = $("#" + this.getValueId);
+        if (this.input.length == 0) {
             return;
         }
 
@@ -2482,59 +2411,62 @@ TGOGO.__countdownButtonFn = (function(){
         this.now_t = this.countdownTime;
 
 
-
-        if(this.obj.length == 0 ){return;}
+        if (this.obj.length == 0) {
+            return;
+        }
 
         this.init();
 
     };
     countdownButton.prototype = {
-        init:function(){
+        init: function () {
             this.addEvent();
         },
-        addEvent:function(){
+        addEvent: function () {
             var _this = this;
-            this.obj.click(function(){
+            this.obj.click(function () {
                 //检查输入框
                 var pass = TGOGO.__checkInput_fn(_this.input);
-                if(!pass){
+                if (!pass) {
                     var text = _this.input.data("error_info");
                     TGOGO.settings.alert(text);
                     return;
                 }
 
                 //是否在倒计时
-                if(!_this.canClick){return;}
+                if (!_this.canClick) {
+                    return;
+                }
 
 
                 //ajax请求
                 _this.runFn();
 
             });
-            this.obj.hover(function(){
+            this.obj.hover(function () {
                 $(this).addClass(_this.hoverClass);
-            },function(){
+            }, function () {
                 $(this).removeClass(_this.hoverClass);
             });
         },
 
-        showCountdown:function(){
+        showCountdown: function () {
             var _this = this;
-            this.interval = setInterval(function(){
-                if(_this.now_t == 0){
+            this.interval = setInterval(function () {
+                if (_this.now_t == 0) {
                     clearInterval(_this.interval);
                     _this.canClick = true;
                     _this.obj.removeClass(_this.canNotClickClass);
                     _this.obj.text(_this.text);
                     _this.now_t = _this.countdownTime;
-                }else{
-                    _this.now_t --;
-                    var text = _this.showText.replace("x",_this.now_t);
+                } else {
+                    _this.now_t--;
+                    var text = _this.showText.replace("x", _this.now_t);
                     _this.obj.text(text);
                 }
-            },1000);
+            }, 1000);
         },
-        ajaxSuccess:function(){
+        ajaxSuccess: function () {
             this.obj.addClass(this.canNotClickClass);
             this.canClick = false;
             this.showCountdown();
@@ -2544,41 +2476,29 @@ TGOGO.__countdownButtonFn = (function(){
     return countdownButton;
 
 })();
-TGOGO.countdownButton = function(obj){
+TGOGO.countdownButton = function (obj) {
     var ajaxFn = obj.data("click_run_fn"),
         inputId = obj.data("input_id"),
         show_text = obj.data("show_text"),
         hover_class = obj.data("hover_class"),
         can_not_click_class = obj.data("can_not_click_class"),
         countdown_time = obj.data("countdown_time"),
-        fn_name = "__countdownButton__"+DEVICE.counter();
+        fn_name = "__countdownButton__" + DEVICE.counter();
 
-    obj.data({fn_name:fn_name});
+    obj.data({fn_name: fn_name});
     ajaxFn = window[ajaxFn];
 
     window[fn_name] = new TGOGO.__countdownButtonFn({
-        obj:obj,
-        runFn:ajaxFn,
-        countdownTime:countdown_time,
-        getValueId:inputId,
-        show_text:show_text,
-        hoverClass:hover_class,
-        canNotClickClass:can_not_click_class
+        obj: obj,
+        runFn: ajaxFn,
+        countdownTime: countdown_time,
+        getValueId: inputId,
+        show_text: show_text,
+        hoverClass: hover_class,
+        canNotClickClass: can_not_click_class
     });
 
 };
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 //*****************************************************
@@ -2614,99 +2534,100 @@ TGOGO.__getNewImageSize = function (imgwidth, imgheight, objwidth, objheight) {
 };
 
 
-
 //*****************************************************
 //loading
 //*****************************************************
 TGOGO.loading = {
-    imgSrc:TGOGO.settings.resourceSrc + "loading.gif",  //图片地址
-    showWidth:110,          //要显示loading区域的大小
-    showHeight:110,
-    imgWidth:400,           //图片实际尺寸
-    imgHeight:300,
-    imgScale:0.5,             //图片缩放比例
-    imgX:145,              //图片定位坐标
-    imgY:71,
-    padding:20,             //中间div的padding
-    background:"#DEE1E2",      //背景颜色
-    color:"#000",           //文字颜色
-    obj:null,
-    zz:null,
-    createZZ:function(){
+    imgSrc: TGOGO.settings.resourceSrc + "loading.gif",  //图片地址
+    showWidth: 110,          //要显示loading区域的大小
+    showHeight: 110,
+    imgWidth: 400,           //图片实际尺寸
+    imgHeight: 300,
+    imgScale: 0.5,             //图片缩放比例
+    imgX: 145,              //图片定位坐标
+    imgY: 71,
+    padding: 20,             //中间div的padding
+    background: "#DEE1E2",      //背景颜色
+    color: "#000",           //文字颜色
+    obj: null,
+    zz: null,
+    createZZ: function () {
         var obj = $("<div></div>");
         obj.css({
-            width:"100%",
-            height:"100%",
-            display:"block",
-            position:"fixed",
-            left:0,
-            top:0,
-            "z-index":300000,
-            background:"#000"
+            width: "100%",
+            height: "100%",
+            display: "block",
+            position: "fixed",
+            left: 0,
+            top: 0,
+            "z-index": 300000,
+            background: "#000"
         });
         this.zz = obj;
     },
-    createLoading:function(info){
-        var main = this.zz.clone().css({background:"none",display:"block","z-index":300001});
+    createLoading: function (info) {
+        var main = this.zz.clone().css({background: "none", display: "block", "z-index": 300001});
         info = info || "loading...";
 
         var load = $("<div></div>"),
             img_div = $("<div></div>"),
-            img = $("<img src='"+this.imgSrc+"' />"),
-            text = $("<div>"+info+"</div>"),
-            width = (this.showWidth * this.imgScale > 110)? this.showWidth * this.imgScale : 110,
+            img = $("<img src='" + this.imgSrc + "' />"),
+            text = $("<div>" + info + "</div>"),
+            width = (this.showWidth * this.imgScale > 110) ? this.showWidth * this.imgScale : 110,
             height = this.showHeight * this.imgScale + 40;
         load.css(DEVICE.fixObjCss({
-            padding:this.padding + "px",
-            width:width + "px",
-            height:height + "px",
-            position:"absolute",
-            left:"50%",
-            top:"50%",
-            "margin-left":-(width/2 + this.padding) + "px",
-            "margin-top":-(height/2 + this.padding) + "px",
-            background:this.background,
-            "border-radius":"5px"
+            padding: this.padding + "px",
+            width: width + "px",
+            height: height + "px",
+            position: "absolute",
+            left: "50%",
+            top: "50%",
+            "margin-left": -(width / 2 + this.padding) + "px",
+            "margin-top": -(height / 2 + this.padding) + "px",
+            background: this.background,
+            "border-radius": "5px"
         }));
         img_div.css({
-            position:"relative",
-            width:this.showWidth * this.imgScale + "px",
-            height:this.showHeight * this.imgScale + "px",
-            margin:"0 auto",
-            overflow:"hidden"
+            position: "relative",
+            width: this.showWidth * this.imgScale + "px",
+            height: this.showHeight * this.imgScale + "px",
+            margin: "0 auto",
+            overflow: "hidden"
         });
         img.css({
-            position:"absolute",
-            width:this.imgWidth * this.imgScale + "px",
-            height:this.imgHeight * this.imgScale + "px",
-            left:- this.imgX * this.imgScale + "px",
-            top:- this.imgY * this.imgScale + "px"
+            position: "absolute",
+            width: this.imgWidth * this.imgScale + "px",
+            height: this.imgHeight * this.imgScale + "px",
+            left: -this.imgX * this.imgScale + "px",
+            top: -this.imgY * this.imgScale + "px"
         });
         text.css({
-            width:"100%",
-            height:"40px",
-            "line-height":"40px",
-            "text-align":"center",
-            color:this.color
+            width: "100%",
+            height: "40px",
+            "line-height": "40px",
+            "text-align": "center",
+            color: this.color
         });
         img_div.append(img);
         load.append(img_div).append(text);
         main.append(load);
         this.obj = main;
     },
-    show:function(info){
-        if(this.obj){return;}
+    show: function (info) {
+        if (this.obj) {
+            return;
+        }
         this.createZZ();
         this.createLoading(info);
 
-        this.zz.css({opacity:0});
+        this.zz.css({opacity: 0});
         this.zz.animate({
-            opacity:0.5
-        },500);
+            opacity: 0.5
+        }, 500);
         $("body").append(this.zz).append(this.obj);
 
     },
-    hide:function(){
+    hide: function () {
         this.obj.remove();
         this.zz.remove();
         this.obj = null;
