@@ -377,6 +377,65 @@
 //<input type="text" data-rule="must,username" data-error_info="格式不对" id="ddd" />
 
 
+
+
+
+//*****************************************************
+//产品图横向滚动 (循环显示)
+//*****************************************************
+//说明：
+//class:　__TGOGO__　                        　          @必须写死
+//data-type: "productScroll"                            @必须写死
+//data-left_button_id = "left"                          @左侧按钮id
+//data-right_button_id = "right"                        @右侧按钮id
+//data-show_area_id = "main"                            @显示区域容器id
+//data-scroll_spd = "1000"                              @滚动速度，毫秒
+//data-children_tag = "a"                               @子元素标签（注意唯一性）
+
+//eg:
+//<div style="width: 500px; height: 300px; position: relative" class="bbccdd __TGOGO__"
+//data-type="productScroll"
+//data-left_button_id = "left"
+//data-right_button_id = "right"
+//data-show_area_id = "main"
+//data-scroll_spd = "1000"
+//data-children_tag = "a"
+//>
+//<div id="left" style="position: absolute; left: 0; top: 0; width: 30px; height: 30px; background: #f00;"></div>
+//<div id="right" style="position: absolute; right: 0; top: 0; width: 30px; height: 30px; background: #f00;"></div>
+//<div id="main" style="width: 400px; height: 300px; margin: 0 50px; background: #ccc;">
+//<a><img src="" alt="1" /></a>
+//<a><img src="" alt="2" /></a>
+//<a><img src="" alt="3" /></a>
+//<a><img src="" alt="4" /></a>
+//</div>
+//</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 $(document).ready(function () {
     TGOGO.run($("body"));
 });
@@ -2499,6 +2558,161 @@ TGOGO.countdownButton = function (obj) {
     });
 
 };
+
+
+
+
+
+
+//*****************************************************
+//产品图横向滚动 (循环显示)
+//*****************************************************
+TGOGO.__productScroll = (function(){
+    var productScroll = function(opt){
+        this.leftBtn = opt.left_button;     //左边按钮
+        this.rightBtn = opt.right_button;   //右边按钮
+        this.main = opt.main;               //主容器
+        this.spd = opt.spd;                 //滚动一个商品的时间
+        this.childrenTag = opt.children;       //子元素tag
+        this.body = null;                   //子元素包裹层
+
+        this.main_width = parseInt(this.main.width());      //包裹容器的宽度
+        this.main_height = parseInt(this.main.height());
+        this.childrens = this.main.find(this.childrenTag);
+
+        this.children_number = this.childrens.length;  //子元素数量
+
+        //没有子产品  返回
+        if(this.children_number == 0){
+            return;
+        }
+        this.children_width = this.childrens.eq(0).outerWidth();  //子元素的宽度,没有计算margin值
+        this.childrens_width = this.children_number * this.children_width;      //所有子元素的宽度
+
+        //判断是否放满容器，没放满结束
+        if(this.main_width > this.childrens_width){
+            return;
+        }
+
+        this.isMove = false;
+
+        this.init();
+    };
+    productScroll.prototype = {
+        init:function(){
+            this.setDiv();
+            this.bindEvent();
+        },
+        setDiv:function(){
+            this.main.css({
+                width:this.main_width + "px",
+                height:this.main_height + "px",
+                overflow:"hidden",
+                position:"relative"
+            });
+
+            var body = $("<div></div>");
+            body.css({
+                width:this.childrens_width + this.children_width + "px",
+                height:this.main_height + "px",
+                position:"absolute",
+                left:0,
+                top:0
+            });
+
+            body.append(this.childrens);
+            this.main.append(body);
+
+            this.body = body;
+        },
+        bindEvent:function(){
+            var _this = this;
+            this.leftBtn.click(function(){
+                _this.leftMove();
+            });
+            this.rightBtn.click(function(){
+                _this.rightMove();
+            });
+        },
+        leftMove:function(){
+            if(this.isMove){return;}
+            this.isMove = true;
+
+            var first_children = this.main.find(this.childrenTag).eq(0),
+                clone = first_children.clone(),
+                _this = this;
+
+            this.body.append(clone);
+            this.body.animate({
+                left:- _this.children_width + "px"
+            },this.spd,function(){
+                first_children.remove();
+                _this.body.css({left:0});
+                _this.isMove = false;
+            })
+        },
+        rightMove:function(){
+            if(this.isMove){return;}
+            this.isMove = true;
+
+            var first_children = this.main.find(this.childrenTag).eq(0),
+                end_children = this.main.find(this.childrenTag).eq(this.children_number-1),
+                clone = end_children.clone(),
+                _this = this;
+
+            clone.insertBefore(first_children);
+            this.body.css({
+                left:-_this.children_width + "px"
+            });
+
+            this.body.animate({
+                left:0
+            },this.spd,function(){
+                end_children.remove();
+                _this.isMove = false;
+            })
+        }
+    };
+
+    return productScroll;
+})();
+TGOGO.productScroll = function(obj){
+    var left_button_id = obj.data("left_button_id"),
+        right_button_id = obj.data("right_button_id"),
+        main_id = obj.data("show_area_id"),
+        scroll_spd = obj.data("scroll_spd"),
+        children = obj.data("children_tag"),
+        left_button = $("#"+left_button_id),
+        right_button = $("#"+right_button_id),
+        main = $("#"+main_id);
+
+    if(main.length == 0 ){return;}
+
+
+    new TGOGO.__productScroll({
+        left_button:left_button,
+        right_button:right_button,
+        main:main,
+        spd:scroll_spd,
+        children:children
+    })
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 //*****************************************************
