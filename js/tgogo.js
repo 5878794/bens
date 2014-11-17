@@ -22,6 +22,7 @@
 //data-type: numberControl                @必须写死
 //data-max_number = "10"                @能输入的最大值
 //data-min_number = "-3"                @能输入的最小值
+//data-add_class = ""                   @加减号附带的样式
 
 //eg：
 //<input
@@ -2792,11 +2793,16 @@ TGOGO.__numberControl = (function(){
                     width:"15px",
                     height:"15px",
                     "line-height":"15px",
+                    color:"#333",
                     border:"1px solid #888",
                     "font-size":"12px",
                     "text-align":"center",
                     "font-weight":"blod",
-                    cursor:"pointer"
+                    cursor:"pointer",
+                    "-webkit-user-select":"none",
+                    "-moz-user-select":"none",
+                    "-ms-user-select":"none",
+                    "user-select":"none"
                 };
 
             add.css(css).addClass(this.addClass);
@@ -2825,6 +2831,30 @@ TGOGO.__numberControl = (function(){
                 }
                 _this.input.val(val);
             });
+
+            this.add.hover(function(){
+                $(this).css({
+                    color:"red",
+                    border:"1px solid red"
+                })
+            },function(){
+                $(this).css({
+                    color:"#333",
+                    border:"1px solid #888"
+                })
+            });
+            this.lower.hover(function(){
+                $(this).css({
+                    color:"red",
+                    border:"1px solid red"
+                })
+            },function(){
+                $(this).css({
+                    color:"#333",
+                    border:"1px solid #888"
+                })
+            });
+
 
             DEVICE.addEvent(this.input.get(0),"input",function(){
                 var val = $.trim(_this.input.val());
