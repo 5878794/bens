@@ -12,6 +12,31 @@
  * tab切换 表单提交  表单验证
  */
 
+
+
+//*****************************************************
+//input输入框 带加减号控制
+//*****************************************************
+//说明：
+//class:　__TGOGO__　                     @必须写死
+//data-type: numberControl                @必须写死
+//data-max_number = "10"                @能输入的最大值
+//data-min_number = "-3"                @能输入的最小值
+
+//eg：
+//<input
+//class="__TGOGO__"
+//data-type="numberControl"
+//data-max_number = "10"
+//data-min_number = "-3"
+//type="text"
+//value="1"
+//name="text"
+///>
+
+
+
+
 //*****************************************************
 //触发其它元素的绑定
 //*****************************************************
@@ -1783,7 +1808,8 @@ TGOGO.uploadImage = function (obj) {
 //弹出居中层
 //*****************************************************
 TGOGO.showCenterDiv_fn = (function () {
-    var wrap_bg = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH3gkMDRAo1IkjzgAAAA1JREFUCNdj+P//fwMACXwDfrW+dCcAAAAASUVORK5CYII=";
+    //var wrap_bg = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAABmJLR0QA/wD/AP+gvaeTAAAACXBIWXMAAAsTAAALEwEAmpwYAAAAB3RJTUUH3gkMDRAo1IkjzgAAAA1JREFUCNdj+P//fwMACXwDfrW+dCcAAAAASUVORK5CYII=";
+    var wrap_bg = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyZpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuNS1jMDIxIDc5LjE1NTc3MiwgMjAxNC8wMS8xMy0xOTo0NDowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENDIDIwMTQgKFdpbmRvd3MpIiB4bXBNTTpJbnN0YW5jZUlEPSJ4bXAuaWlkOjRDMTUzQTYzNjk2QjExRTRBMTJBRjU1NjlCNkVBMDVGIiB4bXBNTTpEb2N1bWVudElEPSJ4bXAuZGlkOjRDMTUzQTY0Njk2QjExRTRBMTJBRjU1NjlCNkVBMDVGIj4gPHhtcE1NOkRlcml2ZWRGcm9tIHN0UmVmOmluc3RhbmNlSUQ9InhtcC5paWQ6NEMxNTNBNjE2OTZCMTFFNEExMkFGNTU2OUI2RUEwNUYiIHN0UmVmOmRvY3VtZW50SUQ9InhtcC5kaWQ6NEMxNTNBNjI2OTZCMTFFNEExMkFGNTU2OUI2RUEwNUYiLz4gPC9yZGY6RGVzY3JpcHRpb24+IDwvcmRmOlJERj4gPC94OnhtcG1ldGE+IDw/eHBhY2tldCBlbmQ9InIiPz6tD5QsAAAAD0lEQVR42mJiYGCQAggwAAApAB1BPs+SAAAAAElFTkSuQmCC";
     var showDiv = function (opt) {
         this.wrap = null;
         this.zz = null;
@@ -1850,7 +1876,7 @@ TGOGO.showCenterDiv_fn = (function () {
         show: function () {
             $("body").append(this.zz).append(this.wrap);
             this.zz.animate({
-                opacity: 0.4
+                opacity: 0.2
             }, 500);
             var width = parseInt(this.div.width()) + 20,
                 height = parseInt(this.div.height()) + 20;
@@ -2738,8 +2764,102 @@ TGOGO.productScroll = function(obj){
 
 
 
+//*****************************************************
+//数量输入框   带+，-控制
+//*****************************************************
+TGOGO.__numberControl = (function(){
+    var numberControl = function(opt){
+        this.max = opt.max;
+        this.min = opt.min;
+        this.input = opt.input;
+        this.addClass = opt.add_class;
+
+        this.add = null;
+        this.lower = null;
+
+        this.init();
+    };
+    numberControl.prototype = {
+        init:function(){
+            this.addButton();
+            this.addEvent();
+        },
+        addButton:function(){
+            var add = $("<div>+</div>"),
+                lower = $("<div>-</div>"),
+                css = {
+                    display:"inline-block",
+                    width:"15px",
+                    height:"15px",
+                    "line-height":"15px",
+                    border:"1px solid #888",
+                    "font-size":"12px",
+                    "text-align":"center",
+                    "font-weight":"blod",
+                    cursor:"pointer"
+                };
+
+            add.css(css).addClass(this.addClass);
+            lower.css(css).addClass(this.addClass);
+            add.insertAfter(this.input);
+            lower.insertBefore(this.input);
+
+            this.add = add;
+            this.lower = lower;
+        },
+        addEvent:function(){
+            var _this = this;
+            this.add.click(function(){
+                var val = $.trim(_this.input.val());
+                val++;
+                if(val > _this.max){
+                    val = _this.max;
+                }
+                _this.input.val(val);
+            });
+            this.lower.click(function(){
+                var val = $.trim(_this.input.val());
+                val--;
+                if(val < _this.min){
+                    val = _this.min;
+                }
+                _this.input.val(val);
+            });
+
+            DEVICE.addEvent(this.input.get(0),"input",function(){
+                var val = $.trim(_this.input.val());
+                if(val == "-" || val == ""){
+                    return;
+                }
+
+                val = parseInt(val);
+                if(val > _this.max){
+                    val = _this.max;
+                }
+                if(val < _this.min){
+                    val = _this.min;
+                }
+                _this.input.val(val);
+            });
+        }
+    };
+    return numberControl;
+})();
+TGOGO.numberControl = function(obj){
+    var max = obj.data("max_number"),
+        min = obj.data("min_number"),
+        add_class = obj.data("add_class");
 
 
+    a = new TGOGO.__numberControl({
+        add_class:add_class,
+        input:obj,
+        max:max,
+        min:min
+    });
+
+
+};
 
 
 
