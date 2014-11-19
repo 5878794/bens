@@ -59,8 +59,8 @@ var ZeroClipboard = {
 		var info = {
 			left: 0, 
 			top: 0, 
-			width: obj.width ? obj.width : obj.offsetWidth, 
-			height: obj.height ? obj.height : obj.offsetHeight
+			width: parseInt($(obj).width()),
+			height: parseInt($(obj).height())
 		};
 
 		while (obj && (obj != stopObj)) {
@@ -118,13 +118,14 @@ ZeroClipboard.Client.prototype = {
 		
 		// find X/Y position of domElement
 		var box = ZeroClipboard.getDOMObjectPosition(this.domElement, appendElem);
-		
+
+
 		// create floating DIV above element
 		this.div = document.createElement('div');
 		var style = this.div.style;
 		style.position = 'absolute';
-		style.left = '' + box.left + 'px';
-		style.top = '' + box.top + 'px';
+		style.left = 0;
+		style.top = 0;
 		style.width = '' + box.width + 'px';
 		style.height = '' + box.height + 'px';
 		style.zIndex = zIndex;
@@ -136,9 +137,12 @@ ZeroClipboard.Client.prototype = {
 		}
 		
 		// style.backgroundColor = '#f00'; // debug
-		
-		appendElem.appendChild(this.div);
-		
+
+
+		//appendElem.appendChild(this.div);
+		this.domElement.style.position = "relative";
+		this.domElement.appendChild(this.div);
+		console.log(box)
 		this.div.innerHTML = this.getHTML( box.width, box.height );
 	},
 	
@@ -148,15 +152,17 @@ ZeroClipboard.Client.prototype = {
 		var flashvars = 'id=' + this.id + 
 			'&width=' + width + 
 			'&height=' + height;
+
+		var style = "position:absolute;;left:0;top:0;";
 			
 		if (navigator.userAgent.match(/MSIE/)) {
 			// IE gets an OBJECT tag
 			var protocol = location.href.match(/^https/i) ? 'https://' : 'http://';
-			html += '<object classid="clsid:d27cdb6e-ae6d-11cf-96b8-444553540000" codebase="'+protocol+'download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=9,0,0,0" width="'+width+'" height="'+height+'" id="'+this.movieId+'" align="middle"><param name="allowScriptAccess" value="always" /><param name="allowFullScreen" value="false" /><param name="movie" value="'+ZeroClipboard.moviePath+'" /><param name="loop" value="false" /><param name="menu" value="false" /><param name="quality" value="best" /><param name="bgcolor" value="#ffffff" /><param name="flashvars" value="'+flashvars+'"/><param name="wmode" value="transparent"/></object>';
+			html += '<object style="'+style+'" classid="clsid:d27cdb6e-ae6d-11cf-96b8-444553540000" codebase="'+protocol+'download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=9,0,0,0" width="'+width+'" height="'+height+'" id="'+this.movieId+'" align="middle"><param name="allowScriptAccess" value="always" /><param name="allowFullScreen" value="false" /><param name="movie" value="'+ZeroClipboard.moviePath+'" /><param name="loop" value="false" /><param name="menu" value="false" /><param name="quality" value="best" /><param name="bgcolor" value="#ffffff" /><param name="flashvars" value="'+flashvars+'"/><param name="wmode" value="transparent"/></object>';
 		}
 		else {
 			// all other browsers get an EMBED tag
-			html += '<embed id="'+this.movieId+'" src="'+ZeroClipboard.moviePath+'" loop="false" menu="false" quality="best" bgcolor="#ffffff" width="'+width+'" height="'+height+'" name="'+this.movieId+'" align="middle" allowScriptAccess="always" allowFullScreen="false" type="application/x-shockwave-flash" pluginspage="http://www.macromedia.com/go/getflashplayer" flashvars="'+flashvars+'" wmode="transparent" />';
+			html += '<embed style="'+style+'" id="'+this.movieId+'" src="'+ZeroClipboard.moviePath+'" loop="false" menu="false" quality="best" bgcolor="#ffffff" width="'+width+'" height="'+height+'" name="'+this.movieId+'" align="middle" allowScriptAccess="always" allowFullScreen="false" type="application/x-shockwave-flash" pluginspage="http://www.macromedia.com/go/getflashplayer" flashvars="'+flashvars+'" wmode="transparent" />';
 		}
 		return html;
 	},
@@ -198,8 +204,8 @@ ZeroClipboard.Client.prototype = {
 		if (this.domElement && this.div) {
 			var box = ZeroClipboard.getDOMObjectPosition(this.domElement);
 			var style = this.div.style;
-			style.left = '' + box.left + 'px';
-			style.top = '' + box.top + 'px';
+			//style.left = '' + box.left + 'px';
+			//style.top = '' + box.top + 'px';
 		}
 	},
 	

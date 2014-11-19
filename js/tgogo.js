@@ -23,8 +23,8 @@
 //class = 　"__TGOGO__"　                     @必须写死
 //data-type = "copyButton"                   @必须写死
 //data-swf_path = "js/plus/copy_text/"       @swf地址相对于html（绝对或相对）
-//data-bind_input_id = "copy_text_input"     @获取要复制文字的dom的id
-//data-copy_success_fn = "copy_success"      @copy成功执行，会返回复制的文字
+//data-bind_input_id = "copy_text_input"     @获取要复制文字的input或textarea的id
+//data-copy_success_fn = "copy_success"      @copy成功执行
 
 //eg：
 //<input type="text" id="copy_text_input" value="ddaacc" />
@@ -223,6 +223,7 @@
 //data-z_index="100"                        @弹出层的z-index 层级
 //data-before_show_run = "before_show"      @弹出层打开前执行函数名
 //data-after_close_run = "after_close"      @弹出层关闭后执行函数名
+//data-close_btn_class = ""                 @带该class的dom元素点击都会执行关闭
 //fn_name = ""  "实例化的名称"  @自动生成，取这个属性可取到函数名
 //
 //eg:
@@ -234,6 +235,7 @@
 //data-z_index="100"
 //data-before_show_run = "before_show"
 //data-after_close_run = "after_close"
+//data-close_btn_class = ""
 //>
 //显示居中弹出层
 //</div>
@@ -1842,6 +1844,7 @@ TGOGO.showCenterDiv_fn = (function () {
         this.zz = null;
         this.div = opt.div;
         this.closeRun = opt.closeRun;
+        this.closeBtnClass = opt.closeBtnClass;
 
         if (typeof(this.div) === "string") {
             this.div = $("#" + this.div).css({display: "block"});
@@ -1899,9 +1902,15 @@ TGOGO.showCenterDiv_fn = (function () {
                 e.stopPropagation();
 //                e.preventDefault();
             });
+
+            if(!this.closeBtnClass){return;}
+            this.div.find("."+this.closeBtnClass).click(function(){
+                _this.destroy();
+            })
         },
         show: function () {
             $("body").append(this.zz).append(this.wrap);
+            TGOGO.run(this.div);
             this.zz.animate({
                 opacity: 0.2
             }, 500);
@@ -1926,6 +1935,9 @@ TGOGO.showCenterDiv_fn = (function () {
                 this.wrap.remove();
             }
 
+            if(this.closeBtnClass){
+                this.div.find("."+this.closeBtnClass).unbind("click");
+            }
 
             this.zz = null;
             this.wrap = null;
@@ -1941,6 +1953,7 @@ TGOGO.showCenterDiv = function (obj) {
         z_index = obj.data("z_index"),
         after_close_run = obj.data("after_close_run"),
         before_show_run = obj.data("before_show_run"),
+        close_btn_class = obj.data("close_btn_class") || "",
         _this = this,
         _id = DEVICE.counter(),
         fn_name = "_temp_showCenterDiv_fn_" + _id;
@@ -1952,11 +1965,12 @@ TGOGO.showCenterDiv = function (obj) {
     };
 
     DEVICE.addEvent(obj.get(0), event, function () {
-        before_show_run();
+        before_show_run(obj);
         window[fn_name] = new _this.showCenterDiv_fn({
             div: id,
             zIndex: z_index,
-            closeRun: after_close_run
+            closeRun: after_close_run,
+            closeBtnClass:close_btn_class
         });
     });
 
@@ -2932,7 +2946,13 @@ TGOGO.copyButton = function(obj){
     var swf_path = obj.data("swf_path") || "",
         input_id = obj.data("bind_input_id") || "",
         success = obj.data("copy_success_fn"),
-        input,clip;
+        input,
+        fn_name = DEVICE.counter();
+
+    fn_name = "__temp__copyButton__" + fn_name;
+
+    obj.attr({fn_name:fn_name});
+    console.log(fn_name)
 
     success = (window[success])?  window[success] : function(){};
     input = $("#"+input_id);
@@ -2943,29 +2963,29 @@ TGOGO.copyButton = function(obj){
     //swf相对于html的位置
     ZeroClipboard.setMoviePath( swf_path + 'ZeroClipboard.swf' );
     //创建新的Zero Clipboard对象
-    clip = new ZeroClipboard.Client();
+    window[fn_name] = new ZeroClipboard.Client();
     // will be set later on mouseDown   //清空剪贴板
-    clip.setText('');
+    window[fn_name].setText('');
     //设置鼠标移到复制框时的形状
-    clip.setHandCursor( true );
+    window[fn_name].setHandCursor( true );
     //启用css
-    clip.setCSSEffects( false );
+    window[fn_name].setCSSEffects( false );
     //复制完成后的监听事件
-    clip.addEventListener( 'complete', function(client, text) {
+    window[fn_name].addEventListener( 'complete', function(client, text) {
         success(text);
         // 复制一次后，hide()使复制按钮失效，防止重复计算使用次数
         //clip.hide();
     } );
-    clip.addEventListener( 'mouseDown', function(client) {
+    window[fn_name].addEventListener( 'mouseDown', function(client) {
         var tagname = obj.get(0).tagName;
         if(tagname == "input" || tagname == "textarea"){
-            clip.setText( input.val() );
+            window[fn_name].setText( input.val() );
         }else{
-            clip.setText( input.text() );
+            window[fn_name].setText( input.text() );
         }
     } );
     //id或dom
-    clip.glue( obj.get(0) );
+    window[fn_name].glue( obj.get(0) );
 };
 
 
