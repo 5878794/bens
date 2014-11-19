@@ -23,8 +23,8 @@
 //class = 　"__TGOGO__"　                     @必须写死
 //data-type = "copyButton"                   @必须写死
 //data-swf_path = "js/plus/copy_text/"       @swf地址相对于html（绝对或相对）
-//data-bind_input_id = "copy_text_input"     @获取要复制文字的input或textarea的id
-//data-copy_success_fn = "copy_success"      @copy成功执行
+//data-bind_input_id = "copy_text_input"     @获取要复制文字的dom的id
+//data-copy_success_fn = "copy_success"      @copy成功执行，会返回复制的文字
 
 //eg：
 //<input type="text" id="copy_text_input" value="ddaacc" />
@@ -2949,15 +2949,20 @@ TGOGO.copyButton = function(obj){
     //设置鼠标移到复制框时的形状
     clip.setHandCursor( true );
     //启用css
-    clip.setCSSEffects( true );
+    clip.setCSSEffects( false );
     //复制完成后的监听事件
     clip.addEventListener( 'complete', function(client, text) {
-        alert(text);
+        success(text);
         // 复制一次后，hide()使复制按钮失效，防止重复计算使用次数
         //clip.hide();
     } );
     clip.addEventListener( 'mouseDown', function(client) {
-        clip.setText( input.val() );
+        var tagname = obj.get(0).tagName;
+        if(tagname == "input" || tagname == "textarea"){
+            clip.setText( input.val() );
+        }else{
+            clip.setText( input.text() );
+        }
     } );
     //id或dom
     clip.glue( obj.get(0) );
