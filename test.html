@@ -24,6 +24,9 @@
     <script src="js/plus/datepicker/jquery-ui-1.10.4.custom.min.js" type="text/javascript"></script>
 
 
+
+    <script src="js/plus/copy_text/ZeroClipboard.js"></script>
+
     <!--  TODO bug  隐藏的ｄｉｖ　图片不能居中 -->
     <style>
         *{
@@ -144,6 +147,18 @@
 
 
 
+<input type="text" id="copy_text_input" value="ddaacc" />
+<div class="__TGOGO__"
+    data-type="copyButton"
+    data-swf_path = "js/plus/copy_text/"
+    data-bind_input_id = "copy_text_input"
+    data-copy_success_fn = "copy_success"
+>copy</div>
+
+
+
+
+
 
 
 <input
@@ -160,6 +175,23 @@
 <br/><br/><br/><br/><br/><br/>
 
 
+<style>
+    .test_1{
+        border: 1px solid #000066;
+    }
+    .test_1 div{
+        color: #999;
+    }
+    .test_1:hover{
+        border: 1px solid #f00;
+    }
+    .test_1:hover div{
+        color: #f00;
+    }
+</style>
+<div class="test_1">
+    <div>2222</div>
+</div>
 
 
 
