@@ -12,6 +12,32 @@
  * tab切换 表单提交  表单验证
  */
 
+//*****************************************************
+//带icon的下拉菜单，  取值还是取select的值
+//*****************************************************
+//说明：
+//class = 　"__TGOGO__"　                     @必须写死
+//data-type = "iconselect"                   @必须写死
+
+//option元素带data-iconurl属性，指到图片地址。
+
+
+//eg：
+//<select class="__TGOGO__"
+//id = "iconselect"
+//data-type="iconSelect"
+//style="height: 30px;"
+//>
+//<option data-iconurl="" value="1">1123123123</option>
+//<option selected data-iconurl="http://icons.iconarchive.com/icons/custom-icon-design/pretty-office-5/256/themes-icon.png" value="2">2</option>
+//<option data-iconurl="http://icons.iconarchive.com/icons/custom-icon-design/pretty-office-5/256/themes-icon.png" value="3">3</option>
+//<option data-iconurl="http://icons.iconarchive.com/icons/custom-icon-design/pretty-office-5/256/themes-icon.png" value="4">4</option>
+//</select>
+
+
+
+
+
 
 //*****************************************************
 //复制按钮
@@ -2987,6 +3013,242 @@ TGOGO.copyButton = function(obj){
     //id或dom
     window[fn_name].glue( obj.get(0) );
 };
+
+
+
+
+
+
+
+
+//*****************************************************
+//带icon的下拉菜单
+//*****************************************************
+TGOGO.__iconSelect = (function(){
+    var iconselect = function(opt){
+        this.dom = opt.obj;
+
+        this.width = parseInt(this.dom.width()) + 61;
+        this.height = parseInt(this.dom.height()) - 2;
+        this.rowNumber = 6;
+
+
+        this.select = null;     //select dom
+        this.lists = null;      //lists dom
+        this.selected = null;   //显示的dom
+
+        this.init();
+    };
+    iconselect.prototype = {
+        init:function(){
+
+            this.dom.css({display:"none"});
+
+            this.createDom();
+
+            this.createMain();
+
+            this.createListDom();
+            this.createList();
+
+            this.createEvent();
+        },
+        //创建容器
+        createDom:function(){
+            var div = $("<div></div>");
+            div.css({
+                width:this.width + "px",
+                height:this.height + "px",
+                border:"1px solid #e5e5e5",
+                position:"relative"
+            });
+
+            div.insertAfter(this.dom);
+            this.select = div;
+
+
+        },
+        //创建主显示
+        createMain:function(){
+            var dom = this.createRowClone();
+            this.select.append(dom);
+            this.selected = dom;
+        },
+        //创建列表的容器
+        createListDom:function(){
+            var div = $("<div></div>");
+            div.css({
+                width:this.width + "px",
+                "max-height":(this.height + 2) * this.rowNumber + "px",
+                position:"absolute", left:"-1px", top: this.height  + "px",
+                border:"1px solid #e5e5e5","z-index":"100000",
+                background:"#fff",
+                "overflow-y":"auto","overflow-x":"hidden",
+                display:"none"
+            });
+
+            this.lists = div;
+            this.select.append(div);
+        },
+        //创建行clone母版
+        createRowClone:function(){
+            var icon = $("<img src='' />"),
+                text = $("<div></div>"),
+                arrow = $("<span></span>"),
+                div = $("<p></p>");
+
+            icon.css({
+                width:"20px",height:"20px",display:"block",float:"left",padding:"0 10px 0 5px",
+                position:"relative",top:"3px", visibility: "hidden"
+            });
+            text.css({
+                height:"28px","line-height":"28px",float:"left",color:"#666"
+            });
+            arrow.css({
+                width:0,height:0,"border-top":"4px solid #666", float:"right", display:"block",
+                "border-left":"4px solid transparent","border-right":"4px solid transparent",
+                position:"relative", top:"11px","margin":"0 10px","font-size":0,
+                "font-adjust":"none"
+            });
+            div.css({
+                cursor:"pointer",width:"100%",height:"28px"
+            });
+
+            div.append(icon).append(text).append(arrow);
+            return div;
+        },
+        createList:function(){
+            var option = this.dom.find("option"),
+                _this = this,
+                selectDom = null,
+                id = 0;
+
+            option.each(function(){
+                var icon = $(this).data("iconurl"),
+                    text = $(this).text(),
+                    dom = _this.createRowClone(),
+                    isSelected = ($(this).attr("selected") == "selected");
+
+                id++;
+
+                $(this).attr({__id:id});
+                dom.attr({__id:id});
+                dom.find("span").remove();
+                dom.find("div").text(text);
+                if(icon){
+                    dom.find("img").attr({src:icon}).css({
+                        visibility: "visible"
+                    });
+                }
+
+                //还未赋值的话默认取第一个
+                if(!selectDom){
+                    selectDom = $(this);
+                }
+                //如果是选中的就替换
+                if(isSelected){
+                    selectDom = $(this);
+                }
+
+                _this.lists.append(dom);
+            });
+
+            if(selectDom){
+                var icon = selectDom.data("iconurl"),
+                    text = selectDom.text();
+                this.createSelected(icon,text);
+            }
+        },
+        createSelected:function(icon,text){
+            //赋值icon
+            if(icon){
+                this.selected.find("img").attr({src:icon}).css({
+                    visibility: "visible"
+                });
+            }else{
+                this.selected.find("img").css({visibility:"hidden"});
+            }
+
+            //赋值文本
+            if(text){
+                this.selected.find("div").text(text);
+            }else{
+                this.selected.find("div").text("");
+            }
+        },
+
+        createEvent:function(){
+            var _this = this,
+                isShow = false;
+
+            //select点击显示或关闭
+            this.selected.click(function(e){
+                e.stopPropagation();
+                e.preventDefault();
+
+                if(isShow){
+                    isShow = false;
+                    _this.lists.css({display:"none"});
+                }else{
+                    isShow = true;
+                    _this.lists.css({display:"block"});
+                }
+            });
+
+            //点菜单列表关闭并赋值  hover变色
+            this.lists.find("p").click(function(e){
+                e.stopPropagation();
+                e.preventDefault();
+
+                //ui赋值
+                var icon = $(this).find("img").attr("src"),
+                    text = $(this).text();
+                _this.createSelected(icon,text);
+                //select控件改变值
+                var __id = $(this).attr("__id");
+                _this.selectChange(__id);
+                //关闭
+                _this.lists.css({display:"none"});
+                isShow = false;
+            }).hover(function(){
+                $(this).css({background:"#f5f5f5"});
+            },function(){
+                $(this).css({background:"#fff"});
+            });
+
+
+            //点其它地方关闭
+            $("body").click(function(){
+                if(!isShow){return;}
+                _this.lists.css({display:"none"});
+                isShow = false;
+            })
+        },
+        //改变select的值
+        selectChange:function(id){
+            var lists = this.dom.find("option");
+            lists.each(function(){
+                var __id = $(this).attr("__id");
+                if(__id == id){
+                    $(this).attr({selected:"selected"});
+                }else{
+                    $(this).removeAttr("selected");
+                }
+            })
+        }
+    };
+    return iconselect;
+})();
+TGOGO.iconSelect = function(obj){
+
+    new TGOGO.__iconSelect({
+        obj:obj
+    })
+
+
+
+};
+
 
 
 
