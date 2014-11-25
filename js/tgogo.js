@@ -17,7 +17,7 @@
 //*****************************************************
 //说明：
 //class = 　"__TGOGO__"　                     @必须写死
-//data-type = "iconselect"                   @必须写死
+//data-type = "iconSelect"                   @必须写死
 
 //option元素带data-iconurl属性，指到图片地址。
 
@@ -728,14 +728,27 @@ TGOGO.banner_scroll_fn = (function () {
                 height = (this.direction == "x") ? this.winHeight : this.winHeight * this.imgLength;
 
 
-            this.body.css({
-                width: width + "px",
-                height: height + "px"
-            });
-            this.body.find("a").css({
-                width: this.winWidth + "px",
-                height: this.winHeight + "px"
-            })
+            if(this.direction == "x"){
+                this.body.css({
+                    width: width + "px",
+                    height: "100%"
+                });
+                this.body.find("a").css({
+                    width: this.winWidth + "px",
+                    height: "100%"
+                })
+            }else{
+                this.body.css({
+                    width: "100%",
+                    height: height + "px"
+                });
+                this.body.find("a").css({
+                    width: "100%",
+                    height: this.winHeight + "px"
+                })
+            }
+
+
 
 
         },
@@ -914,6 +927,7 @@ TGOGO.banner_scroll_fn = (function () {
 })();
 TGOGO.bannerScroll = function (obj) {
     var body = $("<div></div>");
+    //body.addClass("auto_size");
     obj.append(body);
     body.append(obj.find("a"));
 
@@ -3240,7 +3254,6 @@ TGOGO.__iconSelect = (function(){
     return iconselect;
 })();
 TGOGO.iconSelect = function(obj){
-
     new TGOGO.__iconSelect({
         obj:obj
     })
