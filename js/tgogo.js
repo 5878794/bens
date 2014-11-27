@@ -74,6 +74,7 @@
 //data-type: numberControl                @必须写死
 //data-max_number = "10"                @能输入的最大值
 //data-min_number = "-3"                @能输入的最小值
+//data-change_fn = "change_fn"          @input输入框值变化时触发的函数，并返回jq的input对象(该函数必须在window对象下)
 //data-add_class = ""                   @加减号附带的样式
 
 //eg：
@@ -82,6 +83,7 @@
 //data-type="numberControl"
 //data-max_number = "10"
 //data-min_number = "-3"
+//data-change_fn = "change_fn"
 //type="text"
 //value="1"
 //name="text"
@@ -2854,6 +2856,7 @@ TGOGO.__numberControl = (function(){
         this.min = opt.min;
         this.input = opt.input;
         this.addClass = opt.add_class;
+        this.changeFn = opt.changeFn || function(){};
 
         this.add = null;
         this.lower = null;
@@ -2902,6 +2905,7 @@ TGOGO.__numberControl = (function(){
                     val = _this.max;
                 }
                 _this.input.val(val);
+                _this.changeFn(_this.input);
             });
             this.lower.click(function(){
                 var val = $.trim(_this.input.val());
@@ -2910,6 +2914,7 @@ TGOGO.__numberControl = (function(){
                     val = _this.min;
                 }
                 _this.input.val(val);
+                _this.changeFn(_this.input);
             });
 
             this.add.hover(function(){
@@ -2939,6 +2944,7 @@ TGOGO.__numberControl = (function(){
             DEVICE.addEvent(this.input.get(0),"input",function(){
                 var val = $.trim(_this.input.val());
                 if(val == "-" || val == ""){
+                    _this.changeFn(_this.input);
                     return;
                 }
 
@@ -2950,6 +2956,7 @@ TGOGO.__numberControl = (function(){
                     val = _this.min;
                 }
                 _this.input.val(val);
+                _this.changeFn(_this.input);
             });
         }
     };
@@ -2958,14 +2965,17 @@ TGOGO.__numberControl = (function(){
 TGOGO.numberControl = function(obj){
     var max = obj.data("max_number"),
         min = obj.data("min_number"),
+        changeFn = obj.data("change_fn"),
         add_class = obj.data("add_class");
 
+    changeFn = window[changeFn] || function(){};
 
     a = new TGOGO.__numberControl({
         add_class:add_class,
         input:obj,
         max:max,
-        min:min
+        min:min,
+        changeFn:changeFn
     });
 
 

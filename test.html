@@ -144,6 +144,11 @@
             window[fn].ajaxSuccess();
         }
 
+
+        change_fn = function(obj){
+            console.log(obj.val())
+        }
+
     </script>
 </head>
 <body>
@@ -190,6 +195,7 @@
     data-max_number = "10"
     data-min_number = "-3"
     data-add_class = ""
+    data-change_fn = "change_fn"
     type="text"
     value="1"
     name="text"
