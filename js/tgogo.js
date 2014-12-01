@@ -610,8 +610,8 @@ TGOGO.banner_scroll_fn = (function () {
         this.pointBg = "#ccc";
         this.pointSelectBg = "#f00";
 
-        this.winWidth = null;
-        this.winHeight = null;
+        this.winWidth = parseInt(this.win.width());
+        this.winHeight = parseInt(this.win.height());
 
         this.page = 0;
         this.maxPage = this.imgLength - 1;
@@ -622,7 +622,6 @@ TGOGO.banner_scroll_fn = (function () {
         this.touchStartTime = 0;
         this.touchPoints = [];
         this.leftPx = 0;
-
         this.init();
     };
     scrollBanner.prototype = {
