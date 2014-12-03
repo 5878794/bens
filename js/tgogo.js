@@ -8,9 +8,42 @@
  * Email:5878794@qq.com
  * =====================================
  * Desc:  依赖　　jq.js    device.js
- * TODO
- * tab切换 表单提交  表单验证
  */
+
+
+//*****************************************************
+//时间倒计时
+//*****************************************************
+//说明：
+//class = 　"__TGOGO__"　                     @必须写死
+//data-type = "countDown"                    @必须写死
+//data-server_time="1417585770161"           @服务器当前时间时间戳
+//data-start_time=" 1417585870161"           @开始的时间时间戳
+//data-start_fn = "ffdeadf"                  @开始时执行函数名  window对象下
+
+
+//子元素 小时、分、秒、毫秒显示区域需要带   data-show 的指定属性
+//data-show="hour"    小时
+//data-show="minute"    分
+//data-show="second"    秒
+//data-show="millisecond"  毫秒（可无该项）
+
+//eg:
+//<div class="__TGOGO__"
+//    data-type="countDown"
+//    data-server_time="1417585770161"
+//    data-start_time=" 1417585870161"
+//    data-start_fn = "ffdeadf"
+//>
+//    <span data-show="hour">1</span>
+//    <span data-show="minute">1</span>
+//    <span data-show="second">2</span>
+//    <span data-show="millisecond">3</span>
+//</div>
+
+
+
+
 
 //*****************************************************
 //带icon的下拉菜单，  取值还是取select的值
@@ -3270,6 +3303,130 @@ TGOGO.iconSelect = function(obj){
 
 
 };
+
+
+
+
+
+
+
+
+//*****************************************************
+//时间倒计时
+//*****************************************************
+TGOGO.__countDown = (function(){
+    var countDown = function(opt){
+        this.server_time = opt.server_time;
+        this.start_time = opt.start_time;
+        this.start_fn = opt.start_fn;
+
+        this.body = opt.body;
+        this.hourObj = opt.hour_obj;
+        this.minuteObj = opt.minute_obj;
+        this.secondObj = opt.second_obj;
+        this.millisecondObj = opt.millisecond_obj;
+
+        this.time = 1000;
+        this.diffTime = this.server_time - new Date().getTime();
+        this.fn = null;
+
+        //要显示毫秒
+        if(this.millisecondObj.length == 1){
+            this.time = 100;
+        }
+
+        this.init();
+
+    };
+    countDown.prototype = {
+        init:function(){
+            this.run();
+        },
+        checkTime:function(now_time){
+            var state = (now_time < this.start_time);
+
+            if(!state){
+                this.end();
+                clearInterval(this.fn);
+            }
+
+            return state;
+        },
+        run:function(){
+            var _this = this;
+
+            this.fn = setInterval(function(){
+                var now_time =  new Date().getTime() + _this.diffTime;
+                if(!_this.checkTime(now_time)){return;}
+
+                _this.setDom(_this.start_time - now_time);
+
+            },this.time);
+        },
+        setDom:function(timestame){
+            var h = parseInt(timestame / 3600000);
+            timestame -= h*3600000;
+            var m = parseInt(timestame / 60000);
+            timestame -= m*60000;
+            var s = parseInt(timestame / 1000);
+            timestame -= s*1000;
+            var hm = parseInt(timestame/100);
+
+            this.hourObj.text(h);
+            this.minuteObj.text(m);
+            this.secondObj.text(s);
+            if(this.millisecondObj.length == 1){
+                this.millisecondObj.text(hm);
+            }
+
+        },
+        end:function(){
+            this.hourObj.text(0);
+            this.minuteObj.text(0);
+            this.secondObj.text(0);
+            if(this.millisecondObj.length == 1){
+                this.millisecondObj.text(0);
+            }
+
+            this.start_fn();
+        }
+    };
+    return countDown;
+})();
+TGOGO.countDown = function(obj){
+    var server_time = obj.data("server_time") || new Date().getTime(),
+        start_time = obj.data("start_time"),
+        start_fn = obj.data("start_fn") || "",
+        hour_obj = obj.find("[data-show='hour']"),
+        minute_obj = obj.find("[data-show='minute']"),
+        second_obj = obj.find("[data-show='second']"),
+        millisecond_obj = obj.find("[data-show='millisecond']");
+
+    if(hour_obj.length != 1 || minute_obj.length != 1 || second_obj.length !=1){
+        return;
+    }
+
+    start_fn = (start_fn && window[start_fn])? window[start_fn] : function(){};
+
+
+
+    new TGOGO.__countDown({
+        body:obj,
+        server_time:server_time,
+        start_time:start_time,
+        start_fn:start_fn,
+        hour_obj:hour_obj,
+        minute_obj:minute_obj,
+        second_obj:second_obj,
+        millisecond_obj:millisecond_obj
+    });
+
+};
+
+
+
+
+
 
 
 
