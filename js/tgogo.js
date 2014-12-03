@@ -11,6 +11,35 @@
  */
 
 
+
+//*****************************************************
+//点击显示隐藏div
+//*****************************************************
+//说明：
+//class = 　"__TGOGO__"　                     @必须写死
+//data-type = "countDown"                    @必须写死
+//data-id="a_v_c"                            @要控制的div的id
+//data-show_class="show_hied_1"              @div显示时该元素附加的class，同时移除隐藏时的class
+//data-hide_class="show_hied_2"              @div隐藏时该元素附加的class，同时移除显示时的class
+
+
+//eg:
+//<div class="__TGOGO__"
+//    data-type="showHideDiv"
+//    data-id="a_v_c"
+//    data-start_state="hide"
+//    data-show_class="show_hied_1"
+//    data-hide_class="show_hied_2"
+//>
+//显示隐藏div
+//</div>
+//<div id="a_v_c">阿萨法的算法sdk就发了狂受打击法拉克设计的阿斯顿了房间啊lsd解放路口</div>
+
+
+
+
+
+
 //*****************************************************
 //时间倒计时
 //*****************************************************
@@ -3428,8 +3457,41 @@ TGOGO.countDown = function(obj){
 
 
 
+//*****************************************************
+//点击显示隐藏div
+//*****************************************************
+TGOGO.showHideDiv = function(obj){
+    var div_id = obj.data("id"),
+        state = obj.data("start_state"),
+        show_class = obj.data("show_class"),
+        hide_class = obj.data("hide_class"),
+        div = $("#"+div_id);
+
+    if(div.length != 1){return}
+
+    obj.css({cursor:"pointer"});
+
+    if(state == "show"){
+        div.css({display:"block"});
+        obj.attr({is_show:"true"}).addClass(show_class).removeClass(hide_class);
+    }else{
+        div.css({display:"none"});
+        obj.attr({is_show:"false"}).addClass(hide_class).removeClass(show_class);
+    }
 
 
+    obj.click(function(){
+        if($(this).attr("is_show") == "true"){
+            console.log("hide")
+            div.css({display:"none"});
+            $(this).attr({is_show:"false"}).addClass(hide_class).removeClass(show_class);
+        }else{
+            console.log("show")
+            div.css({display:"block"});
+            $(this).attr({is_show:"true"}).addClass(show_class).removeClass(hide_class);
+        }
+    });
+};
 
 
 
