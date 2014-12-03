@@ -2949,6 +2949,12 @@ TGOGO.__numberControl = (function(){
                     "user-select":"none"
                 };
 
+            if(DEVICE.isIe && DEVICE.ver == 8){
+                css.position = "relative";
+                css.top = "5px"
+            }
+
+
             add.css(css).addClass(this.addClass);
             lower.css(css).addClass(this.addClass);
             add.insertAfter(this.input);
