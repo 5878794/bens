@@ -3031,7 +3031,7 @@ TGOGO.numberControl = function(obj){
 
     changeFn = window[changeFn] || function(){};
 
-    a = new TGOGO.__numberControl({
+    new TGOGO.__numberControl({
         add_class:add_class,
         input:obj,
         max:max,
