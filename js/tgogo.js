@@ -2800,7 +2800,6 @@ TGOGO.__productScroll = (function(){
         }
 
         this.isMove = false;
-
         this.init();
     };
     productScroll.prototype = {
@@ -3069,7 +3068,6 @@ TGOGO.copyButton = function(obj){
     fn_name = "__temp__copyButton__" + fn_name;
 
     obj.attr({fn_name:fn_name});
-    console.log(fn_name)
 
     success = (window[success])?  window[success] : function(){};
     input = $("#"+input_id);
@@ -3488,11 +3486,9 @@ TGOGO.showHideDiv = function(obj){
 
     obj.click(function(){
         if($(this).attr("is_show") == "true"){
-            console.log("hide")
             div.css({display:"none"});
             $(this).attr({is_show:"false"}).addClass(hide_class).removeClass(show_class);
         }else{
-            console.log("show")
             div.css({display:"block"});
             $(this).attr({is_show:"true"}).addClass(show_class).removeClass(hide_class);
         }
