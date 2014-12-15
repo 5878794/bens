@@ -13,6 +13,50 @@
 
 
 //*****************************************************
+//分页控件
+//*****************************************************
+//说明：
+//class = 　"__TGOGO__"　                     @必须写死
+//data-type = "pagination"                    @必须写死
+//data-max_page = "20"                        @最大页数
+//data-now_page = "1"                         @当前页数
+//data-color = ""                             @字体颜色
+//data-hover_color = ""                       @鼠标悬浮颜色
+//data-background = ""                        @背景颜色
+//data-hover_background = ""                  @鼠标悬浮背景颜色
+//data-page_url = "/bens/test.html"           @分页跳转的地址
+//data-url_params = "type_1,type_2,type_3,type_4,type_5"   @分页跳转的参数名（同下面的input的id相同，val取input的值）
+//data-page_key = "page"                      @地址中分页数的key
+
+
+//eg:
+//<div class="__TGOGO__"
+//    id = "adf2233"
+//    style="text-align: center;"
+//    data-type="pagination"
+//    data-max_page = "20"
+//    data-now_page = "1"
+//    data-color = ""
+//    data-hover_color = ""
+//    data-background = ""
+//    data-hover_background = ""
+//    data-page_url = "/bens/test.html"
+//    data-url_params = "type_1,type_2,type_3,type_4,type_5"
+//    data-page_key = "page"
+//>
+//    <input type="hidden" id="type_1" value="" />
+//    <input type="hidden" id="type_2" value="" />
+//    <input type="hidden" id="type_3" value="" />
+//    <input type="hidden" id="type_4" value="" />
+//    <input type="hidden" id="type_5" value="" />
+//</div>
+
+
+
+
+
+
+//*****************************************************
 //点击显示隐藏div
 //*****************************************************
 //说明：
@@ -3489,6 +3533,274 @@ TGOGO.showHideDiv = function(obj){
         }
     });
 };
+
+
+
+
+
+
+//*****************************************************
+//分页控件
+//*****************************************************
+TGOGO.__pagination_fn = (function(){
+    var pagination = function(opt){
+        this.body = opt.body;
+        this.maxPage = opt.max_page || 1;
+        this.nowPage = opt.now_page || 1;
+        this.color = opt.color || "#666";
+        this.hoverColor = opt.hover_color || "#cf1e2c";
+        this.background = opt.background || "#fff";
+        this.hoverBackground = opt.hover_background || "#fff";
+        this.urlParams = opt.url_params || [];
+        this.pageKey = opt.page_key || "page";
+        this.pageUrl = opt.page_url || "";
+
+        this.init();
+
+    };
+    pagination.prototype = {
+        init:function(){
+            this.addDom();
+
+        },
+        //增加dom元素
+        addDom:function(){
+            this.createBtn("pre");
+            this.createNumberDom();
+            this.createBtn("next");
+        },
+        //增加普通页码
+        createNumberDom:function(){
+            //总页数小于等于8
+            if(this.maxPage<=8){
+                for(var i=1,l=this.maxPage;i<=l;i++){
+                    this.createBtn(i);
+                }
+                return;
+            }
+
+            //总页数大于8
+            if(this.nowPage >=5 && this.nowPage<=this.maxPage-4){
+                this.createBtn(1);
+                this.createPoint();
+                for(var z=this.nowPage-2;z<this.nowPage+3;z++){
+                    this.createBtn(z);
+                }
+                this.createPoint();
+                this.createBtn(this.maxPage);
+            }else if(this.nowPage <=5){
+                for(var j=1;j<6;j++){
+                    this.createBtn(j);
+                }
+                this.createPoint();
+                this.createBtn(this.maxPage);
+            }else{
+                this.createBtn(1);
+                this.createPoint();
+                for(var t=this.maxPage-4;t<=this.maxPage;t++){
+                    this.createBtn(t);
+                }
+            }
+
+
+        },
+        //创建点点
+        createPoint:function(){
+            var div = $("<div>...</div>");
+            div.css({
+                width:"30px",
+                height:"20px",
+                "line-height":"20px",
+                display:"inline-block",
+                "text-align":"center",
+                position:"relative",
+                top:"-5px"
+            });
+            this.body.append(div);
+        },
+        //创建上一页，下一页 等
+        createBtn:function(page){
+            if(this.nowPage ==  1  && page == "pre"){
+                return;
+            }
+            if(this.nowPage == this.maxPage && page == "next"){
+                return;
+            }
+
+            var text = page,
+                width = "30",
+                padding = 0;
+            if(page == "pre"){
+                text = "上一页";
+                width = "60";
+                padding = "0 0 0 10px";
+            }
+            if(page == "next"){
+                text = "下一页";
+                width = "60";
+                padding = "0 10px 0 0";
+            }
+            var div = $("<a>"+text+"</a>");
+
+            div.css({
+                display:"inline-block",
+                "text-align":"center",
+                padding:padding,
+                width:width+"px",
+                border:"1px solid "+ this.color,
+                color:this.color,
+                position:"relative",
+                cursor:"pointer",
+                height:"30px",
+                "line-height":"30px",
+                margin:"0 5px"
+            });
+
+
+            //生成箭头
+            var arrow = $("<div></div>");
+            if(page == "pre"){
+                arrow.css({
+                    "border-right":"8px solid "+this.color,
+                    "border-top":"6px solid transparent",
+                    "border-bottom":"6px solid transparent",
+                    position:"absolute",
+                    left:"3px",
+                    top:"9px"
+                });
+                div.append(arrow);
+            }
+            if(page == "next"){
+                arrow.css({
+                    "border-left":"8px solid "+this.color,
+                    "border-top":"6px solid transparent",
+                    "border-bottom":"6px solid transparent",
+                    position:"absolute",
+                    right:"3px",
+                    top:"9px"
+                });
+                div.append(arrow);
+            }
+
+
+
+            this.bindEvent(page,div);
+            this.body.append(div);
+        },
+        //绑定事件
+        bindEvent:function(type,obj){
+            var _this = this;
+
+
+            //如果是当前页
+            if(_this.nowPage == obj.text()){
+                obj.css({
+                    cursor:"auto",
+                    border:"1px solid "+this.hoverColor,
+                    color:this.hoverColor,
+                    background:this.hoverBackground
+                });
+                return;
+            }
+
+
+            //绑定
+            obj.click(function(){
+                if(type == "pre"){
+                    _this.goTo(_this.nowPage - 1);
+                    return;
+                }
+                if(type == "next"){
+                    _this.goTo(_this.nowPage + 1);
+                    return;
+                }
+
+                _this.goTo(obj.text());
+
+
+            }).hover(function(){
+                _this.changeColor($(this),type,"on");
+            },function(){
+                _this.changeColor($(this),type,"out");
+            });
+
+
+        },
+        changeColor:function(obj,type,state){
+            var _this = this,
+                color = (state == "on")? _this.hoverColor : _this.color,
+                bg = (state == "on")? _this.hoverBackground : _this.background;
+
+            if(type == "pre"){
+                obj.find("div").css({
+                    "border-right":"8px solid "+ color,
+                    "border-top":"6px solid transparent",
+                    "border-bottom":"6px solid transparent"
+                })
+            }
+
+            if(type == "next"){
+                obj.find("div").css({
+                    "border-left":"8px solid "+ color,
+                    "border-top":"6px solid transparent",
+                    "border-bottom":"6px solid transparent"
+                })
+            }
+
+            obj.css({
+                border:"1px solid "+ color,
+                color:color,
+                background:bg
+            });
+
+
+        },
+        //页面跳转
+        goTo:function(page){
+            var param = this.urlParams,
+                val = "",
+                url = (this.pageUrl.indexOf("?") > -1)? this.pageUrl+"&" : this.pageUrl + "?";
+
+
+            for(var i=0,l=param.length;i<l;i++){
+                var id = param[i],
+                    this_val = $("#"+id).val();
+                val += id + "=" + this_val + "&"
+            }
+
+            window.location.href = url + val +this.pageKey+"="+page;
+        }
+    };
+    return pagination;
+})();
+TGOGO.pagination = function(obj){
+    var max_page = obj.data("max_page") || 1,
+        now_page = obj.data("now_page") || 1,
+        color = obj.data("color") || "#666",
+        hover_color = obj.data("hover_color") || "#cf1e2c",
+        background = obj.data("background")  || "#fff",
+        hover_background = obj.data("hover_background") || "#fff",
+        url_params = obj.data("url_params") || "",
+        page_key = obj.data("page_key") || "page",
+        page_url = obj.data("page_url") || "";
+
+    url_params = url_params.split(",");
+
+
+    new TGOGO.__pagination_fn({
+        body:obj,
+        max_page:max_page,
+        now_page:now_page,
+        color:color,
+        hover_color:hover_color,
+        background:background,
+        hover_background:hover_background,
+        url_params:url_params,
+        page_key:page_key,
+        page_url:page_url
+    });
+};
+
 
 
 
