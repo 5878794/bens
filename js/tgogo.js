@@ -3813,31 +3813,43 @@ TGOGO.pagination = function(obj){
 //获取图片要显示的大小
 //*****************************************************
 TGOGO.__getNewImageSize = function (imgwidth, imgheight, objwidth, objheight) {
-    var newimgwidth, newimgheight;
+    var newimgwidth,newimgheight;
 
-    if (imgwidth > 0 && imgheight > 0) {
-        if (imgwidth / imgheight >= objwidth / objheight) {
-            if (imgwidth > objwidth) {
+    if(!imgwidth || !imgheight){
+        return {
+            width:objwidth,
+            height:objheight
+        }
+    }
+
+
+    if(imgwidth>0 && imgheight>0){
+        if(imgwidth/imgheight>=objwidth/objheight){
+            if(imgwidth>objwidth){
                 newimgwidth = objwidth;
-                newimgheight = imgheight * objwidth / imgwidth;
-            } else {
+                newimgheight = imgheight*objwidth/imgwidth;
+            }else{
                 newimgwidth = imgwidth;
                 newimgheight = imgheight;
             }
-        } else {
-            if (imgheight > objheight) {
+        }else{
+            if(imgheight>objheight){
                 newimgheight = objheight;
-                newimgwidth = imgwidth * objheight / imgheight;
-            } else {
+                newimgwidth = imgwidth*objheight/imgheight;
+            }else{
                 newimgwidth = imgwidth;
                 newimgheight = imgheight;
             }
         }
+    }else{
+        newimgwidth = objwidth;
+        newimgheight = objheight;
     }
 
+
     return {
-        width: newimgwidth,
-        height: newimgheight
+        width:newimgwidth,
+        height:newimgheight
     }
 };
 
@@ -3948,5 +3960,214 @@ TGOGO.loading = {
 
 
 
+//*****************************************************
+//商品图片局部放大
+//*****************************************************
+TGOGO.imgEnlarged_fn = (function(){
+    var base64 = "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyZpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuNi1jMDE0IDc5LjE1Njc5NywgMjAxNC8wOC8yMC0wOTo1MzowMiAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENDIDIwMTQgKFdpbmRvd3MpIiB4bXBNTTpJbnN0YW5jZUlEPSJ4bXAuaWlkOkFFMTgxMUZGODVFNTExRTRBMUU2RjUyRUQ5QUNCRjg1IiB4bXBNTTpEb2N1bWVudElEPSJ4bXAuZGlkOkFFMTgxMjAwODVFNTExRTRBMUU2RjUyRUQ5QUNCRjg1Ij4gPHhtcE1NOkRlcml2ZWRGcm9tIHN0UmVmOmluc3RhbmNlSUQ9InhtcC5paWQ6QUUxODExRkQ4NUU1MTFFNEExRTZGNTJFRDlBQ0JGODUiIHN0UmVmOmRvY3VtZW50SUQ9InhtcC5kaWQ6QUUxODExRkU4NUU1MTFFNEExRTZGNTJFRDlBQ0JGODUiLz4gPC9yZGY6RGVzY3JpcHRpb24+IDwvcmRmOlJERj4gPC94OnhtcG1ldGE+IDw/eHBhY2tldCBlbmQ9InIiPz6krjdcAAAAD0lEQVR42mJiYGBoAAgwAACPAIPkdzb8AAAAAElFTkSuQmCC";
+    var imgEnlarged = function(opt){
+        this.body = opt.obj;
+
+        this.div = null;
+        this.img = this.body.find("img");
+        this.bodyWidth = parseInt(this.body.width());
+        this.bodyHeight = parseInt(this.body.height());
 
 
+
+        this.isLoaded = false;
+        this.imgWidth = null;
+        this.imgHeight = null;
+        this.scale = 1;
+        this.zz = null;
+        this.eventDiv = null;
+        this.zzWidth = null;
+        this.zzHeight = null;
+        this.zzMaxLeft = null;
+        this.zzMaxTop = null;
+        this.bigImg = null;
+
+        this.mouseIn = false;
+
+        this.init();
+    };
+    imgEnlarged.prototype = {
+        init:function(){
+            this.createDiv();
+            this.createZZ();
+            this.createEventDiv();
+            this.addEvent();
+
+            var src = this.img.attr("src");
+            this.changeImg(src);
+        },
+        createDiv:function(){
+            this.body.css({position:"relative"});
+
+            var width = this.bodyWidth,
+                height = this.bodyHeight,
+                div = $("<div></div>");
+
+            div.css({
+                width:width+"px",
+                height:height+"px",
+                background:"#fff",
+                position:"absolute",
+                left:width+"px",
+                top:0,
+                "z-index":"11",
+                display:"none",
+                "overflow":"hidden"
+            });
+
+
+            this.div = div;
+            this.body.append(div);
+        },
+        addEvent:function(){
+            var _this = this;
+            this.eventDiv.mouseover(function(e){
+                if(!_this.isLoaded){return;}
+                if(_this.mouseIn){return;}
+                _this.mouseIn = true;
+                _this.setZZ();
+                _this.showBigImg();
+
+            });
+
+
+            this.eventDiv.mousemove(function(e){
+                if(!_this.isLoaded){return;}
+                if(!_this.mouseIn){return;}
+                var x = e.offsetX - _this.zzWidth/2,
+                    y = e.offsetY - _this.zzHeight/2;
+
+                x = (x<0)? 0 : x;
+                x = (x>_this.zzMaxLeft)? _this.zzMaxLeft : x;
+                y = (y<0)? 0 : y;
+                y = (y>_this.zzMaxTop)? _this.zzMaxTop : y;
+
+
+                _this.moveZZ(x,y);
+                _this.moveImg(x,y);
+            });
+
+
+            this.eventDiv.mouseout(function(){
+                if(!_this.isLoaded){return;}
+                _this.mouseIn = false;
+                _this.zz.css({display:"none"});
+                _this.div.css({display:"none"});
+                _this.div.html("");
+            });
+
+
+        },
+
+        changeImg:function(src){
+            this.src = src;
+            var img = new Image(),
+                _this = this;
+
+            img.onload = function(){
+                _this.autoScale(this);
+            };
+            img.src = src;
+        },
+        autoScale:function(img){
+            var width = img.width,
+                height = img.height,
+                newSize = TGOGO.__getNewImageSize(width,height,this.bodyWidth,this.bodyHeight);
+
+            this.imgWidth = width;
+            this.imgHeight = height;
+            this.scale = newSize.width / width;
+            this.zzWidth = this.bodyWidth * this.scale;
+            this.zzHeight = this.bodyHeight * this.scale;
+            this.zzMaxLeft = this.bodyWidth - this.zzWidth;
+            this.zzMaxTop = this.bodyHeight - this.zzHeight;
+            this.imgTop = (this.bodyHeight - newSize.height)/2;
+            this.imgLeft = (this.bodyWidth - newSize.width)/2;
+
+            this.img.css({
+                width:newSize.width + "px",
+                height:newSize.height + "px",
+                position:"absolute",
+                left:this.imgLeft +"px",
+                top:this.imgTop + "px"
+            });
+
+            this.isLoaded = true;
+        },
+        createEventDiv:function(){
+            var div = $("<div></div>");
+            div.css({
+                position:"absolute",
+                left:0,top:0,right:0,bottom:0,
+                "z-index":20,
+                cursor:"move"
+            });
+            this.body.append(div);
+            this.eventDiv = div;
+        },
+        createZZ:function(){
+            var div = $("<div></div>");
+            div.css({
+                position:"absolute",
+                left:0,
+                top:0,
+                width:0,
+                height:0,
+                border:"1px solid #555",
+                background:"url("+base64+")",
+                "z-index":"10",
+                display:"none"
+            });
+            this.zz = div;
+            this.body.append(div);
+        },
+        setZZ:function(){
+            this.zz.css({
+                width:this.zzWidth-2 + "px",
+                height:this.zzHeight -2 +"px",
+                display:"block"
+            });
+        },
+        moveZZ:function(x,y){
+            this.zz.css({
+                left:x+"px",
+                top:y+"px"
+            })
+        },
+        showBigImg:function(){
+            var img = new Image();
+            img.src = this.src;
+            this.div.append(img);
+            $(img).css({
+                position:"absolute",
+                left:0,
+                top:0,
+                width:this.imgWidth +"px",
+                height:this.imgHeight + "px"
+            });
+            this.bigImg = $(img);
+            this.div.css({display:"block"});
+        },
+        moveImg:function(x,y){
+            x = (this.imgLeft - x)/this.scale;
+            y = (this.imgTop - y)/this.scale;
+            this.bigImg.css({
+                left:x+"px",
+                top:y+"px"
+            })
+
+        }
+
+    };
+    return imgEnlarged;
+})();
+TGOGO.imgEnlarged = function(obj){
+    new TGOGO.imgEnlarged_fn({
+        obj:obj
+    })
+};
