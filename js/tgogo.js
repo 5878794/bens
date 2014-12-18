@@ -11,6 +11,32 @@
  */
 
 
+//*****************************************************
+//商品图片局部放大
+//*****************************************************
+//说明：
+//class = 　"__TGOGO__"　                     @必须写死
+//data-type = "imgEnlarged"                    @必须写死
+//fn_name = ""                  @自动生成实例化的名称
+
+
+//更换图片
+//var fn_name = $("#id").attr("fn_name");
+//window[fn_name].changeImg(src);
+
+
+//eg:
+//<div class="__TGOGO__"
+//    style="width: 300px;height: 300px; margin-left: 100px;"
+//    data-type="imgEnlarged"
+//>
+//    <img src="image/loading.gif" />
+//</div>
+
+
+
+
+
 
 //*****************************************************
 //分页控件
@@ -4096,6 +4122,7 @@ TGOGO.imgEnlarged_fn = (function(){
                 left:this.imgLeft +"px",
                 top:this.imgTop + "px"
             });
+            this.img.attr({src:this.src});
 
             this.isLoaded = true;
         },
@@ -4167,7 +4194,10 @@ TGOGO.imgEnlarged_fn = (function(){
     return imgEnlarged;
 })();
 TGOGO.imgEnlarged = function(obj){
-    new TGOGO.imgEnlarged_fn({
+    var fn_name = "imgEnlarged_fn" + DEVICE.counter();
+    obj.attr({fn_name:fn_name});
+
+    window[fn_name] = new TGOGO.imgEnlarged_fn({
         obj:obj
     })
 };
