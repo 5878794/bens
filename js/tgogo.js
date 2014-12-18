@@ -4120,7 +4120,8 @@ TGOGO.imgEnlarged_fn = (function(){
                 height:newSize.height + "px",
                 position:"absolute",
                 left:this.imgLeft +"px",
-                top:this.imgTop + "px"
+                top:this.imgTop + "px",
+                "z-index":"14"
             });
             this.img.attr({src:this.src});
 
@@ -4132,7 +4133,9 @@ TGOGO.imgEnlarged_fn = (function(){
                 position:"absolute",
                 left:0,top:0,right:0,bottom:0,
                 "z-index":20,
-                cursor:"move"
+                cursor:"move",
+                background:"#fff",
+                opacity:"0"
             });
             this.body.append(div);
             this.eventDiv = div;
@@ -4147,7 +4150,7 @@ TGOGO.imgEnlarged_fn = (function(){
                 height:0,
                 border:"1px solid #555",
                 background:"url("+base64+")",
-                "z-index":"10",
+                "z-index":"16",
                 display:"none"
             });
             this.zz = div;
