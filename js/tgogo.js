@@ -22,12 +22,27 @@
 //data-text = "非常不满1,不满意3,一般5,满意7,非常满意9"    @星星后的文字说明,可为空
 //data-text_color = "#ff5f01"                         @文字颜色,默认黑色
 //data-star_length = "5"                            @显示几个星星
+//data-default_val = "0"                            @初始显示的分数
 //data-star_width = "28"                            @星星图片的长宽
 //data-star_height = "28"
 //data-use_half_star = "no"                         @是否显示半颗星星　yes/no
-//data-hide_input_id = "adfegggg"                   @星星的分值存放的input的id
+//data-hide_input_id = "adfegggg"                   @星星的分值存放的input的id（半个星存在的时候半个星＝１，5个星星＝１０）
 
-
+//eg:
+//<div class="__TGOGO__"
+//    style="width:300px; height: 30px; position: relative; margin-left: 40px;"
+//    data-type = "starScore"
+//    data-img_src = "image/star.png"
+//    data-img_src_bg = "image/star_white.png"
+//    data-text = "非常不满1,不满意3,一般5,满意7,非常满意9"
+//    data-text_color = "#ff5f01"
+//    data-star_length = "5"
+//    data-star_width = "28"
+//    data-star_height = "28"
+//    data-use_half_star = "no"
+//    data-hide_input_id = "adfegggg"
+//>
+//</div>
 
 
 
@@ -4251,6 +4266,7 @@ TGOGO.starScore_fn = (function(){
         this.star_width = opt.star_width;
         this.star_height = opt.star_height;
         this.use_half_star = opt.use_half_star || false;
+        this.default_val = opt.default_val || 0;
         this.inputId = opt.input_id || "";
 
         this.stars = null;
@@ -4263,13 +4279,19 @@ TGOGO.starScore_fn = (function(){
     };
     startScore.prototype = {
         init:function(){
+            this.score = this.default_val;
+
             this.createDom();
             this.addEvent();
 
+            this.input.val(this.score);
         },
         createDom:function(){
             var star_main = $("<div class='__temp__start__score__'></div>"),
-                star_text = $("<span></span>");
+                start_width = (this.use_half_star)? this.star_width/2 : this.star_width,
+                text = this.text[this.score - 1] || "",
+                star_text = $("<span>"+text+"</span>");
+
             star_main.css({
                 float:"left",
                 width:this.star_number * this.star_width + "px",
@@ -4290,7 +4312,7 @@ TGOGO.starScore_fn = (function(){
 
             var div = $("<div></div>");
             div.css({
-                width:"0%",
+                width:start_width*this.score+"px",
                 height:this.star_height+"px",
                 background:"url("+this.img+")",
                 position:"absolute",
@@ -4349,6 +4371,7 @@ TGOGO.starScore = function(obj){
         width = obj.data("star_width"),
         height = obj.data("star_height"),
         input_id = obj.data("hide_input_id"),
+        default_val = obj.data("default_val") || 0,
         use_half_star = (obj.data("use_half_star") == "yes");
 
     text = text.split(",");
@@ -4360,6 +4383,7 @@ TGOGO.starScore = function(obj){
         bg:bg,
         text:text,
         color:color,
+        default_val:default_val,
         star_number:number,
         star_width:width,
         star_height:height,
