@@ -12,6 +12,30 @@
 
 
 //*****************************************************
+//评分星星
+//*****************************************************
+//说明：
+//class = 　"__TGOGO__"　                     @必须写死
+//data-type = "starScore"                    @必须写死
+//data-img_src = "image/star.png"                 @星星图片（上面的）
+//data-img_src_bg = "image/star_white.png"      　@星星图片（背景）
+//data-text = "非常不满1,不满意3,一般5,满意7,非常满意9"    @星星后的文字说明,可为空
+//data-text_color = "#ff5f01"                         @文字颜色,默认黑色
+//data-star_length = "5"                            @显示几个星星
+//data-star_width = "28"                            @星星图片的长宽
+//data-star_height = "28"
+//data-use_half_star = "no"                         @是否显示半颗星星　yes/no
+//data-hide_input_id = "adfegggg"                   @星星的分值存放的input的id
+
+
+
+
+
+
+
+
+
+//*****************************************************
 //商品图片局部放大
 //*****************************************************
 //说明：
@@ -4205,4 +4229,141 @@ TGOGO.imgEnlarged = function(obj){
     window[fn_name] = new TGOGO.imgEnlarged_fn({
         obj:obj
     })
+};
+
+
+
+
+
+
+
+//*****************************************************
+//评分星星
+//*****************************************************
+TGOGO.starScore_fn = (function(){
+    var startScore = function(opt){
+        this.body = opt.body;
+        this.img = opt.img;
+        this.bg = opt.bg;
+        this.text = opt.text;
+        this.color = opt.color;
+        this.star_number = opt.star_number || 5;
+        this.star_width = opt.star_width;
+        this.star_height = opt.star_height;
+        this.use_half_star = opt.use_half_star || false;
+        this.inputId = opt.input_id || "";
+
+        this.stars = null;
+        this.starMain = null;
+        this.score = 0;
+        this.input = null;
+        this.textObj = null;
+
+        this.init();
+    };
+    startScore.prototype = {
+        init:function(){
+            this.createDom();
+            this.addEvent();
+
+        },
+        createDom:function(){
+            var star_main = $("<div class='__temp__start__score__'></div>"),
+                star_text = $("<span></span>");
+            star_main.css({
+                float:"left",
+                width:this.star_number * this.star_width + "px",
+                height:this.star_height + "px",
+                overflow:"hidden",
+                position:"relative",
+                padding:"0 0 0 10px"
+            });
+            star_text.css({
+                float:"left",
+                color: this.color,
+                display:"block",
+                height:this.star_height + "px",
+                "line-height":this.star_height + "px",
+                padding:"0 0 0 10px"
+            });
+
+
+            var div = $("<div></div>");
+            div.css({
+                width:"0%",
+                height:this.star_height+"px",
+                background:"url("+this.img+")",
+                position:"absolute",
+                left:"10px",
+                top:0,
+                "z-index":"10"
+            });
+            var bg = div.clone();
+            bg.css({background:"url("+this.bg+")","z-index":"9",width:"100%"});
+
+            star_main.append(bg).append(div);
+
+            this.body.append(star_main).append(star_text);
+            this.starMain = star_main;
+            this.stars = div;
+            this.textObj = star_text;
+
+
+            var input = $("<input type='hidden' id='"+this.inputId+"' />");
+            this.input = input;
+            this.body.append(input);
+
+        },
+        addEvent:function(){
+            var _this = this,
+                start_width = (_this.use_half_star)? _this.star_width/2 : _this.star_width;
+
+            this.starMain.mousemove(function(e){
+                var x = (e.target.className == "__temp__start__score__") ? e.offsetX - 10 : e.offsetX,
+                    n =  (x <= 0)? 0 : parseInt(x/start_width)+1,
+                    width = start_width * n;
+                _this.stars.css({width:width});
+            });
+            this.starMain.mouseout(function(){
+                _this.stars.css({width:_this.score*start_width});
+            });
+            this.starMain.click(function(e){
+                var x = (e.target.className == "__temp__start__score__") ? e.offsetX - 10 : e.offsetX,
+                    n =  (x <= 0)? 0 : parseInt(x/start_width)+1,
+                    text = _this.text[n-1] || "";
+                _this.score = n;
+                _this.input.val(n);
+                _this.textObj.text(text);
+            });
+        }
+
+    };
+    return startScore;
+})();
+TGOGO.starScore = function(obj){
+    var img = obj.data("img_src"),
+        bg = obj.data("img_src_bg"),
+        text = obj.data("text") || "",
+        color = obj.data("text_color") || "#000",
+        number = obj.data("star_length"),
+        width = obj.data("star_width"),
+        height = obj.data("star_height"),
+        input_id = obj.data("hide_input_id"),
+        use_half_star = (obj.data("use_half_star") == "yes");
+
+    text = text.split(",");
+
+
+    new TGOGO.starScore_fn({
+        body:obj,
+        img:img,
+        bg:bg,
+        text:text,
+        color:color,
+        star_number:number,
+        star_width:width,
+        star_height:height,
+        use_half_star:use_half_star,
+        input_id:input_id
+    });
 };
