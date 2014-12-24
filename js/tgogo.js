@@ -3130,6 +3130,13 @@ TGOGO.__numberControl = (function(){
                 _this.input.val(val);
                 _this.changeFn(_this.input);
             });
+        },
+        refresh:function(){
+            var val = $.trim(this.input.val());
+            val = (val>this.max)? this.max : val;
+            val = (val<this.min)? this.min : val;
+
+            this.input.val(val);
         }
     };
     return numberControl;
@@ -3138,11 +3145,13 @@ TGOGO.numberControl = function(obj){
     var max = obj.data("max_number"),
         min = obj.data("min_number"),
         changeFn = obj.data("change_fn"),
-        add_class = obj.data("add_class");
+        add_class = obj.data("add_class"),
+        fn_name = "__numberControl__"+DEVICE.counter();
 
     changeFn = window[changeFn] || function(){};
+    obj.attr({fn_name:fn_name});
 
-    new TGOGO.__numberControl({
+    window[fn_name] = new TGOGO.__numberControl({
         add_class:add_class,
         input:obj,
         max:max,
