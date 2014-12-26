@@ -12,6 +12,38 @@
 
 
 //*****************************************************
+//流程条
+//*****************************************************
+//说明：
+//class = 　"__TGOGO__"　                     @必须写死
+//data-type = "processBar"                    @必须写死
+//@箭头图片3层  从下向上为  背景色、已完成、当前
+//data-arrow_img="image/3_1.png,image/2_1.png,image/1.png"  @箭头图片（3层）
+//data-text_color="#999,#fff,#fff"                          @箭头颜色（3层）
+//data-arrow_text="1、测试,2、测试,3、测试,4、测试"             @箭头数量(以，分割)
+//data-arrow_width="12"                                     @箭头单边宽高
+//data-arrow_height="28"
+//data-now_step="1"                                         @当前在第几步  0开始
+
+//eg:
+//<div class="__TGOGO__"
+//    style="width: 80%; height: 30px; line-height: 30px; text-align: center;"
+//    data-type="processBar"
+//    data-arrow_img="image/3_1.png,image/2_1.png,image/1.png"
+//    data-arrow_color="#ddd,#bbb,#333"
+//    data-text_color="#999,#fff,#fff"
+//    data-arrow_text="1、测试,2、测试,3、测试,4、测试"
+//    data-arrow_width="12"
+//    data-arrow_height="28"
+//    data-now_step="1"
+//>
+//</div>
+
+
+
+
+
+//*****************************************************
 //评分星星
 //*****************************************************
 //说明：
@@ -4399,4 +4431,161 @@ TGOGO.starScore = function(obj){
         use_half_star:use_half_star,
         input_id:input_id
     });
+};
+
+
+
+
+
+
+//*****************************************************
+//流程条
+//*****************************************************
+TGOGO.__processBar_fn = (function(){
+    var processBar = function(opt){
+        this.imgs = opt.img || [];          //3层
+        this.bgColors = opt.bg_color || [];      //3层
+        this.textColors = opt.text_color || []; //3层
+
+        this.texts = opt.text || [];
+        this.step = opt.step || 0;
+        this.body = opt.body;
+        this.arrowWidth = opt.arrow_width;
+        this.arrowHeight = opt.arrow_height;
+        this.arrowMdf = 3;
+
+
+
+        this.n = this.texts.length;
+        this.bodyWidth = parseInt(this.body.width());
+        this.bodyHeight = parseInt(this.body.height());
+        this.listWidth = (this.bodyWidth - (this.arrowWidth-this.arrowMdf)*2*(this.n-1))/this.n;
+        this.doms = [];
+
+        console.log(this.listWidth)
+
+        this.init();
+    };
+    processBar.prototype = {
+        init:function(){
+            this.createDiv();
+            this.createText();
+            this.changeColor();
+        },
+        createDiv:function(){
+            for(var i=0;i<this.n;i++){
+                if(i==0){
+                    this.createDom("start");
+                    continue;
+                }
+                if(i==this.n-1){
+                    this.createDom("end");
+                    continue;
+                }
+                this.createDom();
+            }
+        },
+        createDom:function(type){
+            var div = $("<div><span></span></div>"),
+                div_left = $("<div></div>"),
+                div_right = $("<div></div>"),
+                margin_left = (type == "start")? 0 : this.arrowWidth-this.arrowMdf+"px",
+                margin_right = (type == "end")? 0 : this.arrowWidth-this.arrowMdf + "px";
+
+            div.css({
+                width:this.listWidth+"px",
+                height:this.arrowHeight+"px",
+                "margin-left":margin_left,
+                "margin-right":margin_right,
+                "background":this.bgColors[0],
+                "text-align":"center",
+                "line-height":this.arrowHeight+"px",
+                float:"left",
+                position:"relative"
+            });
+            div_left.css({
+                position:"absolute",
+                width:this.arrowWidth+"px",
+                height:this.arrowHeight+"px",
+                left:-this.arrowWidth+"px",
+                top:0,
+                "background-image":"url("+this.imgs[0]+")",
+                overflow:"hidden"
+            });
+            div_right.css({
+                position:"absolute",
+                width:this.arrowWidth+"px",
+                height:this.arrowHeight+"px",
+                right:-this.arrowWidth+"px",
+                top:0,
+                "background-image":"url("+this.imgs[0]+")",
+                "background-position":this.arrowWidth+"px 0",
+                overflow:"hidden"
+            });
+
+            if(type=="start"){
+                div.append(div_right);
+            }else if(type == "end"){
+                div.append(div_left);
+            }else{
+                div.append(div_left).append(div_right);
+            }
+
+            this.doms.push(div);
+            this.body.append(div);
+        },
+        createText:function(){
+            for(var i=0,l=this.doms.length;i<l;i++){
+                this.doms[i].find("span").text(this.texts[i]);
+            }
+        },
+        changeColor:function(){
+            for(var i=0,l=this.doms.length;i<l;i++){
+                var n = 0;
+                if(i<this.step){
+                    //第2层的颜色
+                    n = 1;
+                }else if(i == this.step){
+                    //第3层的颜色
+                    n = 2;
+                }else{
+                    //第1层的颜色
+                    n = 0;
+                }
+                this.doms[i].find("div").css({
+                    "background-image":"url("+this.imgs[n]+")"
+                });
+                this.doms[i].css({
+                    background:this.bgColors[n]
+                });
+                this.doms[i].find("span").css({
+                    color:this.textColors[n]
+                })
+            }
+        }
+    };
+    return processBar;
+})();
+TGOGO.processBar = function(obj){
+    var arrow_img = obj.data("arrow_img"),
+        arrow_color = obj.data("arrow_color"),
+        text_color = obj.data("text_color"),
+
+        arrow_text = obj.data("arrow_text"),
+        arrow_width = obj.data("arrow_width"),
+        arrow_height = obj.data("arrow_height"),
+        step = obj.data("now_step");
+
+
+    new TGOGO.__processBar_fn({
+        body:obj,
+        img:arrow_img.split(","),
+        bg_color:arrow_color.split(","),
+        text_color:text_color.split(","),
+        text:arrow_text.split(","),
+        step:step,
+        arrow_width:arrow_width,
+        arrow_height:arrow_height
+    });
+
 };
