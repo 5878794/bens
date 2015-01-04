@@ -12,6 +12,39 @@
 
 
 //*****************************************************
+//显示1个月的日期（仿日历控件）
+//*****************************************************
+//说明：
+//class = 　"__TGOGO__"　                     @必须写死
+//data-type = "createMonthDatePage"                    @必须写死
+//data-time="2015-1-2"                      @要显示的日期
+//data-row_height="30"                      @行高  px
+//data-item_width = "30"                    @单个元素宽度  px
+//data-can_not_select = "after"             @当前日期（before）之前、（afrer）之后、（“”）全部显示  可点击
+//data-color="#BDBDBD,#363636,#FFFBFB"      @不可选颜色、可选颜色、当前日期颜色
+//data-background="#F5F5F5,#EAEAEA,#5A7BE3" @不可选背景色、可选背景色、当前日期背景色
+//data-click_fn = "cmdp_click"              @触发日期后执行的函数，函数在window对项下。返回点击的（年月日）数组
+//data-click_event_name = "click"           @触发的事件名
+
+//eg：
+//<div class="__TGOGO__"
+//    style="width:300px; background: #FBFBFB; font-size: 14px;"
+//    data-type="createMonthDatePage"
+//    data-time="2015-1-2"
+//    data-row_height="30"
+//    data-item_width = "30"
+//    data-can_not_select = ""
+//    data-color="#BDBDBD,#363636,#FFFBFB"
+//    data-background="#F5F5F5,#EAEAEA,#5A7BE3"
+//    data-click_fn = "cmdp_click"
+//    data-click_event_name = "click"
+//></div>
+
+
+
+
+
+//*****************************************************
 //流程条
 //*****************************************************
 //说明：
@@ -4459,10 +4492,9 @@ TGOGO.__processBar_fn = (function(){
         this.n = this.texts.length;
         this.bodyWidth = parseInt(this.body.width());
         this.bodyHeight = parseInt(this.body.height());
-        this.listWidth = (this.bodyWidth - (this.arrowWidth-this.arrowMdf)*2*(this.n-1))/this.n;
+        this.listWidth = (this.bodyWidth - (this.arrowWidth-this.arrowMdf)*2*(this.n-1))/this.n -1;
         this.doms = [];
 
-        console.log(this.listWidth)
 
         this.init();
     };
@@ -4589,3 +4621,291 @@ TGOGO.processBar = function(obj){
     });
 
 };
+
+
+
+
+//*****************************************************
+//显示1个月的日期（仿日历控件）
+//*****************************************************
+TGOGO.__createMonthDatePageFn = (function(){
+    var monthDatePage = function(opt){
+        this.color = opt.color || [];   //可点  不可点  当前选中
+        this.bg = opt.bg || [];    //可点  不可点  当前选中
+        this.time = opt.time.split("-");
+        this.body = opt.body;
+        this.lineHeight = opt.lineHeight;
+        this.canNotSelect = opt.canNotSelect;
+        this.clickFn = opt.clickFn || function(){};
+        this.clickEventName = opt.clickEventName || "click";
+
+        this.bodyWidth = parseInt(this.body.width());
+        this.margin = 5;
+        this.itemWidth = (this.bodyWidth - this.margin *8 )/7;
+
+        this.year = this.time[0];
+        this.month = this.time[1];
+        this.day = this.time[2];
+
+        this.nowYear = new Date().getYear() +1900;
+        this.nowMonth = new Date().getMonth() + 1;
+        this.nowDay = new Date().getDate();
+
+
+        this.weekData = ["周日","周一","周二","周三","周四","周五","周六"];
+
+
+        this.init();
+    };
+    monthDatePage.prototype = {
+        init:function(){
+            this.createDom();
+
+        },
+        createRow:function(){
+            var row = $("<div></div>");
+            row.css({
+                width:this.bodyWidth + "px",
+                height:this.lineHeight + "px",
+                "line-height":this.lineHeight + "px",
+                "text-align":"center",
+                "margin-top":this.margin+"px"
+            });
+            return row;
+        },
+        createItem:function(text){
+            var item = $("<div></div>");
+            item.css({
+                width:this.itemWidth + "px",
+                height:this.lineHeight +"px",
+                "margin-right":this.margin+"px",
+                background:this.color,
+                float:"left"
+            });
+            item.text(text);
+            return item;
+        },
+        createDom:function(){
+            //生成标题
+            this.createTitle();
+            //生成星期
+            this.createWeek();
+            //生成日期
+            this.createDay();
+        },
+        createTitle:function(){
+            var row = this.createRow();
+            row.text(this.year+"年 "+this.month+"月");
+            row.css({
+                background:"#fff",
+                "border-bottom":"1px solid #ddd",
+                "font-weight":"bold",
+                "font-size":"16px",
+                height:this.lineHeight+10+"px",
+                "line-height":this.lineHeight+10+"px"
+            });
+            this.body.append(row);
+        },
+        createWeek:function(){
+            var row = this.createRow();
+            for(var i=0;i<7;i++){
+                var item = this.createItem(this.weekData[i]);
+                item.css({background:""});
+                if(i==0){
+                    item.css({"margin-left":this.margin+"px"});
+                }
+                if(i==0 || i==6){
+                    item.css({color:"#ff5f01"});
+                }else{
+                    item.css({color:this.color[0]});
+                }
+
+                row.append(item);
+            }
+            this.body.append(row);
+        },
+        getDay:function(year_val,month_val){
+            var isRun =  (0==year_val%4 && ((year_val%100!=0)||(year_val%400==0))),
+                day_number = 30;
+
+            if(month_val == 1 || month_val == 3 || month_val == 5 || month_val == 7 || month_val == 8 || month_val == 10 || month_val == 12){
+                //31天
+                day_number = 31;
+            }else if(month_val == 2){
+                if(isRun){
+                    //29天
+                    day_number = 29;
+                }else{
+                    //28天
+                    day_number = 28;
+                }
+            }else{
+                //30天
+                day_number = 30;
+            }
+
+            return day_number;
+        },
+        createDay:function(){
+            var firstWeek = DEVICE.time2stamp(this.year + "-" + this.month + "-" + 1),
+                start_add = new Date(firstWeek).getDay(),
+                dayNumber = this.getDay(this.year,this.month),
+                forNumber = start_add +dayNumber,
+                row;
+
+            for(var i=0;i<forNumber;i++){
+                if(i%7 ==0){
+                    row = this.createRow();
+                    this.body.append(row);
+                }
+
+
+
+                var day = i-start_add+1,
+                    text = (i<start_add)? "" : day,
+                    item = this.createItem(text);
+
+
+                if(text == ""){
+                    item.css({background:""});
+                }else{
+                    var temp = this.getColorAndBg(day);
+                    item.css({
+                        color:temp.color,
+                        background:temp.bg
+                    });
+                    if(temp.canClick){
+                        var _this = this;
+                        item.css({
+                            cursor:"pointer"
+                        });
+                        DEVICE.addEvent(item.get(0),this.clickEventName,function(){
+                            var day = $(this).text();
+                            _this.clickFn([
+                                _this.year,
+                                _this.month,
+                                day
+                            ])
+                        });
+                    }
+
+                }
+
+
+                if(i%7 ==0){
+                    item.css({"margin-left":this.margin+"px"});
+                }
+
+
+
+
+
+
+                row.append(item);
+
+            }
+
+            row.css({"padding-bottom":this.margin+"px"});
+        },
+        getColorAndBg:function(day){
+            var month = parseInt(this.month),
+                nowMonth = parseInt(this.nowMonth),
+                nowDay = parseInt(this.nowDay),
+                nowTime = "",
+                time = "";
+
+            month = (month<10)? "0"+month : month;
+            nowMonth = (nowMonth<10)? "0"+nowMonth : nowMonth;
+            day = (day<10)? "0"+day : day;
+            nowDay = (nowDay<10)? "0"+nowDay : nowDay;
+
+            nowTime = this.nowYear + "" + nowMonth + "" + nowDay;
+            time = this.year + "" + month + "" + day;
+
+            if(nowTime>time){
+                //之前的
+                if(this.canNotSelect == "before"){
+                    return {
+                        color:this.color[0],
+                        bg:this.bg[0],
+                        canClick:false
+                    }
+                }else if(this.canNotSelect == "after"){
+                    return {
+                        color:this.color[1],
+                        bg:this.bg[1],
+                        canClick:true
+                    }
+                }else{
+                    return {
+                        color:this.color[1],
+                        bg:this.bg[1],
+                        canClick:true
+                    }
+                }
+            }else if(nowTime<time){
+                //之后的
+                if(this.canNotSelect == "before"){
+                    return {
+                        color:this.color[1],
+                        bg:this.bg[1],
+                        canClick:true
+                    }
+                }else if(this.canNotSelect == "after"){
+                    return {
+                        color:this.color[0],
+                        bg:this.bg[0],
+                        canClick:false
+                    }
+                }else{
+                    return {
+                        color:this.color[1],
+                        bg:this.bg[1],
+                        canClick:true
+                    }
+                }
+            }else{
+                //当前
+                return {
+                    color:this.color[2],
+                    bg:this.bg[2],
+                    canClick:true
+                }
+            }
+        }
+    };
+    return monthDatePage;
+})();
+TGOGO.createMonthDatePage = function(obj){
+    var time = obj.data("time") || DEVICE.stamp2date(),  //当前时间
+        lineHeight = obj.data("row_height") || 30,       //行高
+        clickFn = obj.data("click_fn"),   //点击执行
+        canNotSelect = obj.data("can_not_select"),      //不能选择的部分：after before ""
+        click_event_name = obj.data("click_event_name"),    //触发事件名
+        color = obj.data("color") || "",                       //颜色
+        bg = obj.data("background") || "";                     //背景
+
+    color = color.split(",");
+    bg = bg.split(",");
+    clickFn = (window[clickFn])?  window[clickFn] :function(){};
+
+    new TGOGO.__createMonthDatePageFn({
+        body:obj,
+        time:time,
+        canNotSelect:canNotSelect,
+        lineHeight:lineHeight,
+        color:color,
+        bg:bg,
+        clickFn:clickFn,
+        clickEventName:click_event_name
+    })
+};
+
+
+
+
+
+
+
+
+
