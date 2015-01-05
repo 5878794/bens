@@ -4180,8 +4180,13 @@ TGOGO.imgEnlarged_fn = (function(){
             this.eventDiv.mousemove(function(e){
                 if(!_this.isLoaded){return;}
                 if(!_this.mouseIn){return;}
-                var x = e.offsetX - _this.zzWidth/2,
-                    y = e.offsetY - _this.zzHeight/2;
+
+                var temp_x = (e.offsetX)? e.offsetX : e.pageX - $(this).offset().left,
+                    temp_y = (e.offsetY)? e.offsetY : e.pageY - $(this).offset().top;
+
+
+                var x = temp_x - _this.zzWidth/2,
+                    y = temp_y - _this.zzHeight/2;
 
                 x = (x<0)? 0 : x;
                 x = (x>_this.zzMaxLeft)? _this.zzMaxLeft : x;
