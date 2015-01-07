@@ -4956,7 +4956,13 @@ TGOGO.__showMobileStyleFn = (function(){
 
             DEVICE.addEvent(this.obj.get(0),input_event,function(){
                 var val = _this.obj.val(),
+                    reg = /^[0-9]*$/,
                     new_val = _this.getShowVal(val);
+
+                if(!reg.test(val)){
+                    val = val.replace(/\D/g,"");
+                    _this.obj.val(val);
+                }
 
                 _this.div.text(new_val);
             });
