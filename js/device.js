@@ -503,8 +503,91 @@ DEVICE.time2stamp = function(a){
 };
 
 
+//获取输入框焦点
+DEVICE.getInputCursorPosition=function(obj){
+    var _this=obj.get(0);
+
+    var rangeData = {text: "", start: 0, end: 0 };
+
+    if (_this.setSelectionRange) { // W3C
+        _this.focus();
+        rangeData.start= _this.selectionStart;
+        rangeData.end = _this.selectionEnd;
+        rangeData.text = (rangeData.start != rangeData.end) ? _this.value.substring(rangeData.start, rangeData.end): "";
+    } else if (document.selection) { // IE
+        _this.focus();
+        var i,
+            oS = document.selection.createRange(),
+        // Don't: oR = textarea.createTextRange()
+            oR = document.body.createTextRange();
+        oR.moveToElementText(_this);
+
+        rangeData.text = oS.text;
+        rangeData.bookmark = oS.getBookmark();
+
+        // object.moveStart(sUnit [, iCount])
+        // Return Value: Integer that returns the number of units moved.
+        for (i = 0; oR.compareEndPoints('StartToStart', oS) < 0 && oS.moveStart("character", -1) !== 0; i ++) {
+            // Why? You can alert(textarea.value.length)
+            if (_this.value.charAt(i) == '\r' ) {
+                i ++;
+            }
+        }
+        rangeData.start = i;
+        rangeData.end = rangeData.text.length + rangeData.start;
+    }
+
+    return rangeData;
+};
+
+//设置焦点
+DEVICE.setInputCursorPosition=function(obj,start,end){
+    var _this=obj.get(0);
+
+    start = parseInt(start) || 0;
+    end = parseInt(end) || obj.val().length;
+
+    var rangeData = {text: "", start: start, end: end };
+
+    _this.focus();
+    if (_this.setSelectionRange) { // W3C
+        _this.setSelectionRange(rangeData.start, rangeData.end);
+    } else if (_this.createTextRange) { // IE
+        oR = _this.createTextRange();
+        oR.moveStart('character', parseInt(rangeData.start));
+        oR.moveEnd('character', -1*(obj.val().length-parseInt(rangeData.end)));
+        oR.select();
 
 
+    }
+
+};
+
+//替换文字
+DEVICE.addTextToInputCursorPosition=function(obj,start,end,text){
+    var _this=obj.get(0);
+
+    start = parseInt(start) || 0;
+    end = parseInt(end) || obj.val().length;
+
+    var rangeData = {text: text, start: start, end: end };
+
+    if (_this.setSelectionRange) { // W3C
+        var ovalue=obj.val();
+        var nvalue=ovalue.substring(0,rangeData.start)+rangeData.text+ovalue.substring(rangeData.end);
+        var nStart = rangeData.start + text.length;
+        var nEnd = rangeData.start + text.length;
+        var st = _this.scrollTop;
+        obj.val(nvalue);
+        obj.setInputCursorPosition(nStart,nStart);
+    } else if (_this.createTextRange) { // IE
+        obj.setInputCursorPosition(start,end);
+        sR = document.selection.createRange();
+        sR.text = text;
+        sR.setEndPoint('StartToEnd', sR);
+        sR.select();
+    }
+};
 
 
 

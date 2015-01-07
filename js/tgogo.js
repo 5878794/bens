@@ -10,6 +10,17 @@
  * Desc:  依赖　　jq.js    device.js
  */
 
+//*****************************************************
+//电话号码显示插件   显示成 123 1231 1231   支持ｉｅ8＋
+//*****************************************************
+//说明：
+//class = 　"__TGOGO__"　                     @必须写死
+//data-type = "showMobileStyle"                    @必须写死
+
+//eg:
+//    <input type="text" class="__TGOGO__" data-type="showMobileStyle" />
+
+
 
 //*****************************************************
 //显示1个月的日期（仿日历控件）
@@ -3057,8 +3068,8 @@ TGOGO.__productScroll = (function(){
     return productScroll;
 })();
 TGOGO.productScroll = function(obj){
-    var left_button_id = obj.data("left_button_id"),
-        right_button_id = obj.data("right_button_id"),
+    var right_button_id = obj.data("left_button_id"),
+        left_button_id = obj.data("right_button_id"),
         main_id = obj.data("show_area_id"),
         scroll_spd = obj.data("scroll_spd"),
         children = obj.data("children_tag"),
@@ -4706,8 +4717,8 @@ TGOGO.__createMonthDatePageFn = (function(){
                 "border-bottom":"1px solid #ddd",
                 "font-weight":"bold",
                 "font-size":"16px",
-                height:this.lineHeight+10+"px",
-                "line-height":this.lineHeight+10+"px"
+                height:parseInt(this.lineHeight)+10+"px",
+                "line-height":parseInt(this.lineHeight)+10+"px"
             });
             this.body.append(row);
         },
@@ -4910,7 +4921,81 @@ TGOGO.createMonthDatePage = function(obj){
 
 
 
+//*****************************************************
+//电话号码显示插件   显示成 123 1231 1231   支持ｉｅ8＋
+//*****************************************************
+TGOGO.__showMobileStyleFn = (function(){
+    var showMobileStyle = function(opt){
+        this.obj = opt.obj;
+
+        this.obj.attr({maxlength:11});
+
+        this.div = null;
+
+        this.init();
+    };
+    showMobileStyle.prototype = {
+        init:function(){
+            this.addEvent();
+        },
+        addEvent:function(){
+            var input_event = (document.addEventListener)? "input" : "propertychange",
+                _this = this;
+
+            DEVICE.addEvent(this.obj.get(0),"focus",function(){
+                _this.createDiv();
+                _this.div.text(_this.getShowVal(_this.obj.val()));
+            });
+
+            DEVICE.addEvent(this.obj.get(0),"blur",function(){
+                if(_this.div){
+                    _this.div.remove();
+                    _this.div = null;
+                }
+            });
+
+            DEVICE.addEvent(this.obj.get(0),input_event,function(){
+                var val = _this.obj.val(),
+                    new_val = _this.getShowVal(val);
+
+                _this.div.text(new_val);
+            });
+        },
+        createDiv:function(){
+            var input_pos = this.obj.offset(),
+                div = $("<div></div>");
+
+            div.css({
+                position:"absolute",
+                left:input_pos.left+"px",
+                top:input_pos.top-40+"px",
+                "min-width":"100px",
+                height:"40px",
+                "line-height":"40px",
+                "padding":"0 10px",
+                "z-index":1000,
+                "font-size":"16px",
+                background:"#ffffe4"
+            });
+
+            $("body").append(div);
+            this.div = div;
+        },
+        getShowVal:function(val){
+            val = val.replace(/\D/g,"");
+            val = val.substr(0,11);
+            val = val.replace(/(\d{3})(\d{0,4})(\d{0,4}?)/,"$1 $2 $3").replace(/(^\s+)|(\s+$)/g,"");
+            return val;
+        }
+    };
+    return showMobileStyle;
+})();
+TGOGO.showMobileStyle = function(obj){
+    new TGOGO.__showMobileStyleFn({
+        obj:obj
+    });
 
 
+};
 
 
