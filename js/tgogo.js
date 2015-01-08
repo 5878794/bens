@@ -499,6 +499,8 @@
 //data-before_show_run = "before_show"      @弹出层打开前执行函数名
 //data-after_close_run = "after_close"      @弹出层关闭后执行函数名
 //data-close_btn_class = ""                 @带该class的dom元素点击都会执行关闭
+//data-run_btn_class = "center_div_btn"     @其他点击额外执行的函数　　之前会执行关闭
+//data-run_btn_run = "center_div_btn_fn"　　　＠其他点击执行的ｄｏｍ的ｃｌａｓｓ类名
 //fn_name = ""  "实例化的名称"  @自动生成，取这个属性可取到函数名
 //
 //eg:
@@ -511,6 +513,8 @@
 //data-before_show_run = "before_show"
 //data-after_close_run = "after_close"
 //data-close_btn_class = ""
+//data-run_btn_class = "center_div_btn"
+//data-run_btn_run = "center_div_btn_fn"
 //>
 //显示居中弹出层
 //</div>
@@ -2133,15 +2137,16 @@ TGOGO.showCenterDiv_fn = (function () {
         this.wrap = null;
         this.zz = null;
         this.div = opt.div;
-        this.closeRun = opt.closeRun;
+        this.closeRun = opt.closeRun || function(){};
         this.closeBtnClass = opt.closeBtnClass;
+        this.runFn = opt.runFn || function(){};
+        this.runClass = opt.runClass;
 
         if (typeof(this.div) === "string") {
             this.div = $("#" + this.div).css({display: "block"});
         } else {
             this.div = this.div.css({display: "block"});
         }
-
 
         this.zIndex = opt.zIndex || 1000;
         this.init();
@@ -2193,10 +2198,19 @@ TGOGO.showCenterDiv_fn = (function () {
 //                e.preventDefault();
             });
 
-            if(!this.closeBtnClass){return;}
-            this.div.find("."+this.closeBtnClass).click(function(){
-                _this.destroy();
-            })
+            if(this.closeBtnClass){
+                this.div.find("."+this.closeBtnClass).click(function(){
+                    _this.destroy();
+                });
+            }
+
+            if(this.runClass){
+                this.div.find("."+this.runClass).click(function(){
+                    _this.destroy();
+                    _this.runFn();
+                });
+            }
+
         },
         show: function () {
             $("body").append(this.zz).append(this.wrap);
@@ -2229,10 +2243,15 @@ TGOGO.showCenterDiv_fn = (function () {
                 this.div.find("."+this.closeBtnClass).unbind("click");
             }
 
+            if(this.runClass){
+                this.div.find("."+this.runClass).unbind("click");
+            }
+
             this.zz = null;
             this.wrap = null;
             this.div = null;
             this.closeRun();
+
         }
     };
     return showDiv;
@@ -2244,15 +2263,17 @@ TGOGO.showCenterDiv = function (obj) {
         after_close_run = obj.data("after_close_run"),
         before_show_run = obj.data("before_show_run"),
         close_btn_class = obj.data("close_btn_class") || "",
+        run_btn_class = obj.data("run_btn_class"),
+        run_btn_run = obj.data("run_btn_run"),
         _this = this,
         _id = DEVICE.counter(),
         fn_name = "_temp_showCenterDiv_fn_" + _id;
 
+
     obj.attr({"fn_name": fn_name});
-    after_close_run = (after_close_run) ? window[after_close_run] : function () {
-    };
-    before_show_run = (before_show_run) ? window[before_show_run] : function () {
-    };
+    after_close_run = (window[after_close_run]) ? window[after_close_run] : function () {};
+    before_show_run = (window[before_show_run]) ? window[before_show_run] : function () {};
+    run_btn_run = (window[run_btn_run])? window[run_btn_run] : function(){};
 
     DEVICE.addEvent(obj.get(0), event, function () {
         before_show_run(obj);
@@ -2260,7 +2281,9 @@ TGOGO.showCenterDiv = function (obj) {
             div: id,
             zIndex: z_index,
             closeRun: after_close_run,
-            closeBtnClass:close_btn_class
+            closeBtnClass:close_btn_class,
+            runFn:run_btn_run,
+            runClass:run_btn_class
         });
     });
 

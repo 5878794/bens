@@ -333,6 +333,10 @@
     var val = DEVICE.getUrlParam("page123") || 1;
     $("#adf2233").attr({"data-now_page":val});
 
+
+    var center_div_btn_fn = function(){
+        alert("btn click");
+    }
 </script>
 
 
@@ -646,6 +650,8 @@
         data-z_index="100"
         data-before_show_run = ""
         data-after_close_run = "after_close"
+        data-run_btn_class = "center_div_btn"
+        data-run_btn_run = "center_div_btn_fn"
         >
     显示居中弹出层
 </div>
@@ -653,7 +659,7 @@
 <div id="center_div1">
     <input name="name" type="text" value="123" />
     <textarea name="info">dddd</textarea>
-    <input class="__TGOGO__"
+    <input class="__TGOGO__ center_div_btn"
            data-type = "ajaxSubmit"
            data-wrap_id = "center_div1"
            data-ajax_type = "post"
