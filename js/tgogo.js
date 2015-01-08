@@ -10,6 +10,26 @@
  * Desc:  依赖　　jq.js    device.js
  */
 
+
+
+//*****************************************************
+//加入收藏夹
+//*****************************************************
+//说明：
+//class = 　"__TGOGO__"　                     @必须写死
+//data-type = "addFavorite"                    @必须写死
+//data-title="baidu"                        @收藏夹中显示名字
+//data-url="http://www.baidu.com"           ＠收藏中收藏的地址
+
+//eg:
+//    <a class="__TGOGO__"
+//        data-type="addFavorite"
+//        data-title="baidu"
+//        data-url="http://www.baidu.com"
+//    >收藏本站</a>
+
+
+
 //*****************************************************
 //电话号码显示插件   显示成 123 1231 1231   支持ｉｅ8＋
 //*****************************************************
@@ -5028,3 +5048,28 @@ TGOGO.showMobileStyle = function(obj){
 };
 
 
+
+
+//*****************************************************
+//加入收藏夹
+//*****************************************************
+TGOGO.addFavorite = function(obj){
+    var title = obj.data("title") || "",
+        url = obj.data("url") || "";
+
+    obj.click(function(){
+        AddFavorite(url,title);
+    });
+
+    function AddFavorite(sURL, sTitle) {
+        try {
+            window.external.addFavorite(sURL, sTitle);
+        } catch (e) {
+            try {
+                window.sidebar.addPanel(sTitle, sURL, "");
+            } catch (e) {
+                alert("加入收藏失败，请使用Ctrl+D进行添加");
+            }
+        }
+    }
+};
