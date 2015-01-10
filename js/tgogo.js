@@ -4053,7 +4053,7 @@ TGOGO.__getNewImageSize = function (imgwidth, imgheight, objwidth, objheight) {
 //loading
 //*****************************************************
 TGOGO.loading = {
-    imgSrc: TGOGO.settings.resourceSrc + "loading.gif",  //图片地址
+    imgSrc: TGOGO.settings.resourceSrc + "loading.gif",   //图片地址
     showWidth: 110,          //要显示loading区域的大小
     showHeight: 110,
     imgWidth: 400,           //图片实际尺寸
@@ -4143,8 +4143,12 @@ TGOGO.loading = {
 
     },
     hide: function () {
-        this.obj.remove();
-        this.zz.remove();
+        if(this.obj){
+            this.obj.remove();
+        }
+        if(this.zz){
+            this.zz.remove();
+        }
         this.obj = null;
         this.zz = null;
     }
