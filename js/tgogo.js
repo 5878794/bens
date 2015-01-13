@@ -945,9 +945,9 @@ TGOGO.banner_scroll_fn = (function () {
                     "background-position": "center center",
                     "background-color": color
                 });
-                $(this).css(DEVICE.fixObjCss({
-                    "background-size":"100% 100%"
-                }))
+                //$(this).css(DEVICE.fixObjCss({
+                //    "background-size":"100% 100%"
+                //}))
             });
 
 
