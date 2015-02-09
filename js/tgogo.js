@@ -2803,7 +2803,8 @@ TGOGO.__cascadeSelectFn = (function () {
                 var this_select = this.selects[i],
                     this_val = this.value[i] || "",
                     this_ts = this.ts[i] || "请选择",
-                    this_html = [];
+                    this_html = [],
+                    is_find = false;
 
                 this_html.push("<option value=''>" + this_ts + "</option>");
                 for (var z = 0, zl = data.length; z < zl; z++) {
@@ -2811,6 +2812,7 @@ TGOGO.__cascadeSelectFn = (function () {
                         this_name = data[z].areaName;
 
                     if (this_id == this_val) {
+                        is_find = true;
                         this_html.push("<option value='" + this_id + "' selected>" + this_name + "</option>");
                         now_data = data[z].children;
                     } else {
@@ -2820,7 +2822,12 @@ TGOGO.__cascadeSelectFn = (function () {
 
                 this_select.html(this_html.join(""));
 
-                data = now_data;
+                if(is_find){
+                    data = now_data;
+                }else{
+                    data = [];
+                }
+
             }
         },
         addEvent: function () {
@@ -2829,8 +2836,11 @@ TGOGO.__cascadeSelectFn = (function () {
             for (var i = 0, l = this.selects.length - 1; i < l; i++) {
                 this.selects[i].attr({my_no: i});
                 this.selects[i].change(function () {
-                    var my_no = $(this).attr("my_no");
+                    var my_no = parseInt($(this).attr("my_no"));
                     _this.value[my_no] = $(this).val();
+                    for(var z=my_no+1,zl=_this.value.length;z<zl;z++){
+                        _this.value[z] = "";
+                    }
                     _this.clearOption();
                     _this.createOption();
                 });
