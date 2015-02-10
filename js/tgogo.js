@@ -2318,18 +2318,42 @@ TGOGO.dataInput = function (obj) {
         max_year = obj.data("max_year"),
         now_year = 1900 + new Date().getYear();
 
-    max_year = max_year || now_year;
-    min_year = min_year - now_year + "Y";
-    max_year = max_year - now_year + "Y";
+    if(DEVICE.isIe && DEVICE.ver <= 8){
+        now_year = new Date().getYear();
+    }
 
+    max_year = max_year || now_year;
+    min_year = min_year || 1950;
+
+
+    if(max_year < min_year){
+        var a = max_year;
+        max_year = min_year;
+        min_year = a;
+    }
+
+    var c,n;
+    if(min_year>now_year){
+        n = min_year-now_year - 1;
+        c = "c+"+ n;
+    }else{
+        n = now_year - min_year - 1;
+        c = "c-"+ n;
+    }
+    c += ":";
+    if(max_year>now_year){
+        n = max_year - now_year - 1;
+        c += "c+" + n;
+    }else{
+        n = now_year - max_year - 1;
+        c += "c-" + n;
+    }
 
     obj.datepicker({
         dateFormat: "yy-mm-dd",
-        minDate: min_year,
-        maxDate: max_year,
         changeMonth: true,
         changeYear: true,
-        yearRange: 'c-100:c+100'
+        yearRange: c
     });
 };
 
