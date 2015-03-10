@@ -5059,7 +5059,9 @@ TGOGO.__showMobileStyleFn = (function(){
                     _this.obj.val(val);
                 }
 
-                _this.div.text(new_val);
+                if(_this.div){
+                    _this.div.text(new_val);
+                }
             });
         },
         createDiv:function(){
