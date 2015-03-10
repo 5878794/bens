@@ -2314,46 +2314,60 @@ TGOGO.showCenterDiv = function (obj) {
 //时间选择控件
 //*****************************************************
 TGOGO.dataInput = function (obj) {
-    var min_year = obj.data("min_year"),
-        max_year = obj.data("max_year"),
-        now_year = 1900 + new Date().getYear();
+    var min_year = obj.data("min_year").toString(),
+        max_year = obj.data("max_year").toString();
+        //now_year = 1900 + new Date().getYear();
 
-    if(DEVICE.isIe && DEVICE.ver <= 8){
-        now_year = new Date().getYear();
-    }
+    //if(DEVICE.isIe && DEVICE.ver <= 8){
+    //    now_year = new Date().getYear();
+    //}
 
-    max_year = max_year || now_year;
-    min_year = min_year || 1950;
+    //max_year = max_year || now_year;
+    //min_year = min_year || 1950;
+    //
+    //
+    //if(max_year < min_year){
+    //    var a = max_year;
+    //    max_year = min_year;
+    //    min_year = a;
+    //}
+    //
+    //var c,n;
+    //if(min_year>now_year){
+    //    n = min_year-now_year - 1;
+    //    c = "c+"+ n;
+    //}else{
+    //    n = now_year - min_year - 1;
+    //    c = "c-"+ n;
+    //}
+    //c += ":";
+    //if(max_year>now_year){
+    //    n = max_year - now_year +1;
+    //    c += "c+" + n;
+    //}else{
+    //    n = now_year - max_year - 1;
+    //    c += "c-" + n;
+    //}
 
-
-    if(max_year < min_year){
-        var a = max_year;
-        max_year = min_year;
-        min_year = a;
-    }
-
-    var c,n;
-    if(min_year>now_year){
-        n = min_year-now_year - 1;
-        c = "c+"+ n;
+    if(min_year.indexOf("-")>-1){
+        min_year = new Date(min_year);
     }else{
-        n = now_year - min_year - 1;
-        c = "c-"+ n;
+        min_year = new Date(min_year+"-1-1");
     }
-    c += ":";
-    if(max_year>now_year){
-        n = max_year - now_year - 1;
-        c += "c+" + n;
+
+    if(max_year.indexOf("-")>-1){
+        max_year = new Date(max_year);
     }else{
-        n = now_year - max_year - 1;
-        c += "c-" + n;
+        max_year = new Date(max_year+"-12-31");
     }
 
     obj.datepicker({
         dateFormat: "yy-mm-dd",
         changeMonth: true,
         changeYear: true,
-        yearRange: c
+        //yearRange: c
+        maxDate:max_year,
+        minDate:min_year
     });
 };
 
