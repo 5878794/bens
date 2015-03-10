@@ -589,15 +589,15 @@
 //说明：
 //class:　__TGOGO__　                        @必须写死
 //data-type: dataInput                      @必须写死
-//data-min_year = "1994"                    @显示的最小年份
-//data-max_year = "2009"                    @显示的最大年份   不填默认是到当前年
+//data-min_year = "1994-1-11"                    @显示的最小年月日
+//data-max_year = "2009-12-11"                    @显示的最大年月日   不填默认是到当前年
 //
 //eg:
 //
 //<input type="text" class="__TGOGO__"
 //data-type = "dataInput"
-//data-min_year = "1994"
-//data-max_year = "2009"
+//data-min_year = "1994-1-11"
+//data-max_year = "2009-12-11"
 ///>
 
 
