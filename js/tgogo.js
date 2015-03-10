@@ -2365,7 +2365,7 @@ TGOGO.dataInput = function (obj) {
         dateFormat: "yy-mm-dd",
         changeMonth: true,
         changeYear: true,
-        //yearRange: c
+        yearRange: "c-100:c+100",
         maxDate:max_year,
         minDate:min_year
     });
