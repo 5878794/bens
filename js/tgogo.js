@@ -4516,27 +4516,51 @@ TGOGO.starScore_fn = (function(){
             this.textObj = star_text;
 
 
-            var input = $("<input type='hidden' id='"+this.inputId+"' />");
+            var input = $("<input type='hidden' id='"+this.inputId+"' name='"+this.inputId+"' />");
             this.input = input;
             this.body.append(input);
 
         },
         addEvent:function(){
             var _this = this,
-                start_width = (_this.use_half_star)? _this.star_width/2 : _this.star_width;
+                start_width = (_this.use_half_star)? _this.star_width/2 : _this.star_width,
+                left = null;
 
             this.starMain.mousemove(function(e){
-                var x = (e.target.className == "__temp__start__score__") ? e.offsetX - 10 : e.offsetX,
-                    n =  (x <= 0)? 0 : parseInt(x/start_width)+1,
-                    width = start_width * n;
+                var x,n,width;
+
+                if(e.offsetX){
+                    x = (e.target.className == "__temp__start__score__") ? e.offsetX - 10 : e.offsetX;
+
+                }else{
+                    if(!left){
+                        left = parseInt( _this.starMain.offset().left);
+                    }
+                    var _x = e.pageX - left;
+                    x = (e.target.className == "__temp__start__score__") ? _x - 10 : _x;
+                }
+                n =  (x <= 0)? 0 : parseInt(x/start_width)+1;
+                width = start_width * n;
+
                 _this.stars.css({width:width});
             });
             this.starMain.mouseout(function(){
                 _this.stars.css({width:_this.score*start_width});
             });
             this.starMain.click(function(e){
-                var x = (e.target.className == "__temp__start__score__") ? e.offsetX - 10 : e.offsetX,
-                    n =  (x <= 0)? 0 : parseInt(x/start_width)+1,
+                var x;
+                if(e.offsetX){
+                    x = (e.target.className == "__temp__start__score__") ? e.offsetX - 10 : e.offsetX;
+                }else{
+                    if(!left){
+                        left = parseInt( _this.starMain.offset().left);
+                    }
+                    var _x = e.pageX - left;
+                    x = (e.target.className == "__temp__start__score__") ? _x - 10 : _x;
+                }
+
+
+                var  n =  (x <= 0)? 0 : parseInt(x/start_width)+1,
                     text = _this.text[n-1] || "";
                 _this.score = n;
                 _this.input.val(n);
