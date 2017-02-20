@@ -1,4 +1,4 @@
-let DEVICE = require("./device");
+let DEVICE = require("./../device");
 
 
 

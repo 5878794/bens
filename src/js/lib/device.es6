@@ -161,7 +161,7 @@ var DEVICE = {};
 		hasTouch = (webkitTouch || windowTouch),
 		hasTransform = vendor !== false,
 
-		_transform = prefixStyle('transform'),
+		// _transform = prefixStyle('transform'),
 		_transitionProperty = prefixStyle('transitionProperty'),
 		_transitionDuration = prefixStyle('transitionDuration'),
 		_transformOrigin = prefixStyle('transformOrigin'),
