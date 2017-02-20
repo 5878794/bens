@@ -1,11 +1,9 @@
-
-let imageFitSize = require("./lib/fn/imageFitSize");
-
+let divEditArea = require("./lib/ui/divEditArea");
 
 
 
 $(document).ready(function(){
-	console.log(imageFitSize(300,200,200,200));
-	console.log(123)
-
+	bens.xu = new divEditArea({
+		id:"aa"
+	})
 });
