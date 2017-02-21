@@ -6,13 +6,21 @@
     <script>bens={};</script>
     <script src="js/jquery-3.1.1.min.js"></script>
     <script src="js/polyfill.js"></script>
-    <script src="js/dist/app.min.js"></script>
+    <script>
+        document.write("<script src='js/dist/app.min.js?'"+new Date().getTime()+"><\/script>")
+    </script>
     <style>*{padding: 0;margin: 0;}</style>
+    <style>
+        .a{
+            background: red;
+        }
+        .b{
+            background: green;
+        }
+    </style>
 </head>
 <body>
-<div id="aa" style="height: 40000px;">
-123
-</div>
+<input type="text" id="aa" /><div class="b" id="bb">btn</div>
 
 </body>
 </html>

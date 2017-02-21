@@ -1,9 +1,9 @@
-let divEditArea = require("./lib/ui/divEditArea");
+let divEditArea = require("./lib/fn/point3_get_angle");
 
 
 
 $(document).ready(function(){
-	bens.xu = new divEditArea({
-		id:"aa"
-	})
+	bens = divEditArea;
+
+
 });
