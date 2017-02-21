@@ -9,9 +9,9 @@
 // 								contents			内容变化
 //								opacity				透明度
 //								left, top			定位
-
-require("./extend");
 let device = require("./../device");
+require("./extend");
+
 
 
 

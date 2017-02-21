@@ -1,4 +1,4 @@
-let divEditArea = require("./lib/fn/arrayStepFunction");
+let divEditArea = require("./lib/ui/loading");
 
 
 
