@@ -1,4 +1,4 @@
-let divEditArea = require("./lib/fn/point3_get_angle");
+let divEditArea = require("./lib/fn/arrayStepFunction");
 
 
 
