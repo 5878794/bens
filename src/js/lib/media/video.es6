@@ -5,6 +5,8 @@
 //ios: 静音可以自动播放,  android:必须点击才能播放
 //点击事件需要自己监听
 
+//注意:android部分国产机器禁用video标签,不支持。。。。小米,微信,qq等
+
 
 //html
 // <video src="fll.mp4" loop autoplay muted playsinline></video>
