@@ -1,14 +1,18 @@
-/*
- * Filename :
- * =====================================
- * Created with WebStorm.
- * User: bens
- * Date: 15-8-5
- * Time: 上午11:49
- * Email:5878794@qq.com
- * =====================================
- * Desc:
- */
+window.requestAnimationFrame =  window.requestAnimationFrame ||
+	window.webkitRequestAnimationFrame ||
+	window.mozRequestAnimationFrame ||
+	window.oRequestAnimationFrame ||
+	window.msRequestAnimationFrame ||
+	function (callback) {
+		return setTimeout(callback, 1);
+	};
+window.cancelAnimationFrame =   window.cancelAnimationFrame ||
+	window.webkitCancelAnimationFrame ||
+	window.webkitCancelRequestAnimationFrame ||
+	window.mozCancelRequestAnimationFrame ||
+	window.oCancelRequestAnimationFrame ||
+	window.msCancelRequestAnimationFrame ||
+	clearTimeout;
 
 
 

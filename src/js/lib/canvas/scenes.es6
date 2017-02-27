@@ -18,11 +18,11 @@
 let fixedCanvasImageBug = function(canvas, ctx){
 	var devicePixelRatio = window.devicePixelRatio || 1;
 	var backingStorePixelRatio =    ctx.webkitBackingStorePixelRatio ||
-									ctx.mozBackingStorePixelRatio ||
-									ctx.msBackingStorePixelRatio ||
-									ctx.oBackingStorePixelRatio ||
-									ctx.backingStorePixelRatio ||
-									1;
+		ctx.mozBackingStorePixelRatio ||
+		ctx.msBackingStorePixelRatio ||
+		ctx.oBackingStorePixelRatio ||
+		ctx.backingStorePixelRatio ||
+		1;
 
 	var ratio = devicePixelRatio / backingStorePixelRatio;
 
