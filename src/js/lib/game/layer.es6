@@ -1,5 +1,5 @@
 
-//创建一个场景
+//创建一个画布层,包含多个精灵
 
 
 let sprites = Symbol(),
@@ -97,7 +97,7 @@ class Layer{
 		})
 	}
 
-	//设置场景的父级层
+	//设置画布的父级层
 	set parent(dom){
 		this[parentDom] = dom;
 		dom.append(this[canvas]);
@@ -106,7 +106,7 @@ class Layer{
 		this[refreshParentDom]();
 	}
 
-	//获取场景的父级层
+	//获取画布的父级层
 	get parent(){
 		return this[parentDom];
 	}
@@ -117,7 +117,7 @@ class Layer{
 		this[sprites].push(sprite);
 	}
 
-	//清空场景(画布)
+	//清空画布(画布)
 	[clear](){
 		let color =  "rgba(0,0,0,0)";
 		this[ctx].fillStyle = color;
@@ -127,7 +127,7 @@ class Layer{
 		this[canvas].style.display = "inherit"; // Reattach to DOM
 	}
 
-	//渲染当前场景
+	//渲染当前画布
 	render(){
 		this[clear]();
 
@@ -137,7 +137,7 @@ class Layer{
 		})
 	}
 
-	//销毁当前场景
+	//销毁当前画布
 	destroy(){
 		this[canvas].remove();
 	}

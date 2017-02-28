@@ -1,3 +1,6 @@
+
+//创建游戏app
+
 let device = require("./../device"),
 	eachRun = Symbol(""),
 	body = Symbol(""),
@@ -10,15 +13,19 @@ let device = require("./../device"),
 
 class app{
 	constructor(opt = {}){
+		//app容器
 		this[body] = opt.body || $("body");
-
-		this[isRunning] = true;
+		//app是否运行中
+		this[isRunning] = false;
+		//app包含的场景
 		this[scenes] = [];
+		//动画函数运行器
 		this[runner] = null;
 
 		this[setBody]();
 	}
 
+	//设置容器样式
 	[setBody](){
 		if(!device.checkDomHasPosition(this[body])){
 			this[body].css({
@@ -27,11 +34,13 @@ class app{
 		}
 	}
 
+	//添加场景
 	append(scene){
 		scene.parent = this[body];
 		this[scenes].push(scene);
 	}
 
+	//渲染所有场景
 	[eachRun](){
 		this[scenes].map((scene)=>{
 
@@ -39,6 +48,7 @@ class app{
 		})
 	}
 
+	//开始运行
 	run(){
 
 		let fn = ()=> {
@@ -49,17 +59,21 @@ class app{
 			this[runner] = requestAnimationFrame(fn);
 		};
 
+		this[isRunning] = true;
 		fn();
 	}
 
+	//暂停
 	pause(){
 		this[isRunning] = false;
-
 	}
+
+	//恢复
 	resume(){
 		this[isRunning] = true;
 	}
 
+	//销毁
 	destroy(){
 		cancelAnimationFrame(this[runner]);
 	}
