@@ -45,6 +45,7 @@ class Sprite{
 		return this[canvas];
 	}
 
+
 	//渲染
 	render(){
 		this[ctx].save();
@@ -88,10 +89,11 @@ class Sprite{
 		this[ctx].globalAlpha = 1;
 		this[ctx].restore();
 	}
-
-
-
 }
+
+
+
+
 
 
 module.exports = Sprite;

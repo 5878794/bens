@@ -1,9 +1,9 @@
 let app = require("./app"),
 	scene = require("./scene"),
 	layer = require("./layer"),
-	sprite = require("./sprite");
+	sprite = require("./spriteResAnimate");
 
 
-module.exports = {app,scene,layer,sprite}
+module.exports = {app,scene,layer,sprite};
 
 

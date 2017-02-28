@@ -1,3 +1,4 @@
+
 //创建元素
 //sheep = new ELEMENT({
 //    width:width,              //@param:number     必须          元素宽、高
