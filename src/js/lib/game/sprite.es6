@@ -20,6 +20,8 @@ class Sprite{
 		this.res = opt.res;
 		//精灵旋转角度,根据中心点旋转
 		this.rotate = opt.rotate || 0;
+		//精灵缩放
+		this.scale = opt.scale || 1;
 		//精灵透明度 0-100
 		this.alpha = opt.alpha || 100;
 		//画布中心点
@@ -73,16 +75,31 @@ class Sprite{
 		//画布旋转后还原到翻转后的顶点（左上角）
 		this[ctx].translate(-x,-y);
 
+
+		//计算元素的左上角坐标
+		let elem_x,elem_y;
+		if(this.flipHorizontal){
+			elem_x = this[canvas].width - center_x - (this.width - this.centerX) * this.scale;
+		}else{
+			elem_x = center_x - (center_x - this.x)*this.scale;
+		}
+		if(this.flipVertical){
+			elem_y = this[canvas].height - center_y - (this.height - this.centerY) * this.scale;
+		}else{
+			elem_y = center_y - (center_y - this.y)*this.scale;
+		}
+
+
 		this[ctx].drawImage(
 			this.res,
 			0,
 			0,
 			this.res.width,
 			this.res.height,
-			(this.flipHorizontal)? this[canvas].width - this.width - this.x : this.x,
-			(this.flipVertical)? this[canvas].height - this.height - this.y : this.y,
-			this.width,
-			this.height
+			elem_x,
+			elem_y,
+			this.width*this.scale,
+			this.height*this.scale
 		);
 
 
