@@ -45,21 +45,22 @@ async function init(){
 			width:128,
 			height:128,
 			res:imgs.icon1,
-			x:10,
-			y:10,
-			alpha:100
+			x:64,
+			y:64,
+			// alpha:50,
+			// scale:2,
 			// rotate:30,
-			// centerX:0,
-			// centerY:0,
+			centerX:0,
+			centerY:0
 			// flipHorizontal:true,
 			// flipVertical:true
 		});
 
 	sprite.setResAnimateList({
-		resList:[imgs.icon1,imgs.icon2,imgs.icon3,imgs.icon4,imgs.icon5,imgs.icon6,imgs.icon7,imgs.icon1],
+		resList:[imgs.icon2,imgs.icon3,imgs.icon4,imgs.icon5,imgs.icon6,imgs.icon7,imgs.icon1],
 		frame:5,
-		infinite:true,
-		canStopResPointer:[3,7],
+		// infinite:true,
+		canStopResPointer:[3,6],
 		callback:function(){console.log(123)}
 	});
 
@@ -70,6 +71,16 @@ async function init(){
 	scene.append(layer);
 	app.append(scene);
 
+
+	let isRun = false;
+	document.body.addEventListener("click",()=>{
+		if(isRun){
+			sprite.resAnimateStop();
+		}else{
+			sprite.resAnimatePlay();
+		}
+		isRun = !isRun;
+	},false);
 
 
 	app.run();
