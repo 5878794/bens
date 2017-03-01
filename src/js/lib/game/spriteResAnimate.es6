@@ -65,7 +65,7 @@ class SpriteResAnimate extends sprite{
 		let resLength = this[resList].length - 1;
 		this[canStopResPointer] = opt.canStopResPointer || [resLength];
 		//动画间隔几帧播放下一张资源图,正常情况下一秒60帧
-		this[frame] = opt.frame || 3;
+		this[frame] = opt.frame || 5;
 		//循环播放资源队列
 		//设置为true时,callback回调不会执行
 		this[infinite] = ($.isBoolean(opt.infinite))? opt.infinite : false;
@@ -111,14 +111,15 @@ class SpriteResAnimate extends sprite{
 		}
 
 		//检查当前资源指针是否在队列的停止点上
-		let _resPointer = this[resPointer];
-		return (this[canStopResPointer].indexOf(_resPointer) > -1);
+		return (this[canStopResPointer].indexOf(this[resPointer]) == -1);
 	}
 
 	//设置当前需要播放的资源
 	[setNowRes](){
 		//判断是否可以播放
-		if(!this[checkCanPlayRes]()){return;}
+		if(!this[checkCanPlayRes]()){
+			return;
+		}
 
 		//间隔frame参数播放一帧
 		this[frameCount] ++;
