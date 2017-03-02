@@ -69,6 +69,14 @@ class Scene{
 		this[layers].push(layer);
 	}
 
+	//删除场景
+	del(layer){
+		let n = this[layers].indexOf(layer);
+		if(n>-1){
+			this[layers].splice(n,1);
+		}
+	}
+
 	//渲染场景
 	render(){
 		this[layers].map((layer)=>{

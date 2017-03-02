@@ -117,6 +117,14 @@ class Layer{
 		this[sprites].push(sprite);
 	}
 
+	//删除精灵
+	del(sprite){
+		let n = this[sprites].indexOf(sprite);
+		if(n>-1){
+			this[sprites].splice(n,1);
+		}
+	}
+
 	//清空画布(画布)
 	[clear](){
 		let color =  "rgba(0,0,0,0)";

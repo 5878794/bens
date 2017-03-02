@@ -40,6 +40,14 @@ class app{
 		this[scenes].push(scene);
 	}
 
+	//删除场景
+	del(scene){
+		let n = this[scenes].indexOf(scene);
+		if(n>-1){
+			this[scenes].splice(n,1);
+		}
+	}
+
 	//渲染所有场景
 	[eachRun](){
 		this[scenes].map((scene)=>{

@@ -94,7 +94,13 @@ async function init(){
 				style:{
 					x:0
 				},
-				callback:function(){console.log("over")}
+				callback:function(){
+					setTimeout(()=>{
+						layer.del(sprite)
+					},1000)
+
+					console.log("over")
+				}
 
 			})
 		}
