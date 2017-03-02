@@ -44,7 +44,7 @@ async function init(){
 		sprite = new game.sprite({
 			width:128,
 			height:128,
-			res:imgs.icon1,
+			res:"#f00",
 			x:64,
 			y:64,
 			// alpha:50,
@@ -82,6 +82,24 @@ async function init(){
 		isRun = !isRun;
 	},false);
 
+	sprite.animate({
+		time:2000,
+		style:{
+			x:100
+		},
+		callback:function(){console.log("over");
+
+			bens.animate({
+				time:1000,
+				style:{
+					x:0
+				},
+				callback:function(){console.log("over")}
+
+			})
+		}
+
+	});
 
 	app.run();
 

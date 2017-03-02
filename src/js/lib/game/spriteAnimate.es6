@@ -1,5 +1,5 @@
 
-//精灵动画class
+//精灵动画class   详见animate参数
 
 let spriteResAnimate = require("./spriteResAnimate"),
 	tween = require("./../fn/tween"),

@@ -90,17 +90,32 @@ class Sprite{
 		}
 
 
-		this[ctx].drawImage(
-			this.res,
-			0,
-			0,
-			this.res.width,
-			this.res.height,
-			elem_x,
-			elem_y,
-			this.width*this.scale,
-			this.height*this.scale
-		);
+		//判断是图片还是颜色
+		if($.isObject(this.res)){
+			this[ctx].drawImage(
+				this.res,
+				0,
+				0,
+				this.res.width,
+				this.res.height,
+				elem_x,
+				elem_y,
+				this.width*this.scale,
+				this.height*this.scale
+			);
+		}else{
+			this[ctx].fillStyle = this.res;
+
+			this[ctx].fillRect(
+				elem_x,
+				elem_y,
+				this.width*this.scale,
+				this.height*this.scale
+			)
+
+		}
+
+
 
 
 		this[ctx].globalAlpha = 1;
