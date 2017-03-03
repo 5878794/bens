@@ -1,79 +1,106 @@
-//动画函数
-window.requestAnimationFrame =
-	window.requestAnimationFrame ||
-	window.webkitRequestAnimationFrame ||
-	window.mozRequestAnimationFrame ||
-	window.oRequestAnimationFrame ||
-	window.msRequestAnimationFrame ||
-	function(callback) {  setTimeout(callback, 100/6)};
+
+//创建游戏app
+
+let device = require("./../device"),
+	eachRun = Symbol(""),
+	body = Symbol(""),
+	isRunning = Symbol(""),
+	scenes = Symbol(""),
+	runner = Symbol(""),
+	setBody = Symbol(""),
+	isShow = true;
 
 
+class app{
+	constructor(opt = {}){
+		//app容器
+		this[body] = opt.body || $("body");
+		//app是否运行中
+		this[isRunning] = false;
+		//app包含的场景
+		this[scenes] = [];
+		//动画函数运行器
+		this[runner] = null;
 
-window.cancelRequestAnimationFrame =
-	window.cancelAnimationFrame ||
-	window.cancelRequestAnimationFrame ||
-	window.webkitCancelAnimationFrame ||
-	window.webkitCancelRequestAnimationFrame ||
-	window.mozCancelRequestAnimationFrame ||
-	window.oCancelRequestAnimationFrame ||
-	window.msCancelRequestAnimationFrame ||
-	clearTimeout;
+		this[setBody]();
+	}
 
+	//设置容器样式
+	[setBody](){
+		if(!device.checkDomHasPosition(this[body])){
+			this[body].css({
+				position:"relative"
+			})
+		}
+	}
 
+	//添加场景
+	append(scene){
+		scene.parent = this[body];
+		this[scenes].push(scene);
+	}
 
+	//删除场景
+	del(scene){
+		let n = this[scenes].indexOf(scene);
+		if(n>-1){
+			this[scenes].splice(n,1);
+		}
+	}
 
+	//渲染所有场景
+	[eachRun](){
+		this[scenes].map((scene)=>{
 
-let play = null,
-	isPaused = false;
+			scene.render();
+		})
+	}
 
-let app = {
-	runFn:null,
-	//运行
+	//开始运行
 	run(){
-		var fn = () => {
-			if(this.runFn && !isPaused){
-				this.runFn();
+
+		let fn = ()=> {
+			if(isShow && this[isRunning]){
+				this[eachRun]();
 			}
 
-			play = requestAnimationFrame(fn);
-
+			this[runner] = requestAnimationFrame(fn);
 		};
 
+		this[isRunning] = true;
 		fn();
-	},
+	}
+
 	//暂停
 	pause(){
-		isPaused = true;
-	},
+		this[isRunning] = false;
+	}
+
 	//恢复
 	resume(){
-		isPaused = false;
-	},
-	//停止
-	stop(){
-		cancelRequestAnimationFrame(play);
-		this.runFn = null;
-	},
-	//阻止dom的touchmove事件  以免屏幕滑动
-	preventTouchMove(dom){
-		dom = dom || window;
-		dom.addEventListener("touchmove", (e) => {
-			e.preventDefault();
-		}, false);
+		this[isRunning] = true;
 	}
-};
+
+	//销毁
+	destroy(){
+		cancelAnimationFrame(this[runner]);
+	}
 
 
 
-if(window.addEventListener){
-	window.addEventListener("focus",function(){
-		app.resume();
-	});
-	window.addEventListener("blur",function(){
-		app.pause();
-	});
 }
 
+
+
+(function(){
+	//监听浏览器窗口是否显示或在顶层
+	window.addEventListener("focus",()=>{
+		isShow = true;
+	});
+	window.addEventListener("blur",()=>{
+		isShow = false;
+	});
+})();
 
 
 
