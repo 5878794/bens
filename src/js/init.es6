@@ -1,14 +1,15 @@
-let game = require("./lib/game/game"),
-	loadImg = require("./lib/fn/loadImg");
+let game = require("./lib/canvas/canvas"),
+	loadImg = require("./lib/fn/loadImg"),
+	kb = require("./lib/event/keyboard");
 
 
 
 
 
 $(document).ready(function(){
-	init();
+	// init();
 
-
+	bens = kb;
 
 
 
