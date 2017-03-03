@@ -7,9 +7,9 @@ let game = require("./lib/canvas/canvas"),
 
 
 $(document).ready(function(){
-	// init();
+	init();
 
-	bens = kb;
+
 
 
 
@@ -73,15 +73,15 @@ async function init(){
 	app.append(scene);
 
 
-	let isRun = false;
-	document.body.addEventListener("click",()=>{
-		if(isRun){
-			sprite.resAnimateStop();
-		}else{
-			sprite.resAnimatePlay();
-		}
-		isRun = !isRun;
-	},false);
+	// let isRun = false;
+	// document.body.addEventListener("click",()=>{
+	// 	if(isRun){
+	// 		sprite.resAnimateStop();
+	// 	}else{
+	// 		sprite.resAnimatePlay();
+	// 	}
+	// 	isRun = !isRun;
+	// },false);
 
 	sprite.animate({
 		time:2000,
@@ -109,5 +109,7 @@ async function init(){
 	});
 
 	app.run();
+	app.showFrame();
+
 
 }
