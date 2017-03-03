@@ -1,4 +1,5 @@
 var webpack = require('webpack');
+var path = require('path');
 
 
 module.exports = {
@@ -31,7 +32,12 @@ module.exports = {
 	//其它解决方案配置
 	resolve: {
 		//自动扩展文件后缀名，意味着我们require模块可以省略不写后缀名
-		extensions: ['.es6','.js']
+		extensions: ['.es6','.js'],
+		//自己的库地址
+		modules: [
+			path.resolve(__dirname, "src/js/lib"),
+			"node_modules"
+		]
 		//模块别名定义，方便后续直接引用别名，无须多写长长的地址
 		// alias: {
 		// 	//后续直接 require('mod1') 即可

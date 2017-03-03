@@ -1,9 +1,9 @@
-let game = require("./lib/canvas/canvas"),
-	loadImg = require("./lib/fn/loadImg"),
-	kb = require("./lib/event/keyboard");
+let game = require("canvas/canvas"),
+	loadImg = require("fn/loadImg"),
+	kb = require("event/keyboard");
 
 
-
+window.kb = kb;
 
 
 $(document).ready(function(){
