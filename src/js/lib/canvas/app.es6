@@ -47,6 +47,8 @@ class app{
 	append(scene){
 		scene.parent = this[body];
 		this[scenes].push(scene);
+
+		return this;
 	}
 
 	//删除场景

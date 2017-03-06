@@ -3,8 +3,7 @@
 
 require("./../jq/extend");
 
-let canvas = Symbol(),
-	ctx = Symbol();
+let canvas = Symbol();
 
 
 
@@ -33,13 +32,13 @@ class Sprite{
 		this.flipVertical = $.isBoolean(opt.flipVertical)? opt.flipVertical : false;
 
 		this[canvas] = null;
-		this[ctx] = null;
+		this.ctx = null;
 	}
 
 	//设置父级画布
 	set parent(dom){
 		this[canvas] = dom;
-		this[ctx] = dom.getContext("2d");
+		this.ctx = dom.getContext("2d");
 	}
 
 	//获取父级画布
@@ -47,12 +46,11 @@ class Sprite{
 		return this[canvas];
 	}
 
-
-	//渲染
-	render(){
-		this[ctx].save();
+	//设置画布
+	setCtx(){
+		this.ctx.save();
 		//设置画笔透明度
-		this[ctx].globalAlpha = this.alpha/100;
+		this.ctx.globalAlpha = this.alpha/100;
 
 		//水平或垂直翻转画布
 		var translate_x = (this.flipHorizontal)? this[canvas].width : 0,
@@ -60,8 +58,8 @@ class Sprite{
 			scale_x = (this.flipHorizontal)? -1 : 1,
 			scale_y = (this.flipVertical)? -1 : 1;
 
-		this[ctx].translate(translate_x,translate_y);
-		this[ctx].scale(scale_x,scale_y);
+		this.ctx.translate(translate_x,translate_y);
+		this.ctx.scale(scale_x,scale_y);
 
 		//中心点移至画布翻转后元素的中心点
 		let center_x = this.x + this.centerX,
@@ -70,10 +68,10 @@ class Sprite{
 			y = (this.flipVertical)? this[canvas].height - center_y : center_y;
 
 
-		this[ctx].translate(x,y);
-		this[ctx].rotate(Math.PI*this.rotate/180);
+		this.ctx.translate(x,y);
+		this.ctx.rotate(Math.PI*this.rotate/180);
 		//画布旋转后还原到翻转后的顶点（左上角）
-		this[ctx].translate(-x,-y);
+		this.ctx.translate(-x,-y);
 
 
 		//计算元素的左上角坐标
@@ -89,26 +87,39 @@ class Sprite{
 			elem_y = center_y - (center_y - this.y)*this.scale;
 		}
 
+		return {x:elem_x,y:elem_y};
+	}
+
+	//还原画布
+	restoreCtx(){
+		this.ctx.globalAlpha = 1;
+		this.ctx.restore();
+	}
+
+	//渲染
+	render(){
+		let {x,y} = this.setCtx();
+
 
 		//判断是图片还是颜色
 		if($.isObject(this.res)){
-			this[ctx].drawImage(
+			this.ctx.drawImage(
 				this.res,
 				0,
 				0,
 				this.res.width,
 				this.res.height,
-				elem_x,
-				elem_y,
+				x,
+				y,
 				this.width*this.scale,
 				this.height*this.scale
 			);
 		}else{
-			this[ctx].fillStyle = this.res;
+			this.ctx.fillStyle = this.res;
 
-			this[ctx].fillRect(
-				elem_x,
-				elem_y,
+			this.ctx.fillRect(
+				x,
+				y,
 				this.width*this.scale,
 				this.height*this.scale
 			)
@@ -116,10 +127,9 @@ class Sprite{
 		}
 
 
+		this.restoreCtx();
 
 
-		this[ctx].globalAlpha = 1;
-		this[ctx].restore();
 	}
 }
 

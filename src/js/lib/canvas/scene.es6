@@ -67,6 +67,8 @@ class Scene{
 	append(layer){
 		layer.parent = this[body];
 		this[layers].push(layer);
+
+		return this;
 	}
 
 	//删除场景

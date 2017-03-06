@@ -115,6 +115,8 @@ class Layer{
 	append(sprite){
 		sprite.parent = this[canvas];
 		this[sprites].push(sprite);
+
+		return this;
 	}
 
 	//删除精灵

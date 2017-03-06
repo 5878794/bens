@@ -55,7 +55,36 @@ async function init(){
 			centerY:0
 			// flipHorizontal:true,
 			// flipVertical:true
+		}),
+		sprite1 = new game.sprite({
+			width:100,
+			height:100,
+			res:"#f00",
+			x:0,
+			y:0
+		}),
+		title = new game.text({
+			// x:30,
+			// y:30,
+			text:"测试",
+			fontSize:30,
+			width:100,
+			height:100,
+			lineHeight:30,
+			// scale:1.5,
+			// rotate:30,
+			alpha:50,
+			// flipHorizontal:true,
+			// flipVertical:true
+			// textBaseline:"middle",
+			textAlign:"right"
 		});
+
+	window.game = game;
+	window.title = title;
+	window.layer = layer;
+	window.scene = scene;
+	window.app = app;
 
 	sprite.setResAnimateList({
 		resList:[imgs.icon2,imgs.icon3,imgs.icon4,imgs.icon5,imgs.icon6,imgs.icon7,imgs.icon1],
@@ -68,20 +97,20 @@ async function init(){
 
 	window.bens = sprite;
 
-	layer.append(sprite);
+	layer.append(sprite).append(sprite1);
 	scene.append(layer);
 	app.append(scene);
 
 
-	// let isRun = false;
-	// document.body.addEventListener("click",()=>{
-	// 	if(isRun){
-	// 		sprite.resAnimateStop();
-	// 	}else{
-	// 		sprite.resAnimatePlay();
-	// 	}
-	// 	isRun = !isRun;
-	// },false);
+	let isRun = false;
+	document.body.addEventListener("click",()=>{
+		if(isRun){
+			sprite.resAnimateStop();
+		}else{
+			sprite.resAnimatePlay();
+		}
+		isRun = !isRun;
+	},false);
 
 	sprite.animate({
 		time:2000,
