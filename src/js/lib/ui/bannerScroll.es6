@@ -2,25 +2,26 @@
 
 
 
-//new DEVICE.bannerAnimate({
-//	win: body,                      @param:jqobj    外层窗口
-//	body: $("#story_mains"),        @param:jqobj    滑动层
-//	time: 2000,                     @param:number   滑动间隔时间
-//	animateTime: win_width,         @param:number   滑动动画时间
-//	showPoint:false,                @param:number   是否显示下面的小点
-//	leftBtn:$("#story_right_btn"),  @param:jqobj    左滑动按钮
-//	rightBtn:$("#story_left_btn"),  @param:jqobj    右滑动按钮
+// new DEVICE.bannerAnimate({
+// 	win: body,                      @param:jqobj    外层窗口
+// 	body: $("#story_mains"),        @param:jqobj    滑动层
+// 	time: 2000,                     @param:number   滑动间隔时间
+// 	animateTime: win_width,         @param:number   滑动动画时间
+// 	showPoint:false,                @param:number   是否显示下面的小点
+// 	leftBtn:$("#story_right_btn"),  @param:jqobj    左滑动按钮
+// 	rightBtn:$("#story_left_btn"),  @param:jqobj    右滑动按钮
 //  changeStartFn:function(page){}, @param:fn       滑动开始时执行函数，传递当前要滑动到的页面number
 //  changeEndFn:function(page){}    @param:fn       滑动结束时执行函数，传递当前要滑动到的页面number
-//});
+// });
 
 
 
 
 
 require("./../jq/extend");
+require("./../jq/cssAnimate");
 var device = require("./../device"),
-	$$ = require("./../event/touch");
+	$$ = require("./../event/$$");
 
 
 
@@ -237,6 +238,9 @@ scrollBanner.prototype = {
 
 		if(this.leftBtn){
 			$$(this.leftBtn).myclickok(function(){
+				clearInterval(_this.intervalFn);
+				_this.intervalFn = null;
+				temp_fn();
 				_this.page++;
 				_this.animate();
 			});
@@ -244,6 +248,9 @@ scrollBanner.prototype = {
 
 		if(this.rightBtn){
 			$$(this.rightBtn).myclickok(function(){
+				clearInterval(_this.intervalFn);
+				_this.intervalFn = null;
+				temp_fn();
 				_this.page--;
 				_this.animate();
 			});

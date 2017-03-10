@@ -14,7 +14,7 @@
 require("./../jq/extend");
 require("./../jq/cssAnimate");
 let getImageFitSize = require("./../fn/getImageFitSize"),
-	$$$ = require("./../event/slide"),
+	$$$ = require("./../event/$$"),
 	device = require("./../device");
 
 var showPicture = function(data){
@@ -184,6 +184,7 @@ showPicture.prototype = {
 		};
 		img.src = src;
 
+		var __left = (this.isPc)? "2.5%" : "0";
 
 		//第一次点开
 		if(!this.nowShowDom){
@@ -193,7 +194,7 @@ showPicture.prototype = {
 			},500,function(){
 
 			});
-			div.css({left:0});
+			div.css({left:__left});
 			if(_this.nowShowDom){
 				_this.nowShowDom.remove();
 			}
@@ -202,7 +203,7 @@ showPicture.prototype = {
 			_this.canClick = true;
 		}else{
 			div.cssAnimate({
-				left:0
+				left:__left
 			},500,function(){
 				if(_this.nowShowDom){
 					_this.nowShowDom.remove();
@@ -257,12 +258,14 @@ showPicture.prototype = {
 	eventBindPhone:function(){
 		var _this = this;
 
-		$$$(this.main).myslideleft(function(){
+		$$$(this.main).myslideleft(function(e){
+			e.stopPop();
 			if(!_this.canClick){return;}
 			var n = _this.nowShowNumber + 1;
 			_this.showImg(n);
 		});
-		$$$(this.main).myslideright(function(){
+		$$$(this.main).myslideright(function(e){
+			e.stopPop();
 			if(!_this.canClick){return;}
 			var n = _this.nowShowNumber - 1;
 			_this.showImg(n);
