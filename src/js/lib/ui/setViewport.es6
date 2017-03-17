@@ -19,7 +19,7 @@ let setFn = function(psdWidth){
 		scale = 1 / dpr,
 		rem;
 
-	viewport.setAttribute('content', 'width=' + dpr * win_width + ',initial-scale=' + scale + ',maximum-scale=' + scale + ', minimum-scale=' + scale + ',user-scalable=no');
+	// viewport.setAttribute('content', 'width=' + dpr * win_width + ',initial-scale=' + scale + ',maximum-scale=' + scale + ', minimum-scale=' + scale + ',user-scalable=no');
 
 	var style = document.createElement('style');
 	win_width = window.innerWidth;
