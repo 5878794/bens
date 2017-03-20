@@ -41,6 +41,11 @@ class browserBackCallback{
 		}
 
 	}
+	destroy(){
+		this.callback = function(){
+			window.history.go(-1);
+		}
+	}
 
 }
 
