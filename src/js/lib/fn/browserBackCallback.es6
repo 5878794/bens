@@ -1,5 +1,5 @@
-
 //浏览器点后退按钮执行回调,在次点击浏览器历史记录后退
+//回调只会执行一次。。。。
 //微信需要先在页面点击一次才能生效
 
 //重复执行需要传入的函数是promise对象,取消要执行error
@@ -62,7 +62,9 @@ class browserBackCallback{
 	}
 	destroy(){
 		this.callback = function(){
-			window.history.go(-1);
+			return new Promise((success,error)=>{
+				window.history.go(-1);
+			});
 		}
 	}
 
