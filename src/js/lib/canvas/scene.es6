@@ -1,12 +1,14 @@
 
 //创建一个场景,可以包含多个画布
 
-let createDiv = Symbol(),
+let event = require("./event"),
+	createDiv = Symbol(),
 	setDivCss = Symbol(),
 	body = Symbol(),
 	layers = Symbol(),
 	parentDom = Symbol(),
-	refreshParentDom = Symbol();
+	refreshParentDom = Symbol(),
+	eventObj = Symbol();
 
 
 
@@ -19,7 +21,12 @@ class Scene{
 		//父级层
 		this[parentDom] = null;
 
+		//事件对象
+		this[eventObj] = null;
+
 		this[createDiv]();
+
+
 	}
 
 	//创建场景的包裹层
@@ -49,6 +56,16 @@ class Scene{
 			layer.parent = this[body];
 		})
 	}
+
+	get dom(){
+		return this[body];
+	}
+
+
+	get layers(){
+		return this[layers];
+	}
+
 
 	//设置父级包裹层
 	set parent(dom){
@@ -87,8 +104,19 @@ class Scene{
 		})
 	}
 
+	addEvent(){
+		this[eventObj] = new event({
+			dom:this[body],
+			scene:this
+		})
+	}
+
+
 	//销毁场景
 	destroy(){
+		if(this[eventObj]){
+			this[eventObj].destroy();
+		}
 		this[body].remove();
 	}
 }

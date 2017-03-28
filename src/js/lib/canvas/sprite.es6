@@ -15,6 +15,8 @@ class Sprite{
 		this.height = opt.height || 0;
 		this.x = opt.x || 0;
 		this.y = opt.y || 0;
+		this.x1 = this.x + this.width;
+		this.y1 = this.y + this.height;
 		//精灵的资源图片
 		this.res = opt.res;
 		//精灵旋转角度,根据中心点旋转
@@ -130,6 +132,25 @@ class Sprite{
 		this.restoreCtx();
 
 
+	}
+
+
+	//添加按下的事件
+	myclickdown(callback){
+		this.myclickdownFn = callback;
+		return this;
+	}
+
+	//添加放开的事件
+	myclickup(callback){
+		this.myclickupFn = callback;
+		return this;
+	}
+
+	//添加执行的事件
+	myclickok(callback){
+		this.myclickokFn = callback;
+		return this;
 	}
 }
 

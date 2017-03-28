@@ -111,6 +111,10 @@ class Layer{
 		return this[parentDom];
 	}
 
+	get sprites(){
+		return this[sprites];
+	}
+
 	//添加精灵到当前场景
 	append(sprite){
 		sprite.parent = this[canvas];
