@@ -2,7 +2,7 @@
 //精灵动画class   详见animate参数
 
 let tween = require("./../fn/tween"),
-	animateList = Symbol(),
+	animateList = Symbol("animateList"),
 	nowAnimateStyle = Symbol(),
 	setNowStyle = Symbol(),
 	getNowAnimateStyle = Symbol(),
@@ -207,6 +207,16 @@ let animate = (parClass)=> class extends parClass{
 		};
 
 		this[animateList].unshift(newObj);
+
+
+		//如果不是原路回来动画,重新设置元素的属性为初始属性
+		if(!flip){
+			for(let key in _style){
+				if(_style.hasOwnProperty(key)){
+					this[key] = _style[key];
+				}
+			}
+		}
 	}
 
 	//获取当前的动画样式值
