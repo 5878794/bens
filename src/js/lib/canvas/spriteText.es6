@@ -2,7 +2,6 @@
 //创建文字精灵
 
 let sprite = require("./sprite"),
-	setStyle = Symbol(),
 	autoBreakWord = Symbol(),
 	handlerText = Symbol();
 
@@ -28,23 +27,11 @@ class spriteText extends  sprite{
 		this.ctxTextAlign = "left";
 		this[handlerText] = [];
 
-		this[setStyle]();
 		this[autoBreakWord]();
 	}
 
 	refresh(){
 		this[autoBreakWord]();
-	}
-
-	[setStyle](){
-		if(this.textAlign == "center"){
-			this.x = this.x + this.width/2;
-			this.ctxTextAlign = "center";
-		}
-		if(this.textAlign == "right"){
-			this.x = this.x + this.width;
-			this.ctxTextAlign = "right";
-		}
 	}
 
 	//自动换行(计算每行要显示的文字和坐标)
@@ -92,6 +79,16 @@ class spriteText extends  sprite{
 
 	render(){
 		let {x,y} = this.setCtx();
+		//根据对齐方式转换为文字实际绘画的坐标
+		if(this.textAlign == "center"){
+			x = x + this.width*this.scale/2;
+			this.ctxTextAlign = "center";
+		}
+		if(this.textAlign == "right"){
+			x = x + this.width*this.scale;
+			this.ctxTextAlign = "right";
+		}
+
 
 		this.ctx.fillStyle = this.color;
 		this.ctx.font = this.bold + " "+this.fontSize*this.scale+"px 宋体";
@@ -99,12 +96,13 @@ class spriteText extends  sprite{
 		this.ctx.textAlign =  this.ctxTextAlign;
 
 
+
 		for(let i=0,l=this[handlerText].length;i<l;i++){
-			let _y = i*this.lineHeight;
+			let _y = i*this.lineHeight*this.scale;
 			this.ctx.fillText(
 				this[handlerText][i],
 				x,
-				y + this.lineHeight/2 + _y
+				y + this.lineHeight*this.scale/2 + _y
 			);
 		}
 
