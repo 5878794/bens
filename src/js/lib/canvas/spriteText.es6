@@ -20,7 +20,7 @@ class spriteText extends  sprite{
 		//粗体   bold或""
 		this.bold = opt.bold || "";
 		//行高
-		this.lineHeight = opt.lineHeight || opt.fontSize;
+		this.lineHeight = opt.lineHeight || this.fontSize;
 		//水平对齐方式
 		this.textAlign = opt.textAlign || "left";
 
@@ -29,6 +29,10 @@ class spriteText extends  sprite{
 		this[handlerText] = [];
 
 		this[setStyle]();
+		this[autoBreakWord]();
+	}
+
+	refresh(){
 		this[autoBreakWord]();
 	}
 

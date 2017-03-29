@@ -3,6 +3,7 @@ let app = require("./app"),
 	layer = require("./layer"),
 	sprite = require("./spriteAnimate"),
 	text = require("./textAnimate"),
+	group = require("./spriteGroup"),
 	//阻止窗口滚动
 	preventScroll = ()=> {
 		window.addEventListener(device.MOVE_EV, (e) => {
@@ -18,6 +19,7 @@ module.exports = {
 	layer,
 	sprite,
 	text,
+	group,
 	preventScroll
 };
 
