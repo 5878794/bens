@@ -1,5 +1,6 @@
 
 //创建文字精灵
+//TODO 缩放的时候有细微投动,未找到原因
 
 let sprite = require("./sprite"),
 	autoBreakWord = Symbol(),
