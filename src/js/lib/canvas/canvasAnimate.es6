@@ -9,8 +9,9 @@ let tween = require("./../fn/tween"),
 	setAnimateStyle = Symbol(),
 	tweenFn = Symbol(),
 	getTweenFn = Symbol(),
-	addInfiniteAnimateList = Symbol();
-
+	addInfiniteAnimateList = Symbol(),
+	canRunNextList = Symbol(),
+	animatePause = Symbol();
 
 
 let animate = (parClass)=> class extends parClass{
@@ -23,6 +24,10 @@ let animate = (parClass)=> class extends parClass{
 		this[nowAnimateStyle] = null;
 		//当前动画的方式函数
 		this[tweenFn] = null;
+		//是否可以持续执行队列中的动画参数
+		this[canRunNextList] = true;
+		//动画是否暂停
+		this[animatePause] = false;
 
 	}
 
@@ -65,7 +70,31 @@ let animate = (parClass)=> class extends parClass{
 				endFlipHorizontal:endFlipHorizontal,
 				endFlipVertical:endFlipVertical
 			})
+
 		},delay);
+	}
+
+	//动画运行完当前队列停止动画
+	animateStop(){
+		this[canRunNextList] = false;
+	}
+
+	//立即停止动画
+	animatePause(){
+		this[animatePause] = true;
+	}
+
+	//恢复动画,继续执行
+	animateResume(){
+		this[animatePause] = false;
+		this[canRunNextList] = true;
+	}
+
+	//清空动画队列
+	clearAnimateList(){
+		this[animateList] = [];
+		this[nowAnimateStyle] = null;
+		this.animateResume();
 	}
 
 	//获取动画补间函数
@@ -90,10 +119,24 @@ let animate = (parClass)=> class extends parClass{
 
 	//获取当前的动画样式对象
 	[getNowAnimateStyle](){
+		//判断动画是否暂停
+		if(this[animatePause]){
+			return null;
+		}
+
 		//有当前的动画对象 直接返回
 		if(this[nowAnimateStyle]){
 			return this[nowAnimateStyle];
 		}
+
+		//是否能运行下一个队列
+		//如果不能暂停执行动画,执行下一个队列状态改为true
+		if(!this[canRunNextList]){
+			this[canRunNextList] = true;
+			this[animatePause] = true;
+			return null;
+		}
+
 
 		//队列没有直接返回空
 		if(this[animateList].length == 0){
@@ -158,7 +201,7 @@ let animate = (parClass)=> class extends parClass{
 
 		//如果不是循环动画,执行回调结束
 		if(!infinite){
-			callback();
+			callback.call(this);
 			this[nowAnimateStyle] = null;
 			return;
 		}
