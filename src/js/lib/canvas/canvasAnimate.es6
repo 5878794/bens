@@ -11,12 +11,16 @@ let tween = require("./../fn/tween"),
 	getTweenFn = Symbol(),
 	addInfiniteAnimateList = Symbol(),
 	canRunNextList = Symbol(),
-	animatePause = Symbol();
+	animatePause = Symbol(),
+	myRenderFn = Symbol();
 
 
 let animate = (parClass)=> class extends parClass{
 	constructor(opt = {}){
 		super(opt);
+
+		//自定义的渲染函数
+		this[myRenderFn] = null;
 
 		//动画队列
 		this[animateList] = [];
@@ -136,7 +140,6 @@ let animate = (parClass)=> class extends parClass{
 			this[animatePause] = true;
 			return null;
 		}
-
 
 		//队列没有直接返回空
 		if(this[animateList].length == 0){
@@ -271,8 +274,21 @@ let animate = (parClass)=> class extends parClass{
 
 	}
 
+	set myRender(fn){
+		fn = ($.isFunction(fn))? fn : null;
+		this[myRenderFn] = fn;
+	}
+
+	get myRender(){
+		return this[myRenderFn];
+	}
+
 	render(){
 		this[setNowStyle]();
+
+		if(this[myRenderFn]){
+			this[myRenderFn].call(this);
+		}
 
 		super.render();
 	}
