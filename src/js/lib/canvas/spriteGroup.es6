@@ -26,8 +26,15 @@ class spriteGroup extends sprite{
 
 	//添加精灵到组,记录组的位置
 	append(name,sprite){
+		var newParam = {};
+		for(var key in sprite){
+			if(sprite.hasOwnProperty(key)){
+				newParam[key] = sprite[key];
+			}
+		}
+
 		this[children].set(name,{
-			param:JSON.parse(JSON.stringify(sprite)),
+			param:newParam,
 			sprite:sprite
 		});
 		return this;

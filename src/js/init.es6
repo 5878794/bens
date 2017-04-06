@@ -1,154 +1,263 @@
-// let game = require("canvas/canvas"),
-// 	loadImg = require("fn/loadImg"),
-// 	$$ = require("event/$$");
-//
-//
-// window.$$ = $$;
 
+let game = require("./lib/canvas/canvas"),
+	loadImg = require("./lib/fn/loadImg"),
+	canvasBtn = require("./lib/canvas/group/btn"),
+	$$ = require("./lib/event/$$");
 
-let show = require("./lib/ui/editPicture"),
-	device = require("./lib/device");
-
-console.log(device);
-
+window.game = game;
 
 $(document).ready(function(){
-	// init();
-
-
-	new show({
-		id:"win",                 //要显示的地方   id，dom，jqdom
-	     src:"http://file.ynet.com/2/1509/11/10370925-500.jpg",                    //图片地址
-	     success:function(src){console.log(src)},      //清除对象，返回图片的base64,类型为  png
-	     cancel:function(){console.log("esc")}             //清除对象
-	})
-
+	init().then(()=>{}).catch((e)=>{console.log(e)});
 
 
 });
 
 
 
-// async function init(){
-// 	let imgs = await loadImg([
-// 						{key:"icon1",val:"./image/0.png"},
-// 						{key:"icon2",val:"./image/1.png"},
-// 						{key:"icon3",val:"./image/2.png"},
-// 						{key:"icon4",val:"./image/3.png"},
-// 						{key:"icon5",val:"./image/4.png"},
-// 						{key:"icon6",val:"./image/5.png"},
-// 						{key:"icon7",val:"./image/6.png"}
-// 					 ])
-// 					 .then(function(rs){
-// 					 	 let newRes = {};
-// 						 rs.map(function(obj){
-// 							 newRes[obj.key] = obj.val;
-// 						 });
-// 						 return newRes;
-// 					 });
-//
-// 	var app = new game.app({
-// 			body:$("#test")
-// 		}),
-// 		scene = new game.scene(),
-// 		layer = new game.layer(),
-// 		sprite = new game.sprite({
-// 			width:128,
-// 			height:128,
-// 			res:"#f00",
-// 			x:64,
-// 			y:64,
-// 			// alpha:50,
-// 			// scale:2,
-// 			// rotate:30,
-// 			centerX:0,
-// 			centerY:0
-// 			// flipHorizontal:true,
-// 			// flipVertical:true
-// 		}),
-// 		sprite1 = new game.sprite({
-// 			width:100,
-// 			height:100,
-// 			res:"#f00",
-// 			x:0,
-// 			y:0
-// 		}),
-// 		title = new game.text({
-// 			// x:30,
-// 			// y:30,
-// 			text:"测试",
-// 			fontSize:30,
-// 			width:100,
-// 			height:100,
-// 			lineHeight:30,
-// 			// scale:1.5,
-// 			// rotate:30,
-// 			alpha:50,
-// 			// flipHorizontal:true,
-// 			// flipVertical:true
-// 			// textBaseline:"middle",
-// 			textAlign:"right"
-// 		});
-//
-// 	window.game = game;
-// 	window.title = title;
-// 	window.layer = layer;
-// 	window.scene = scene;
-// 	window.app = app;
-//
-// 	sprite.setResAnimateList({
-// 		resList:[imgs.icon2,imgs.icon3,imgs.icon4,imgs.icon5,imgs.icon6,imgs.icon7,imgs.icon1],
-// 		frame:5,
-// 		// infinite:true,
-// 		canStopResPointer:[3,6],
-// 		callback:function(){console.log(123)}
-// 	});
-//
-//
-// 	window.bens = sprite;
-//
-// 	layer.append(sprite).append(sprite1);
-// 	scene.append(layer);
-// 	app.append(scene);
-//
-//
-// 	let isRun = false;
-// 	document.body.addEventListener("click",()=>{
-// 		if(isRun){
-// 			sprite.resAnimateStop();
-// 		}else{
-// 			sprite.resAnimatePlay();
-// 		}
-// 		isRun = !isRun;
-// 	},false);
-//
-// 	sprite.animate({
-// 		time:2000,
-// 		style:{
-// 			x:100
-// 		},
-// 		callback:function(){console.log("over");
-//
-// 			bens.animate({
-// 				time:1000,
-// 				style:{
-// 					x:0
-// 				},
-// 				callback:function(){
-// 					setTimeout(()=>{
-// 						layer.del(sprite)
-// 					},1000)
-//
-// 					console.log("over")
-// 				}
-//
-// 			})
-// 		}
-//
-// 	});
-//
-// 	app.run();
-// 	app.showFrame();
-//
-//
-// }
+async function init(){
+	let imgs = await loadImg([
+						{key:"icon1",val:"./image/0.png"},
+						{key:"icon2",val:"./image/1.png"},
+						{key:"icon3",val:"./image/2.png"},
+						{key:"icon4",val:"./image/3.png"},
+						{key:"icon5",val:"./image/4.png"},
+						{key:"icon6",val:"./image/5.png"},
+						{key:"icon7",val:"./image/6.png"}
+					 ])
+					 .then(function(rs){
+					 	 let newRes = {};
+						 rs.map(function(obj){
+							 newRes[obj.key] = obj.val;
+						 });
+						 return newRes;
+					 }).catch(function(e){
+					 	console.log(e)
+		});
+	var app = new game.app({
+			body:$("#test")
+		}),
+		scene = new game.scene(),
+		layer = new game.layer();
+
+	var box = new game.group({
+		x:30,y:0,width:100,height:700
+	});
+
+
+	var height = 100;
+	for(var i=0,l=14;i<l;i++){
+		var n = i%7+1;
+		var image = new game.sprite({
+			x:0,y:i*height,width:100,height:height,
+			res:imgs["icon"+n]
+		});
+		box.append("img"+i,image);
+	}
+	var box1 = new game.group({
+		x:130,y:0,width:100,height:700
+	});
+	for(var ii=0,il=14;ii<il;ii++){
+		var ni = ii%7+1;
+		var image1 = new game.sprite({
+			x:0,y:ii*height,width:100,height:height,
+			res:imgs["icon"+ni]
+		});
+		box1.append("img"+ii,image1);
+	}
+
+	var box2 = new game.group({
+		x:230,y:0,width:100,height:700
+	});
+	for(var z=0,zl=14;z<zl;z++){
+		var zn = z%7+1;
+		var image2 = new game.sprite({
+			x:0,y:z*height,width:100,height:height,
+			res:imgs["icon"+zn]
+		});
+		box2.append("img"+z,image2);
+	}
+
+
+
+	box.myclickok(function(){
+		this.animate({
+			time:300,
+			style:{
+				y:-700
+			},
+			infinite:true
+		})
+		// box1.animate({
+		// 	time:500,
+		// 	style:{
+		// 		y:-700
+		// 	},
+		// 	infinite:true
+		// })
+		// box2.animate({
+		// 	time:700,
+		// 	style:{
+		// 		y:-700
+		// 	},
+		// 	infinite:true
+		// })
+	});
+	var obj = $("#btn");
+	$$(obj).myclickdown(function(){
+		// let temp = 0,
+		// 	oldY = null;
+		// box.renderFn = function(){
+		// 	temp++;
+		// 	if(oldY == this.y){
+		//
+		// 		return;
+		// 	}
+		// 	oldY = this.y;
+		// 	this.y -= temp;
+		// };
+
+		box.animateStop();
+		box1.animateStop();
+		box2.animateStop();
+		box.clearAnimateList();
+		box1.clearAnimateList();
+		box2.clearAnimateList();
+
+		getResultAnimate(box,box1,box2);
+
+	});
+
+	// box = new game.sprite({
+	// 	x:0,y:height,width:100,height:height,
+	// 	res:imgs["icon"+1]
+	// });
+	layer.append(box);
+	scene.append(layer);
+	app.append(scene);
+
+	scene.addEvent();
+
+	app.run();
+	app.showFrame();
+
+	window.box = box;
+}
+
+
+async function getResultAnimate(box,box1,box2) {
+
+	box.y = 0;
+	// s = v0·t + a·t²/2
+	// 加速度a，时间t，初速度v0
+
+	let nowSpeed = 700/500,
+		t = new Date().getTime(),
+		//计算总运行时间
+		//平均速度 = (初始速度-结束速度)/2
+		//运动时间 = 距离/平均速度
+		totalTime = 7000*2/nowSpeed,
+		//加速度 = (结束速度 - 初始速度) / 时间
+		a = nowSpeed/totalTime,
+		nowY = box.y,
+		tempY = 0;
+
+
+	box.myRender = function(){
+		let t1 = new Date().getTime(),
+			runTime = t1 - t,
+			//当前位置 = 初始速度 * 当前运行时间 - 加速度*运行时间*运行时间/2
+			y = nowSpeed*runTime - a*runTime*runTime/2;
+		// console.log(y)
+		// console.log(tempY)
+		if(runTime>=totalTime){
+			this.myRender = null;
+			y = nowSpeed*totalTime - a*totalTime*totalTime/2;
+			this.y = nowY - y;
+			this.y = this.y%700;
+			return;
+		}
+
+		tempY = y;
+		this.y = nowY - y;
+		this.y = this.y%700;
+	};
+
+	// box.animate({
+	// 	time:300,
+	// 	style:{
+	// 		y:-700
+	// 	},
+	// 	infinite:true
+	// })
+
+
+	// box.animate({
+	// 	time:1000,
+	// 	style:{
+	// 		y:-700
+	// 	},
+	// 	animateStyle:"Quad",
+	// 	animateClass:"easeOut",
+	// 	callback:function(){
+	// 		this.y = 0;
+	// 	}
+	// });
+	// box.animate({
+	// 	time:2000,
+	// 	style:{
+	// 		y:-700
+	// 	},
+	// 	callback:function(){
+	// 		this.y = 0;
+	// 	}
+	// });
+	// box.animate({
+	// 	time:2000,
+	// 	style:{
+	// 		y:-300
+	// 	}
+	// });
+
+
+
+
+
+	// box1.animate({
+	// 	time:1000,
+	// 	style:{
+	// 		y:-700
+	// 	}
+	// });
+	// box2.animate({
+	// 	time:1000,
+	// 	style:{
+	// 		y:-700
+	// 	}
+	// });
+
+	// box1.animate({
+	// 	time:2000,
+	// 	style:{
+	// 		y:-700
+	// 	}
+	// });
+	// box2.animate({
+	// 	time:2000,
+	// 	style:{
+	// 		y:-700
+	// 	}
+	// });
+
+	// box1.animate({
+	// 	time:2000,
+	// 	style:{
+	// 		y:-400
+	// 	}
+	// });
+	// box2.animate({
+	// 	time:2000,
+	// 	style:{
+	// 		y:-200
+	// 	}
+	// });
+}

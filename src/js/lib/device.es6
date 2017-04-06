@@ -161,7 +161,7 @@ var DEVICE = {};
 
 
 		windowTouch = (window.navigator.msMaxTouchPoints && window.navigator.msMaxTouchPoints > 0) ? true : false,
-		webkitTouch = (DEVICE.isAndroid || DEVICE.isIpad || DEVICE.isIphone),
+		webkitTouch = DEVICE.isPhone,
 		hasTouch = (webkitTouch || windowTouch),
 		hasTransform = vendor !== false,
 
