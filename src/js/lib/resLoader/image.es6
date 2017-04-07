@@ -8,7 +8,12 @@
 // };
 
 
-// let imgObj = await new imageLoader(opt);
+// let imgObj = await new imageLoader(
+//      opt,
+//      function(loaded,total){...}
+// );
+
+
 // if(imgObj.state == 1){
 //      //输出{key,imgObj对象, ...}
 //      console.log(imgObj.data)
@@ -22,14 +27,19 @@ let data = Symbol(),
 	handlerData = Symbol(),
 	loadImg = Symbol(),
 	promiseAll = Symbol(),
-	promise = Symbol();
+	promise = Symbol(),
+	dataLength = Symbol(),
+	loaded = Symbol();
 
 
 class imageLoader{
-	constructor(opt){
+	constructor(opt,propFn){
 		this.ress = opt;
-		this.data = [];
+		this.propFn = propFn || function(){};
 
+		this.data = [];
+		this[dataLength] = Object.entries(this.ress).length;
+		this[loaded] = 0;
 
 		this[handlerData]();
 
@@ -51,11 +61,16 @@ class imageLoader{
 	//加载图片
 	[loadImg](obj){
 		let key = obj.key,
-			val = obj.src;
+			val = obj.src,
+			_this = this;
 
 		return new Promise(function(success,error){
 			let img = new Image();
-			img.onload = function(){success({key,val:this})};
+			img.onload = function(){
+				_this[loaded]++;
+				_this.propFn(_this[loaded],_this[dataLength]);
+				success({key,val:this})
+			};
 			img.onerror = function(){error(val)};
 			img.src = val;
 		})

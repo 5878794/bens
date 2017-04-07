@@ -18,7 +18,12 @@
 // };
 
 
-// let imgObj = await new imageMapLoader(opt);
+// let imgObj = await new imageMapLoader(
+//      opt,
+//      function(loaded,total){...}
+// );
+
+
 // if(imgObj.state == 1){
 //      //输出{key,imgObj对象, ...}
 //      console.log(imgObj.data)
@@ -41,8 +46,9 @@ let imageLoader = require("./image"),
 
 
 class imageMapLoader{
-	constructor(opt){
+	constructor(opt,propFn){
 		this.data = opt;
+		this.propFn = propFn || function(){};
 
 
 		return this[run]();
@@ -88,7 +94,7 @@ class imageMapLoader{
 		//处理成普通图片加载需要的数据格式
 		let newData = this[handlerData]();
 		//加载图片
-		let imgObj = await new imageLoader(newData);
+		let imgObj = await new imageLoader(newData,this.propFn);
 
 		if(imgObj.state == 0){
 			return imgObj.msg;
