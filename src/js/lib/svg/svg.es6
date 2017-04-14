@@ -100,7 +100,7 @@ svgObj.prototype = {
 			}
 		}
 		$(el).text(val);
-		return el;
+		return $(el);
 	}
 };
 
