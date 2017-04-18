@@ -21,7 +21,12 @@
 // 			id:1,
 // 			x:104.01561838983811,
 // 			y:30.686133197290367,
-// 			// icon:"http://developer.baidu.com/map/jsdemo/img/fox.gif",
+// 			icon:{
+//              src:"image/0.png",      //icon地址
+// 	            width:40,               //要显示的大小,透明度
+// 	            height:40,
+// 	            opacity:80
+//          },
 // 			click:function(data){
 // 				console.log(data)
 // 			}
@@ -30,7 +35,12 @@
 // 			id:2,
 // 			x:104.07267947836799,
 // 			y:30.627626930487956,
-// 			// icon:"http://developer.baidu.com/map/jsdemo/img/fox.gif",
+// 			icon:{
+//              src:"image/0.png",      //icon地址
+// 	            width:40,               //要显示的大小,透明度
+// 	            height:40,
+// 	            opacity:80
+//          },
 // 			click:function(data){
 // 				console.log(data)
 // 			}
@@ -55,6 +65,8 @@
 // aa.getMyLocation().then(point=>{console.log(point)});
 
 
+let changeImageSize = require("../fn/changeImageSize");
+
 let createMap = Symbol(),
 	hiddenBaiduLogo = Symbol(),
 	createOtherPoint = Symbol(),
@@ -64,7 +76,8 @@ let createMap = Symbol(),
 	getDistance = Symbol(),
 	ngToBdPoint = Symbol(),
 	cacheFunctions = Symbol(),
-	runCacheFn = Symbol();
+	runCacheFn = Symbol(),
+	handlerImage = Symbol();
 
 
 
@@ -148,6 +161,21 @@ class baiduMap{
 		})
 	}
 
+	//处理图片
+	[handlerImage](img,width,height,opacity){
+		width = width || img.width;
+		height = height || img.height;
+		opacity = opacity/100 || 1;
+
+		return new changeImageSize({
+			img:img,
+			width:width,
+			height:height,
+			opacity:opacity
+		});
+
+	}
+
 	//在地图上标点,可使用自定义图标
 	async [createOtherPoint](){
 		if(this.points.length == 0){return;}
@@ -157,9 +185,11 @@ class baiduMap{
 				this_point = new BMap.Point(point.x,point.y),
 				marker;
 
-			if(point.icon){
+			if(point.icon && point.icon.src){
 				//有图标
-				let imgObj = await this[getImageObj](point.icon);
+				let imgObj = await this[getImageObj](point.icon.src);
+				//处理图片生成base64
+				imgObj = await this[handlerImage](imgObj,point.icon.width,point.icon.height,point.icon.opacity);
 				if(imgObj){
 					let this_icon = new BMap.Icon(imgObj.src,new BMap.Size(imgObj.width,imgObj.height));
 					marker = new BMap.Marker(this_point,{icon:this_icon});
