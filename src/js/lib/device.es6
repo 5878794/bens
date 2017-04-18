@@ -61,7 +61,7 @@ var DEVICE = {};
 	DEVICE.isChrome = (Sys.hasOwnProperty("chrome"));
 	DEVICE.isOpera = (Sys.hasOwnProperty("opera"));
 	DEVICE.isSafari = (Sys.hasOwnProperty("safari"));
-
+	DEVICE.isWeChat = (ua.match(/MicroMessenger/i) == "micromessenger");
 
 	DEVICE.ver = 0;
 	var ver;
