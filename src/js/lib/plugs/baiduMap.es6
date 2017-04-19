@@ -14,8 +14,16 @@
 // 	centerPoint:"104.08099,30.655096",
 // 	//地图缩放等级
 // 	mapScale:12,
-// 	//要在地图上标记的点
-// 	points:[
+//  //是否显示控制层,默认false
+//  showControl:false,
+//  //是否启用鼠标滚轮缩放,默认false
+//  mouseScrollZoom:false,
+//  //报错时处理函数,参数为报错信息
+//  error:function(msg){console.log(msg)}
+// });
+
+// 	//要在地图上标记的点  异步函数
+// 	let points = [
 // 		//图片大小要实际的图片大小尺寸,要不显示不出来
 // 		{
 // 			id:1,
@@ -45,17 +53,14 @@
 // 				console.log(data)
 // 			}
 // 		}
-// 	],
-//  //是否显示控制层,默认false
-//  showControl:false,
-//  //是否启用鼠标滚轮缩放,默认false
-//  mouseScrollZoom:false,
-//  //报错时处理函数,参数为报错信息
-//  error:function(msg){console.log(msg)}
-// });
+// 	]
+//  aa.createMarker(points);
+
+
 
 
 // //获取当前定位坐标到所有点的距离,并返回传入的点的数组,距离在数组中每个对象上的distance属性
+// 异步函数
 // aa.getDistanceList(list=>console.log(list));
 
 // //从当前点步行到一个传入点的id的步行线路图。回调返回ok
@@ -69,7 +74,6 @@ let changeImageSize = require("../fn/changeImageSize");
 
 let createMap = Symbol(),
 	hiddenBaiduLogo = Symbol(),
-	createOtherPoint = Symbol(),
 	getImageObj = Symbol(),
 	getLatAndLongFromBrowser = Symbol(),
 	getLatAndLongFromH5 = Symbol(),
@@ -89,8 +93,6 @@ class baiduMap{
 		this.centerPoint = opt.centerPoint || "";
 		//地图显示的缩放级别
 		this.mapScale = opt.mapScale || 12;
-		//要标注的点
-		this.points = opt.points || [];
 		//获取定位的时间
 		this.getLatAndLongTime = opt.getLatAndLongTime || 10000;
 		//错误处理函数
@@ -107,6 +109,10 @@ class baiduMap{
 		this.myLocation = null;
 		//缓存的函数,待执行的队列
 		this.cacheFunctions = [];
+		//已经瞄的点
+		this.markers = [];
+		//当前标记的点
+		this.points = [];
 
 
 		this.init();
@@ -115,7 +121,6 @@ class baiduMap{
 
 	init(){
 		this[createMap]();
-		this[createOtherPoint]();
 
 		this[hiddenBaiduLogo]();
 		this.getMyLocation();
@@ -177,13 +182,20 @@ class baiduMap{
 	}
 
 	//在地图上标点,可使用自定义图标
-	async [createOtherPoint](){
-		if(this.points.length == 0){return;}
+	async createMarker(points){
+		if(points.length == 0){return;}
 
-		for(let i=0,l=this.points.length;i<l;i++){
-			let point = this.points[i],
+		for(let i=0,l=points.length;i<l;i++){
+			this.points.push(points[i]);
+		}
+
+
+
+		for(let i=0,l=points.length;i<l;i++){
+			let point = points[i],
 				this_point = new BMap.Point(point.x,point.y),
 				marker;
+
 
 			if(point.icon && point.icon.src){
 				//有图标
@@ -210,9 +222,25 @@ class baiduMap{
 					})
 				}
 
+				this.markers.push(marker);
 				this.baiduMapObj.addOverlay(marker);
+
 			}
 		}
+	}
+
+	//清除所有的标记
+	clearAllMarker(){
+		for(let i=0,l=this.markers.length;i<l;i++){
+			let this_mark = this.markers[i];
+
+			this.baiduMapObj.removeOverlay(this_mark);
+		}
+	}
+
+	//清除所有
+	clearAll(){
+		this.baiduMapObj.clearOverlays();
 	}
 
 	//获取当前经纬度
@@ -378,6 +406,8 @@ class baiduMap{
 		walking.search(p2,p1);
 		success("ok");
 	}
+
+
 
 	//隐藏baidu logo等文字
 	[hiddenBaiduLogo](){
