@@ -17,7 +17,7 @@ class $${
 		this[idArray] = [];
 
 		this[create]();
-
+		this.addDefaultEvent();
 	}
 
 	static run(e,type){
