@@ -92,7 +92,7 @@ var DEVICE = {};
 	var x11 = (p == "X11") || (p.indexOf("Linux") == 0);
 
 	DEVICE.isPc = (win || mac || x11);
-	DEVICE.isPhone = !DEVICE.isPc;
+	// DEVICE.isPhone = !DEVICE.isPc;
 	DEVICE.isMac = mac;
 	DEVICE.isWin = win;
 	DEVICE.isLinux = x11;
