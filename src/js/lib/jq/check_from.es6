@@ -146,28 +146,35 @@
 				this_id = $(this).attr("id");
 
 			that_rule = that_rule.split(",");
-
 			data[this_id] = this_val;
-			for(var i=0,l=that_rule.length;i<l;i++){
-				let this_rule = that_rule[i];
-				if(this_rule.indexOf('max:')>-1 || this_rule.indexOf('min:')>-1){
-					this_rule = this_rule.split(":");
-					let _this_rule = this_rule[0],
-						_n = parseInt(this_rule[1]);
 
-					if(!rules[_this_rule]){
-						console.log(_this_rule+"  无此正则");
-					}else{
-						if(!rules[_this_rule](this_val,_n)){
-							errorDom.push($(this));
+
+			//非必填 过
+			if(that_rule.indexOf("must") == -1 && this_val.length == 0){
+
+			}else{
+				for(var i=0,l=that_rule.length;i<l;i++){
+					let this_rule = that_rule[i];
+
+					if(this_rule.indexOf('max:')>-1 || this_rule.indexOf('min:')>-1){
+						this_rule = this_rule.split(":");
+						let _this_rule = this_rule[0],
+							_n = parseInt(this_rule[1]);
+
+						if(!rules[_this_rule]){
+							console.log(_this_rule+"  无此正则");
+						}else{
+							if(!rules[_this_rule](this_val,_n)){
+								errorDom.push($(this));
+							}
 						}
-					}
-				}else{
-					if(!rules[this_rule]){
-						console.log(this_rule+"  无此正则");
 					}else{
-						if(!rules[this_rule](this_val)){
-							errorDom.push($(this));
+						if(!rules[this_rule]){
+							console.log(this_rule+"  无此正则");
+						}else{
+							if(!rules[this_rule](this_val)){
+								errorDom.push($(this));
+							}
 						}
 					}
 				}
