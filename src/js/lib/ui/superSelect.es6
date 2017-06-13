@@ -1,5 +1,6 @@
 
 //单选 多选ui   手机用
+//只有弹出层部分，没有select控件本身
 
 // new superSelect({
 // 	data:[{code:1,value:"aa"}],
