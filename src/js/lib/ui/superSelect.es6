@@ -6,12 +6,11 @@
 // 	selected: [1,2],
 // 	type: "single"    //single单选  填其他多选
 // }).then(rs=> {
-// 	      // [1,2,3]  返回code的数组。没选返回空数组
+//          rs.codes     返回code的数组。没选返回空数组
+//          rs.values    返回value的数组。没选返回空数组
 // }).catch(rs=> {
 // 	console.log(rs)   取消，报错执行，默认不需要
 // });
-
-
 
 
 
@@ -194,7 +193,8 @@ class superSelect{
 			}else{
 				_this[multipleListClick](this);
 			}
-
+			//修正android不刷新ui的bug
+			$("body").append("<div></div>");
 		});
 
 
@@ -243,16 +243,19 @@ class superSelect{
 	}
 	//点击确定按钮
 	[submit](success){
-		let selects = [];
+		let selects = [],
+			values = [];
 		this[allListDom].each(function(){
 			let text = $(this).find("span").text(),
-				id = $(this).attr("_id");
+				id = $(this).attr("_id"),
+				value = $(this).find("p").text();
 			if(text){
 				selects.push(id);
+				values.push(value);
 			}
 		});
 		this.destroy();
-		success(selects);
+		success({codes:selects,values:values});
 	}
 	//销毁
 	destroy(error){
