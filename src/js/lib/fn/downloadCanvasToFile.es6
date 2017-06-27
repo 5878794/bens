@@ -1,5 +1,6 @@
 
 //支持ie10+，chrome等
+//不支持手机webkit
 //canvas下载并保存为图片
 
 // downloadCanvasToFile(
