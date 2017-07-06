@@ -26,8 +26,8 @@ $.fn.listenerStyle = function(array,callback){
 	array.map(param=>{
 		let _param = "_"+param;
 		data[param] = true;
-		Object.defineProperty(_this.style,_param,{
-			set(){
+		Object.defineProperty(_this,_param,{
+			set(val){
 				callback.call(_this);
 			}
 		})
@@ -37,17 +37,21 @@ $.fn.listenerStyle = function(array,callback){
 };
 
 $.fn.CSS = function(obj){
+
+	$(this).css(obj);
+
 	let data = $(this).data("__listener_style__") || {},
 		_this = $(this).get(0);
 
 	for(let key of Object.keys(data)){
 		if(obj.hasOwnProperty(key)){
-			_this.style["_"+key] = 123;
+			let val = new Date().getTime()+parseInt(Math.random()*100);
+			_this["_"+key] = val;
 			break;
 		}
 	}
 
-	$(this).css(obj);
+
 };
 
 
