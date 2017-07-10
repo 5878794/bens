@@ -1,5 +1,6 @@
 
 //生成桌面图标,自动对齐网格。可以单个拖动
+//TODO resize窗口未处理
 
 //var icon =  new Icon({
 // 	icons:[         //要放的图标数组
@@ -294,7 +295,8 @@ class Icons{
 	[iconDownFn](dom,e){
 		$(dom).css3({
 			transition:"",
-			opacity:0.5
+			opacity:0.5,
+			"z-index":this.zIndex+1
 		});
 	}
 
@@ -302,7 +304,8 @@ class Icons{
 	[iconUpFn](dom){
 		$(dom).css3({
 			transition:"all 0.2s linear",
-			opacity:1
+			opacity:1,
+			"z-index":this.zIndex
 		});
 		this[reSetAllIconPosition](dom);
 	}
