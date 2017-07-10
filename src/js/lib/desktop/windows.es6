@@ -1,7 +1,6 @@
 // 生成一个窗口可以拖动,拉动改变大小
 
 //TODO 未考虑浏览器窗口缩放
-//TODO 生成的窗口的层级  不对
 
 // let a = new _window({
 // 	name:"test4",                       //标题名称
@@ -50,7 +49,7 @@ require("../jq/listenerStyle");
 
 let openedWindow = [],
 	maxZIndex = 0;
-
+window.ww = openedWindow;
 
 class _window{
 	constructor(opt){
@@ -186,7 +185,7 @@ class _window{
 			openedWindow[i].zIndex = maxNo;
 			openedWindow[i].setZIndex();
 		}
-
+		maxNo = (maxNo<500)? 500 : maxNo;
 		maxZIndex = maxNo + 1;
 	}
 
@@ -212,7 +211,7 @@ class _window{
 			left:this.left,
 			top:this.top
 		}});
-
+console.log(this.zIndex)
 		//标题栏
 		let title = $("<div>"+this.name+"</div>");
 		title.css3({
