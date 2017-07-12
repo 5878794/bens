@@ -1,3 +1,8 @@
+
+// <script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=2E8A892BB5012b048b85cceae7e32665"></script>
+
+
+
 let baidu = {
 	map:null,
 	//创建
