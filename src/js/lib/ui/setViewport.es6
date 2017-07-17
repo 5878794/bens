@@ -15,8 +15,8 @@ let setFn = function(psdWidth){
 	var psd_width = psdWidth,
 		win_width = window.innerWidth,
 		viewport = document.querySelector('meta[name="viewport"]'),
-		dpr = window.devicePixelRatio || 1,
-		scale = 1 / dpr,
+		// dpr = window.devicePixelRatio || 1,
+		// scale = 1 / dpr,
 		rem;
 
 	//设置meta
