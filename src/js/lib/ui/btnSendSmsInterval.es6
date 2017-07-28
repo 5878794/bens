@@ -1,9 +1,9 @@
 
 
-
+let $$ = require("../event/$$");
 
 //按钮发送短信后倒计时功能
-//var sms = new DEVICE.btnSendSmsInterval({
+// var sms = new DEVICE.btnSendSmsInterval({
 //    //按钮id
 //    btnId:"send_sms",
 //    //电话号码输入框id
@@ -32,7 +32,7 @@
 //    intervalTime:60,
 //    //倒计时按钮显示的文字，{x}为变量。
 //    intervalText:"{x}秒后重试"
-//});
+// });
 
 
 
@@ -72,7 +72,7 @@ btnSendSmsInterval.prototype = {
 		var _this = this;
 
 		//按钮事件绑定
-		this.dom.click(function(){
+		$$(this.dom).myclickok(function(){
 			_this.clearError();
 
 			//检查phoneNumber输入值
@@ -97,7 +97,8 @@ btnSendSmsInterval.prototype = {
 		var _this = this;
 
 		//删除事件绑定
-		_this.dom.unbind("click");
+		// _this.dom.unbind("click");
+		$$(_this.dom).unbind(true);
 
 		//设置样式
 		this.dom.removeClass(this.canClickClass)
