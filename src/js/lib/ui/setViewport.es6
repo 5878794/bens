@@ -43,7 +43,7 @@ let setFn = function(psdWidth){
 		if(rem != _rem){
 			rem = _rem;
 			$("html").css({
-				"font-size":rem+"px"
+				"font-size":rem+"px!important"
 			});
 		}
 	},500);

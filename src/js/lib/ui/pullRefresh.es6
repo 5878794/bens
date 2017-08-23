@@ -50,13 +50,14 @@ require("../jq/extend");
 
 class pullRefresh{
 	constructor(opt = {}){
+		viewport = opt.viewport || 320;
+		body = $("body");
 		//下啦刷新时要显示的dom
 		this.refreshDom = opt.refreshDom || pullRefresh[createShowDom]();
 		this.canRefreshFn = opt.canRefreshFn || function(){};
 		this.notCanRefreshFn = opt.notCanRefreshFn || function(){};
 		this.refreshFn = opt.refreshFn || function(){};
-		viewport = opt.viewport || 320;
-		body = $("body");
+
 
 		//按下的点的集合
 		this[points] = [];
