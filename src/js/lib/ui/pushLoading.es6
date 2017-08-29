@@ -1,13 +1,31 @@
 
 //下拉加载
 
+// var aaa = new pushLoading({
+// 	canLoadingFn:function(){            //拖动到能下载加载时触发到函数
+// 		$(this).find("span").text("释放加载");
+// 	},
+// 	notCanLoadingFn:function(){         //拖动到不能下载加载时触发到函数
+// 		$(this).find("span").text("上拉加载");
+// 	},
+// 	loadingFn:function(){               //加载函数
+// 		$(this).find("span").text("正在加载");
+//
+// 		setTimeout(function(){
+// 			$("body").append("<div style='background: firebrick;height: 3rem;'></div>");
+// 			aaa.loadingEnd();           //添加完dom后在执行该方法隐藏loadingDom
+// 		},1000);
+// 	},
+// 	viewport:750,                       //psd大小   使用rem布局
+// 	bottomFixedDivHeight:1              //底部如果有fixed定位的dom的高度  单位rem
+// });
+
 let app = require("../device"),
 	animate = require("../fn/jsAnimate"),
 	points = Symbol("points"),
 	hasTouched = Symbol("hasTouched"),
 	y = Symbol("y"),
 	animateFn = Symbol("animateFn"),
-	maxPushHeight = Symbol("maxPushHeight"),
 	maxScrollHeight = Symbol("maxScrollHeight"),
 	init = Symbol("init"),
 	createShowDom = Symbol("createShowDom"),
@@ -20,12 +38,12 @@ let app = require("../device"),
 	androidTouchStart = Symbol("androidTouchStart"),
 	androidTouchMove = Symbol("androidTouchMove"),
 	androidTouchEnd = Symbol("androidTouchEnd"),
-	iosTouchStart = Symbol("iosTouchStart"),
-	iosTouchMove = Symbol("iosTouchMove"),
-	iosTouchEnd = Symbol("iosTouchEnd"),
 	savePoint = Symbol("savePoint"),
 	clearPoint = Symbol("clearPoint"),
-	{abs} = Math;
+	iosHandlerScroll = Symbol("iosHandlerScroll"),
+	bodyPaddingBottom = Symbol("bodyPaddingBottom"),
+	isLoading = Symbol("isLoading"),
+	iosScroll = Symbol("iosScroll");
 
 var viewport,body;
 
@@ -35,29 +53,36 @@ class pushLoading{
 		viewport = opt.viewport || 320;
 		body = $("body");
 		this.loadingDom = opt.loadingDom || pushLoading[createShowDom]();
+		this.zIndex = opt.zIndex || 1;
 		this.canLoadingFn = opt.canLoadingFn || function(){};
 		this.notCanLoadingFn = opt.notCanLoadingFn || function(){};
 		this.loadingFn = opt.loadingFn || function(){};
-		this.bottomFixedDivHeihgt = 0;
+
+		let bottomFixedDivHeight = opt.bottomFixedDivHeight || 0;
+		this.bottomFixedDivHeight = app.rem2Px(viewport,bottomFixedDivHeight);
 
 
-		//按下的点的集合
-		this[points] = [];
-		//是否已经按下
-		this[hasTouched] = false;
+
+
 		//下拉滚动条到0的时候的偏移量
 		this[y] = 0;
 		//动画函数对象
 		this[animateFn] = null;
-		//最大下拉高度
-		this[maxPushHeight] = 0;
+		//下啦刷新dom的高度
+		this.loadingDomHeight = 0;
 		//滚动条能滚动的最大高度
 		this[maxScrollHeight] = 0;
+		//body底部padding的高度
+		this[bodyPaddingBottom] = 0;
+		//是否在加载中
+		this[isLoading] = false;
+		//记录的触摸点
+		this[points] = [];
 
 		body.css({position:"relative"});
-
 		this[init]();
 	}
+
 
 	//创建上拉加载要显示的dom
 	static [createShowDom](){
@@ -75,32 +100,11 @@ class pushLoading{
 		return dom;
 	}
 
+
 	[init](){
-		this[refreshParam]();
 		this[setLoadingDomStyle]();
-		this[addEvent]();
-	}
-
-	//刷新参数
-	refresh(){
 		this[refreshParam]();
-	}
-
-	//加载完成隐藏dom
-	end(){
-		this.notCanLoadingFn();
-		body.css3({transform:""});
-		this[y] = 0;
-	}
-
-	//设置参数
-	[refreshParam](){
-		this[maxPushHeight] = parseInt(this.loadingDom.height());
-
-		//计算最大大滚动距离
-		let bodyHeight = body.height(),
-			screenHeight = window.innerHeight;
-		this[maxScrollHeight] = (bodyHeight > screenHeight)? bodyHeight-screenHeight : 0;
+		this[addEvent]();
 	}
 
 	//设置刷新dom的定位
@@ -111,121 +115,203 @@ class pushLoading{
 		this.loadingDom.css({
 			position:"fixed",
 			left:0,
-			bottom:-height+"px",
+			bottom:this.bottomFixedDivHeight+"px",
 			"z-index":-1,
 			background:"#fff"
 		});
 
-		//ios超出弹性部分的遮挡层
-		// let wxZZ = $("<div></div>");
-		// wxZZ.css({
-		// 	position:"absolute",
-		// 	left:0,top:height+"px",width:"100%",height:"1000px",
-		// 	background:"#fff"
-		// });
-		// this.loadingDom.append(wxZZ);
+		let bodyBottom = parseInt(body.css("padding-bottom"));
 
+		this[bodyPaddingBottom] = bodyBottom + this.bottomFixedDivHeight;
+
+		body.css({
+			"padding-bottom":this[bodyPaddingBottom]+"px"
+		});
 		body.append(this.loadingDom);
+	}
+
+	//设置参数
+	[refreshParam](){
+		this.loadingDomHeight = parseInt(this.loadingDom.height());
+
+		//计算最大大滚动距离
+		let bodyHeight = body.outerHeight(),
+			screenHeight = window.innerHeight;
+		this[maxScrollHeight] = (bodyHeight > screenHeight)? bodyHeight-screenHeight : 0;
 	}
 
 	//添加事件
 	[addEvent](){
 		let _this = this;
-		document.addEventListener(app.START_EV,this[touchStartFn] = function(e){
-			if(app.isAndroid){
+		if(!app.isAndroid){
+			window.addEventListener("scroll",function(){
+				_this[iosScroll]();
+			},false);
+			document.addEventListener(app.END_EV,this[touchEndFn] = function(e){
+				_this[iosHandlerScroll]();
+			},false);
+		}else{
+			document.addEventListener(app.START_EV,this[touchStartFn] = function(e){
 				_this[androidTouchStart](e);
-			}else{
-				_this[iosTouchStart](e);
-			}
 
-		},false);
-		document.addEventListener(app.MOVE_EV,this[touchMoveFn] = function(e){
-			if(app.isAndroid){
+			},false);
+			document.addEventListener(app.MOVE_EV,this[touchMoveFn] = function(e){
 				_this[androidTouchMove](e);
-			}else{
-				_this[iosTouchMove](e);
-			}
 
-		},false);
-		document.addEventListener(app.END_EV,this[touchEndFn] = function(e){
-			if(app.isAndroid){
+			},false);
+			document.addEventListener(app.END_EV,this[touchEndFn] = function(e){
 				_this[androidTouchEnd]();
-			}else{
-				_this[iosTouchEnd]();
-			}
+			},false);
+		}
 
-		},false);
 	}
 
-	[iosTouchStart](){
+	//ios
+	[iosHandlerScroll](){
+		if(this[isLoading]){return;}
+
+		let scrollTop = document.body.scrollTop,
+			y = scrollTop - this[maxScrollHeight];
+
+		if(y>this.loadingDomHeight){
+			let bottom = this[bodyPaddingBottom];
+			bottom += this.loadingDomHeight;
+
+			this[isLoading] = true;
+			body.css({"padding-bottom":bottom+"px"});
+			this.loadingDom.css({"z-index":1});
+
+			this.loadingFn.call(this.loadingDom);
+		}
+	}
+	//ios滚动监听
+	[iosScroll](){
+		if(this[isLoading]){return;}
+
+		let scrollTop = document.body.scrollTop,
+			y = scrollTop - this[maxScrollHeight];
+
+		if(y>=this.loadingDomHeight){
+			this.canLoadingFn.call(this.loadingDom);
+		}else{
+			this.notCanLoadingFn.call(this.loadingDom);
+		}
+	}
+
+
+	[androidTouchStart](e){
+		if(this[isLoading]){return;}
+
 		if(this[animateFn]){
 			this[animateFn].stop();
 		}
-	}
-	[iosTouchMove](){
-		console.log($(window).scrollTop(),this[maxScrollHeight]);
-		// let l = this[maxScrollHeight] - $(window).scrollTop();
-		//
-		// if(l<0){
-		// 	body.css3({
-		// 		transform:"translate3d(0,"+ l/10+"px,0)"
-		// 	});
-		// 	this[y] = l/10;
-		// }
-		//
-		// if(abs(l+l/10) >= this[maxPushHeight]){
-		// 	this.canLoadingFn.call(this.loadingDom);
-		// }else{
-		// 	this.notCanLoadingFn.call(this.loadingDom);
-		// }
-	}
-	[iosTouchEnd](){
-		// let l = this[y],
-		// 	_this = this,
-		// 	endY = 0;
-		//
-		// //执行刷新
-		// if(abs(l+l*10)>this[maxPushHeight]){
-		// 	setTimeout(function(){
-		// 		_this.loadingFn();
-		// 	},500);
-		//
-		// 	endY = this[maxPushHeight];
-		// }
-		//
-		// if(l<0){
-		// 	this[animateFn] = new animate({
-		// 		start:l,                  //@param:number   初始位置
-		// 		end:endY,                    //@param:number   结束位置
-		// 		time:500,                 //@param:number   动画执行时间  ms
-		// 		type:"Cubic",             //@param:str      tween动画类别,默认：Linear 详见函数内tween函数
-		// 		class:"easeIn",           //@param:str      tween动画方式,默认：easeIn 详见函数内tween函数
-		// 		stepFn:function(val){     //@param:fn       每步执行函数,返回当前属性值
-		// 			body.css3({
-		// 				transform:"translate3d(0,"+val+"px,0)"
-		// 			});
-		// 			_this[y] = val;
-		// 		},
-		// 		endFn:function(){         //@param:fn       动画结束执行
-		// 			body.css3({
-		// 				transform:""
-		// 			});
-		// 			_this[y] = endY;
-		// 		},
-		// 		alternate:false,          //@param:boolean  动画结束时是否反向运行，默认：false
-		// 		infinite:false            //@param:boolean  动画是否循环执行，默认：false
-		// 	});
-		// 	this[animateFn].play();
-		// }
-	}
 
-	[androidTouchStart](){
+		if(document.body.scrollTop >= this[maxScrollHeight].toFixed(0)){
+			this[y] = 0;
+			this[hasTouched] = true;
+		}
 
+		this[clearPoint]();
+		this[savePoint](e);
 	}
-	[androidTouchMove](){
+	[androidTouchMove](e){
+		if(this[isLoading]){return;}
+		if(!this[hasTouched]){return;}
+		this[savePoint](e);
 
+		let point_length = this[points].length;
+		if(point_length<2){return;}
+
+		let start_point = this[points][point_length-2],
+			end_point = this[points][point_length-1];
+
+
+		this[y] += start_point - end_point;
+		this[y] = (this[y]>this.loadingDomHeight)? this.loadingDomHeight : this[y];
+
+		if(this[y]>=0){
+			e.stopPropagation();
+			e.preventDefault();
+			body.css({
+				"padding-bottom":this[bodyPaddingBottom] + this[y] + "px"
+			});
+			$(window).scrollTop(body.outerHeight()-window.innerHeight);
+
+		}
+
+		if(this[y] >= this.loadingDomHeight*2/3){
+			this.canLoadingFn.call(this.loadingDom);
+		}else{
+			this.notCanLoadingFn.call(this.loadingDom);
+		}
 	}
 	[androidTouchEnd](){
+		if(this.isLoading){return;}
+		if(!this[hasTouched]){return;}
+		this[hasTouched] = false;
+
+		let _this = this;
+
+		//回滚
+		if(this[y]>0 && this[y]<this.loadingDomHeight*2/3){
+			this[animateFn] = new animate({
+				start:this[y],                  //@param:number   初始位置
+				end:0,                    //@param:number   结束位置
+				time:500,                 //@param:number   动画执行时间  ms
+				type:"Cubic",             //@param:str      tween动画类别,默认：Linear 详见函数内tween函数
+				class:"easeIn",           //@param:str      tween动画方式,默认：easeIn 详见函数内tween函数
+				stepFn:function(val){     //@param:fn       每步执行函数,返回当前属性值
+					body.css({
+						"padding-bottom":_this[bodyPaddingBottom] + val + "px"
+					});
+					$(window).scrollTop(body.outerHeight()-window.innerHeight);
+					_this[y] = val;
+				},
+				endFn:function(){         //@param:fn       动画结束执行
+					body.css({
+						"padding-bottom":_this[bodyPaddingBottom] + "px"
+					});
+					$(window).scrollTop(body.outerHeight()-window.innerHeight);
+					_this[y] = 0;
+				},
+				alternate:false,          //@param:boolean  动画结束时是否反向运行，默认：false
+				infinite:false            //@param:boolean  动画是否循环执行，默认：false
+			});
+			this[animateFn].play();
+		}
+
+		//执行加载
+		if(this[y]>this.loadingDomHeight*2/3){
+			setTimeout(function(){
+				_this[animateFn] = new animate({
+					start:_this[y],                  //@param:number   初始位置
+					end:_this.loadingDomHeight,                    //@param:number   结束位置
+					time:100,                 //@param:number   动画执行时间  ms
+					type:"Cubic",             //@param:str      tween动画类别,默认：Linear 详见函数内tween函数
+					class:"easeIn",           //@param:str      tween动画方式,默认：easeIn 详见函数内tween函数
+					stepFn:function(val){     //@param:fn       每步执行函数,返回当前属性值
+						body.css({
+							"padding-bottom":_this[bodyPaddingBottom] + val + "px"
+						});
+						$(window).scrollTop(body.outerHeight()-window.innerHeight);
+						_this[y] = val;
+					},
+					endFn:function(){         //@param:fn       动画结束执行
+						body.css({
+							"padding-bottom":_this[bodyPaddingBottom] + _this.loadingDomHeight + "px"
+						});
+						$(window).scrollTop(body.outerHeight()-window.innerHeight);
+						_this[y] = _this.loadingDomHeight;
+						_this[isLoading] = true;
+						_this.loadingFn.call(_this.loadingDom);
+						_this.loadingDom.css({"z-index":1});
+					},
+					alternate:false,          //@param:boolean  动画结束时是否反向运行，默认：false
+					infinite:false            //@param:boolean  动画是否循环执行，默认：false
+				});
+				_this[animateFn].play();
+			},500)
+		}
 
 	}
 
@@ -242,7 +328,19 @@ class pushLoading{
 	[clearPoint](){
 		this[points] = [];
 	}
+
+	//加载完成回调
+	loadingEnd(){
+		body.css({"padding-bottom":this[bodyPaddingBottom]+"px"});
+		this.loadingDom.css({"z-index":-1});
+		this[isLoading] = false;
+		this[refreshParam]();
+	}
+
 }
+
+
+
 
 
 module.exports = pushLoading;
