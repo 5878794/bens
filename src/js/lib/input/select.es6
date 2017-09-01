@@ -8,6 +8,7 @@
 // 		{key:"2",val:"女"}
 // 	],
 // 	inputId:"select_id",        //input  type=hidden  的id
+//                              //默认选中值放入input的value中 多个用,隔开 eg:1,2,3
 // 	radio:true          //单选还是多选   默认true
 // });
 
