@@ -93,5 +93,14 @@ $.css3 = function(css){
 	return DEVICE.fixCss(css);
 };
 
+//div添加滚动
+$.fn.addScroll = function(){
+	$(this).css({
+		"overflow-x":"hidden",
+		"overflow-y":"scroll",
+		"-webkit-overflow-scrolling" :"touch"
+	});
+};
+
 
 module.exports = null;

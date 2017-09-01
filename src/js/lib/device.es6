@@ -503,5 +503,4 @@ DEVICE.rem2Px = function(psdWidth,val){
 };
 
 
-
 module.exports = DEVICE;
