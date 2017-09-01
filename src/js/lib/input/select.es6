@@ -2,17 +2,13 @@
 
 // let select = require("select");
 // select({
-//      titleText:"请选中性别",
-// 	    data:[              //select的数据
-// 		    {key:1,val:"男"},
-// 		    {key:2,val:"女"}
-// 	    ],
-// 	    selected:[2],        //已选中的项目的key
-//      radio:true          //单选还是多选   默认true
-// }).then(rs=>{
-// 	console.log(rs);    //点击确定返回选中的key 数组
-// }).catch(rs=>function(){
-// 	console.log("cancel")       //关闭窗口执行
+// 	titleText:"请选中性别",
+// 	data:[              //select的数据
+// 		{key:"1",val:"男"},
+// 		{key:"2",val:"女"}
+// 	],
+// 	inputId:"select_id",        //input  type=hidden  的id
+// 	radio:true          //单选还是多选   默认true
 // });
 
 
@@ -211,13 +207,23 @@ class select extends zz{
 
 
 module.exports = function(opt){
-	return new Promise((success,error)=>{
-		opt.success = function(val=[]){
-			success(val);
-		};
-		opt.error = function(){
-			error();
-		};
-		new select(opt)
-	})
+	let inputId = opt.inputId,
+		input = $("#"+inputId),
+		selectedVal = input.val() || "";
+
+	opt.data.map(this_data=>{
+		this_data.key = this_data.key.toString();
+	});
+
+
+	opt.selected = selectedVal.split(",");
+	console.log(selectedVal.split(","))
+
+	opt.success = function(val=[]){
+		input.val(val.join(","));
+	};
+	opt.error = function(){
+
+	};
+	new select(opt)
 };
