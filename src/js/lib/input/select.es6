@@ -173,7 +173,7 @@ class select extends zz{
 
 	//多选事件处理
 	[checkBoxEvent](dom){
-		if(dom.hasClass("__select")){
+		if(dom.hasClass("__select__")){
 			this[delSelectStyle](dom);
 		}else{
 			this[setSelectStyle](dom);
