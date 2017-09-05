@@ -18,8 +18,8 @@ let app = require("../device"),
 	createCloseBtn = Symbol("createCloseBtn"),
 	createYseBtn = Symbol("createYseBtn"),
 	createBody = Symbol("createBody"),
-	moveFn = Symbol("moveFn"),
-	startFn = Symbol("startFn"),
+	moveFn = "",
+	startFn = "",
 	addEvent = Symbol("addEvent");
 
 
@@ -78,6 +78,8 @@ class bodyStyle{
 	}
 
 	[init](){
+		$.allInputCanNotUse(true);
+
 		this[createZZ]();
 		this[createMain]();
 		this[createTitle]();
@@ -269,12 +271,18 @@ class bodyStyle{
 
 	//销毁
 	destroy(){
+		$.allInputCanNotUse(false);
 		$$(this.domYes).unbind(true);
 		$$(this.domClose).unbind(true);
 		$$(this.domZZ).unbind(true);
 		$$(this.domMain).unbind(true);
-		this.domZZ.get(0).addEventListener(app.START_EV,startFn,false);
-		this.domZZ.get(0).addEventListener(app.MOVE_EV,moveFn,false);
+		if(startFn){
+			this.domZZ.get(0).addEventListener(app.START_EV,startFn,false);
+		}
+		if(moveFn){
+			this.domZZ.get(0).addEventListener(app.MOVE_EV,moveFn,false);
+		}
+
 		this.domZZ.remove();
 	}
 }

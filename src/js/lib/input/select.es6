@@ -2,14 +2,15 @@
 
 // let select = require("select");
 // select({
-// 	titleText:"请选中性别",
-// 	data:[              //select的数据
+// 	titleText:"请选中性别",       //@param:str             标题  默认：请选择
+// 	data:[                      //@param:array(必填)      select的数据
 // 		{key:"1",val:"男"},
 // 		{key:"2",val:"女"}
 // 	],
-// 	inputId:"select_id",        //input  type=hidden  的id
+// 	inputId:"select_id",        //@param:str(必填)        input  type=hidden  的id
 //                              //默认选中值放入input的value中 多个用,隔开 eg:1,2,3
-// 	radio:true          //单选还是多选   默认true
+// 	radio:true,                  //@param:boolean          单选还是多选   默认true
+//  viewPort:750                //@param:number 设置psd的大小，布局需要使用rem 默认：750
 // });
 
 
@@ -190,12 +191,12 @@ class select extends zz{
 		});
 
 		this.callback(selected);
-		this.destroy();
+		// this.destroy();
 	}
 
 	cancel(){
 		this.closeFn();
-		this.destroy();
+		// this.destroy();
 	}
 
 	destroy(){
@@ -218,7 +219,6 @@ module.exports = function(opt){
 
 
 	opt.selected = selectedVal.split(",");
-	console.log(selectedVal.split(","))
 
 	opt.success = function(val=[]){
 		input.val(val.join(","));
