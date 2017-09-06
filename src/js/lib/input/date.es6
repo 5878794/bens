@@ -3,11 +3,14 @@
 // let date = require("date");
 // date({
 // 	titleText:"请选择日期",       //@param:str    标题
-// 	inputId:"select_id",        //@param:str(必填)    input  type=hidden  的id
 // 	selected:"2016-12-12",      //@param:str    初始显示的日期， 默认：当前日期
 // 	minDate:"1950-1-1",         //@param:str    最小显示时间 默认：1950-1-1
 // 	maxDate:"2050-12-12",       //@param:str    最大显示时间 默认：2050-12-12
 // 	viewPort:750                //@param:number 设置psd的大小，布局需要使用rem 默认：750
+// }).then(rs=>{
+//      //返回选择的年月日   yyyy-mm-dd
+// }).catch(rs=>{
+//      //取消选择
 // });
 
 
@@ -660,17 +663,9 @@ class dateChoose extends zz{
 
 
 module.exports = function(opt={}){
-	let inputId = opt.inputId,
-		input = $("#"+inputId);
-
-	opt.selected = input.val() || "";
-	opt.success = function(val){
-		input.val(val);
-	};
-	opt.error = function(){
-
-	};
-
-
-	new dateChoose(opt);
+	return new Promise((success,error)=>{
+		opt.success = success;
+		opt.error = error;
+		new dateChoose(opt);
+	})
 };

@@ -7,10 +7,14 @@
 // 		{key:"1",val:"男"},
 // 		{key:"2",val:"女"}
 // 	],
-// 	inputId:"select_id",        //@param:str(必填)        input  type=hidden  的id
-//                              //默认选中值放入input的value中 多个用,隔开 eg:1,2,3
+// 	selected:[1,2],             //@param:array(必填)    选中的key
 // 	radio:true,                  //@param:boolean          单选还是多选   默认true
 //  viewPort:750                //@param:number 设置psd的大小，布局需要使用rem 默认：750
+// }).then(rs=>{
+//          //返回选择的对象
+//          //json数组，  传入的格式
+// }).catch(rs=>{
+//      //取消选择
 // });
 
 
@@ -186,7 +190,10 @@ class select extends zz{
 
 		list.each(function(){
 			if($(this).hasClass("__select__")){
-				selected.push($(this).data("data").key);
+				selected.push({
+					key:$(this).data("data").key,
+					val:$(this).find("span").text()
+				});
 			}
 		});
 
@@ -209,22 +216,9 @@ class select extends zz{
 
 
 module.exports = function(opt){
-	let inputId = opt.inputId,
-		input = $("#"+inputId),
-		selectedVal = input.val() || "";
-
-	opt.data.map(this_data=>{
-		this_data.key = this_data.key.toString();
-	});
-
-
-	opt.selected = selectedVal.split(",");
-
-	opt.success = function(val=[]){
-		input.val(val.join(","));
-	};
-	opt.error = function(){
-
-	};
-	new select(opt)
+	return new Promise((success,error)=>{
+		opt.success = success;
+		opt.error = error;
+		new select(opt)
+	})
 };
