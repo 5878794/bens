@@ -2,6 +2,7 @@
 
 
 require("../jq/extend");
+require("../css/all");
 
 let app = require("../device"),
 	$$ = require("../event/$$"),
