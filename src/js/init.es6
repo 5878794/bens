@@ -20,6 +20,7 @@ async function init(){
 	let body = $("body");
 	$$(body).myclickok(function(){
 		new winDiv({
+			titleText:"123",
 			areaData:areaData,
 			areaSelected:[2498,2499,2505],
 			startParentId:1,

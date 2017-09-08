@@ -2,12 +2,17 @@
 
 // let winDiv = require("./lib/input/cascade");
 // new winDiv({
-// 	areaData:areaData,
-// 	areaSelected:[2,3924,3],
-// 	startParentId:1,
+// 	titleText:"请选择日期",       //标题名称
+// 	areaData:areaData,          //菜单数据 参见 /lib/code/areaCode.es6
+// 	areaSelected:[2,3924,3],    //已选中的数据
+// 	startParentId:1,            //初始第一层搜索数据中的parent=1的生成列表
+// 	viewPort:750m,              //设置psd的大小，布局需要使用rem 默认：750
 // 	success:function(rs){
-// 		console.log(rs);
-// 	}
+// 		console.log(rs);        //选择完成返回数组，数组中对象格式和传入一样
+// 	},
+//  error:function(){
+//          //取消选择
+//  }
 // });
 
 
