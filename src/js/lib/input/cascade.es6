@@ -75,6 +75,7 @@ class cascade extends select{
 		selected = (selected)? [selected] : [];
 
 		this.reSetList(showList,selected);
+		this.domBody.find("div").css({border:'none'});
 		this[createSelectedList](passed);
 	}
 
@@ -102,6 +103,7 @@ class cascade extends select{
 		if(newData.length != 0){
 			//生成列表
 			this.reSetList(newData,[]);
+			this.domBody.find("div").css({border:'none'});
 
 			//在选中dom容器中增加选中的值
 			this[selectedAreaAddDom](data);
@@ -118,9 +120,10 @@ class cascade extends select{
 		div.css({
 			width:"100%",
 			height:this.listLineHeight+"px",
-			background:"#eee",
+			// background:"#eee",
 			"line-height":this.listLineHeight+"px",
-			'overflow':'hidden'
+			'overflow':'hidden',
+			'border-bottom':'1px solid '+this.listBottomColor
 		});
 
 		div.addClass("border_box");
@@ -137,9 +140,10 @@ class cascade extends select{
 		div.css({
 			display:"block",
 			padding:'0 '+this.fontSize+"px",
-			height:this.listLineHeight+"px",
-			float:"left"
-		});
+			height:this.listLineHeight-1+"px",
+			float:"left",
+			'border-bottom':'1px solid transparent'
+		}).addClass("border_box");
 
 		this[selectedShowDom] = div;
 	}
@@ -233,7 +237,7 @@ class cascade extends select{
 		if(data.val){
 			this_list.text(this_name).data({data:data}).addClass("__cascade_selected__");
 		}else{
-			this_list.text(this_name);
+			this_list.text(this_name).css({color:this.selectedColor,'border-bottom':'1px solid '+this.selectedColor});
 		}
 
 		//获取选中列表中最后一个元素
@@ -279,12 +283,13 @@ class cascade extends select{
 			parentId = data.parent,
 			key = data.key;
 
-		dom.text("请选择").removeData("data").removeClass("__cascade_selected__");
+		dom.text("请选择").removeData("data").removeClass("__cascade_selected__").css({color:this.selectedColor,'border-bottom':'1px solid '+this.selectedColor});
 
 
 		//刷新选项
 		let {newData} = this[getData](parentId,"");
 		this.reSetList(newData,[]);
+		this.domBody.find("div").css({border:'none'});
 
 
 		//注册事件

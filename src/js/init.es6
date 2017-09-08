@@ -21,7 +21,7 @@ async function init(){
 	$$(body).myclickok(function(){
 		new winDiv({
 			areaData:areaData,
-			areaSelected:[2498,2499],
+			areaSelected:[2498,2499,2505],
 			startParentId:1,
 			success:function(rs){
 				console.log(rs);
