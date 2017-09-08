@@ -4,6 +4,7 @@
 	// canvasBtn = require("./lib/canvas/group/btn"),
 let	winDiv = require("./lib/input/cascade"),
 	$$ = require("./lib/event/$$"),
+	select = require("./lib/input/select"),
 	areaData = require("./lib/code/areaCode");
 
 
@@ -20,13 +21,33 @@ async function init(){
 	$$(body).myclickok(function(){
 		new winDiv({
 			areaData:areaData,
-			areaSelected:[100],
+			areaSelected:[2498,2499],
 			startParentId:1,
 			success:function(rs){
 				console.log(rs);
 			}
 		});
-			// .then(rs=>console.log(rs));
+
+		// new select({
+		// 	titleText: "请选中性别",       //@param:str             标题  默认：请选择
+		// 	data: [                      //@param:array(必填)      select的数据
+		// 		{key: "1", val: "男"},
+		// 		{key: "2", val: "女"}
+		// 	],
+		// 	selected: [1],             //@param:array(必填)    选中的key
+		// 	radio: false,                  //@param:boolean          单选还是多选   默认true
+		// 	viewPort: 750,                //@param:number 设置psd的大小，布局需要使用rem 默认：750
+		// 	success: function (rs) {
+		// 		//返回选择的对象
+		// 		//json数组，  传入的格式
+		// 		console.log(rs)
+		// 	},
+		// 	error: function () {
+		// 		//取消选择
+		// 	}
+		// })
+
+
 	}).myclickup(function(){}).myclickdown(function(){});
 
 
@@ -163,120 +184,3 @@ async function init(){
 }
 
 
-async function getResultAnimate(box,box1,box2) {
-
-	box.y = 0;
-	// s = v0·t + a·t²/2
-	// 加速度a，时间t，初速度v0
-
-	let nowSpeed = 700/500,
-		t = new Date().getTime(),
-		//计算总运行时间
-		//平均速度 = (初始速度-结束速度)/2
-		//运动时间 = 距离/平均速度
-		totalTime = 7000*2/nowSpeed,
-		//加速度 = (结束速度 - 初始速度) / 时间
-		a = nowSpeed/totalTime,
-		nowY = box.y,
-		tempY = 0;
-
-
-	box.myRender = function(){
-		let t1 = new Date().getTime(),
-			runTime = t1 - t,
-			//当前位置 = 初始速度 * 当前运行时间 - 加速度*运行时间*运行时间/2
-			y = nowSpeed*runTime - a*runTime*runTime/2;
-		// console.log(y)
-		// console.log(tempY)
-		if(runTime>=totalTime){
-			this.myRender = null;
-			y = nowSpeed*totalTime - a*totalTime*totalTime/2;
-			this.y = nowY - y;
-			this.y = this.y%700;
-			return;
-		}
-
-		tempY = y;
-		this.y = nowY - y;
-		this.y = this.y%700;
-	};
-
-	// box.animate({
-	// 	time:300,
-	// 	style:{
-	// 		y:-700
-	// 	},
-	// 	infinite:true
-	// })
-
-
-	// box.animate({
-	// 	time:1000,
-	// 	style:{
-	// 		y:-700
-	// 	},
-	// 	animateStyle:"Quad",
-	// 	animateClass:"easeOut",
-	// 	callback:function(){
-	// 		this.y = 0;
-	// 	}
-	// });
-	// box.animate({
-	// 	time:2000,
-	// 	style:{
-	// 		y:-700
-	// 	},
-	// 	callback:function(){
-	// 		this.y = 0;
-	// 	}
-	// });
-	// box.animate({
-	// 	time:2000,
-	// 	style:{
-	// 		y:-300
-	// 	}
-	// });
-
-
-
-
-
-	// box1.animate({
-	// 	time:1000,
-	// 	style:{
-	// 		y:-700
-	// 	}
-	// });
-	// box2.animate({
-	// 	time:1000,
-	// 	style:{
-	// 		y:-700
-	// 	}
-	// });
-
-	// box1.animate({
-	// 	time:2000,
-	// 	style:{
-	// 		y:-700
-	// 	}
-	// });
-	// box2.animate({
-	// 	time:2000,
-	// 	style:{
-	// 		y:-700
-	// 	}
-	// });
-
-	// box1.animate({
-	// 	time:2000,
-	// 	style:{
-	// 		y:-400
-	// 	}
-	// });
-	// box2.animate({
-	// 	time:2000,
-	// 	style:{
-	// 		y:-200
-	// 	}
-	// });
-}

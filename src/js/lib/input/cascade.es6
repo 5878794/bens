@@ -1,3 +1,15 @@
+//级联菜单
+
+// let winDiv = require("./lib/input/cascade");
+// new winDiv({
+// 	areaData:areaData,
+// 	areaSelected:[2,3924,3],
+// 	startParentId:1,
+// 	success:function(rs){
+// 		console.log(rs);
+// 	}
+// });
+
 
 
 
@@ -190,7 +202,6 @@ class cascade extends select{
 
 	//生成已选中的列表
 	[createSelectedList](n){
-		let data = this.areaSelected;
 
 		this.areaSelected = this.areaSelected.splice(0,n);
 
@@ -200,7 +211,7 @@ class cascade extends select{
 		}
 
 		for(let i=0,l=n;i<l;i++){
-			let rs = data[i];
+			let rs = this.areaSelected[i];
 
 			if(rs){
 				let this_data = this[areaDataByKey][rs];
@@ -284,7 +295,7 @@ class cascade extends select{
 		let div = this[selectedBodyDom].find("div");
 		let data = [];
 		div.each(function(){
-			data.push($(this).data("data").key);
+			data.push($(this).data("data"));
 		});
 
 		this.callback(data);
@@ -296,7 +307,8 @@ class cascade extends select{
 	}
 
 	destroy(){
-
+		let div = this[selectedBodyDom].find("div");
+		$$(div).unbind(true);
 
 
 		super.destroy();

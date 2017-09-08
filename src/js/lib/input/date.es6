@@ -2,7 +2,7 @@
 //需要 all.css
 
 // let date = require("date");
-// date({
+// new date({
 // 	titleText:"请选择日期",       //@param:str    标题
 // 	selected:"2016-12-12",      //@param:str    初始显示的日期， 默认：当前日期
 // 	minDate:"1950-1-1",         //@param:str    最小显示时间 默认：1950-1-1

@@ -2,7 +2,7 @@
 //需要all.css
 
 // let select = require("select");
-// select({
+// new select({
 // 	titleText:"请选中性别",       //@param:str             标题  默认：请选择
 // 	data:[                      //@param:array(必填)      select的数据
 // 		{key:"1",val:"男"},
@@ -18,6 +18,7 @@
 //  error:function(){
 //          //取消选择
 //  };
+//})
 
 
 
