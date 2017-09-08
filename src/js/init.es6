@@ -3,7 +3,8 @@
 	// loadImg = require("./lib/fn/loadImg"),
 	// canvasBtn = require("./lib/canvas/group/btn"),
 let	winDiv = require("./lib/input/cascade"),
-	$$ = require("./lib/event/$$");
+	$$ = require("./lib/event/$$"),
+	areaData = require("./lib/code/areaCode");
 
 
 $(document).ready(function(){
@@ -18,21 +19,12 @@ async function init(){
 	let body = $("body");
 	$$(body).myclickok(function(){
 		new winDiv({
-			data:[                      //@param:array(必填)      select的数据
-				{key:"1",val:"男"},
-				{key:"2",val:"女"},
-				{key:"3",val:"男"},
-				{key:"4",val:"女"},
-				{key:"5",val:"男"},
-				{key:"6",val:"女"},
-				{key:"7",val:"男"},
-				{key:"8",val:"女"},
-				{key:"9",val:"男"},
-				{key:"10",val:"女"},
-				{key:"11",val:"男"},
-				{key:"12",val:"女"}
-			],
-			selected:["1"]
+			areaData:areaData,
+			areaSelected:[100],
+			startParentId:1,
+			success:function(rs){
+				console.log(rs);
+			}
 		});
 			// .then(rs=>console.log(rs));
 	}).myclickup(function(){}).myclickdown(function(){});

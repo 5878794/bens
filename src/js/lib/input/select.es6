@@ -162,11 +162,18 @@ class select extends zz{
 
 		$$(list).myclickok(function(){
 			if(_this.radio){
+				_this.listTouchEventHandler($(this));
 				_this[radioEvent](list,$(this));
 			}else{
+				_this.listTouchEventHandler($(this));
 				_this[checkBoxEvent]($(this));
 			}
 		});
+	}
+
+	//列表点击后处理事件，继承的用
+	listTouchEventHandler(dom){
+
 	}
 
 	//单选事件处理
@@ -184,6 +191,30 @@ class select extends zz{
 		}
 	}
 
+	//重新生成列表
+	reSetList(data,selected){
+		//解绑列表事件
+		let list = this.domBody.find("div");
+		$$(list).unbind(true);
+		//清除html
+		this.domBody.html("");
+
+		//重设参数
+		this.selected = selected || [];
+		this.data = data || [];
+
+		//生成列表
+		this[bindData]();
+		this[bindEvent]();
+
+		//重置滚动参数并阻止滚动到底和顶部的弹性滚动
+		this.unPreventDefaultPushRefresh();
+		this.preventDefaultPushRefresh();
+
+		//滚动条滚动到顶部
+		this.domBody.get(0).scrollTop = 0
+
+	}
 
 	//点击确定返回结果
 	success(){

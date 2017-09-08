@@ -260,6 +260,16 @@ class bodyStyle{
 		},false);
 	}
 
+	//取消阻止div顶部时下啦触发下啦刷新
+	unPreventDefaultPushRefresh(){
+		if(startFn){
+			this.domZZ.get(0).removeEventListener(app.START_EV,startFn,false);
+		}
+		if(moveFn){
+			this.domZZ.get(0).removeEventListener(app.MOVE_EV,moveFn,false);
+		}
+	}
+
 	//点击确定按钮返回,子类继承覆盖
 	success(){
 
@@ -272,17 +282,14 @@ class bodyStyle{
 
 	//销毁
 	destroy(){
-		$.allInputCanNotUse(false);
+		setTimeout(function(){
+			$.allInputCanNotUse(false);
+		},500);
 		$$(this.domYes).unbind(true);
 		$$(this.domClose).unbind(true);
 		$$(this.domZZ).unbind(true);
 		$$(this.domMain).unbind(true);
-		if(startFn){
-			this.domZZ.get(0).addEventListener(app.START_EV,startFn,false);
-		}
-		if(moveFn){
-			this.domZZ.get(0).addEventListener(app.MOVE_EV,moveFn,false);
-		}
+		this.unPreventDefaultPushRefresh();
 
 		this.domZZ.remove();
 	}
