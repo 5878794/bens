@@ -292,6 +292,9 @@ class bodyStyle{
 		this.unPreventDefaultPushRefresh();
 
 		this.domZZ.remove();
+
+		installSvg.del(svgYesId);
+		installSvg.del(svgCloseId);
 	}
 }
 

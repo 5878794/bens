@@ -50,7 +50,15 @@ let svgFontHtmlGet = function(id){
 };
 
 
+let svgFontHtmlDel = function(id){
+	$("#"+id).parent().remove();
+};
+
+
+
+
 module.exports = {
 	set:svgFontHtmlSet,
-	get:svgFontHtmlGet
+	get:svgFontHtmlGet,
+	del:svgFontHtmlDel
 };
