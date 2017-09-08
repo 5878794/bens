@@ -71,10 +71,11 @@ class cascade extends select{
 
 		let {showList,passed} = this[getFirstShowParam]();
 
-		let selected = this.areaSelected[passed];
+		let selected = this.areaSelected[passed-1];
 		selected = (selected)? [selected] : [];
 
 		this.reSetList(showList,selected);
+
 		this.domBody.find("div").css({border:'none'});
 		this[createSelectedList](passed);
 	}
