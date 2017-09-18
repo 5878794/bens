@@ -792,14 +792,3 @@ module.exports = page;
 
 
 
-document.addEventListener("deviceready", function() {
-	YJH.H5ModuleManager.getValue(function(rs){
-		rs = rs.result;
-		rs = rs.substr(0,rs.length-1);
-		rs = rs.substr(0,rs.lastIndexOf("\/")+1);
-		SETTING.serverUrl = rs;
-		JkAndWeChat.run();
-	},function(){
-		JkAndWeChat.alert("无法获取服务器地址");
-	},"AppNetWorkBaseUrl");
-}, false);
