@@ -1,0 +1,84 @@
+网卡设置（虚拟机桥接后）
+	sudo vim /etc/network/interfaces
+
+	修改网卡的类型为静态地址
+	iface enp0s3 inet static
+
+	增加 
+	address 172.16.21.123
+	netmask 255.255.255.0
+	gateway 172.16.21.253
+
+	重启
+	sudo /etc/init.d/networking restart
+
+
+安装ssh
+	sudo apt install openssh-server	
+
+
+安装subversion
+	sudo apt install subversion
+
+	创建仓库,指定位置
+	sudo svnadmin create /home/bens/subversion/code	
+
+	编辑服务配置
+	sudo vim /home/bens/subversion/code/conf/svnserve.conf
+
+		[general]
+		#匿名用户不可读
+		anon-access = none
+		#权限用户可写
+		auth-access = write
+		#密码文件为passwd
+		password-db = passwd
+		#权限文件为authz
+		authz-db = authz
+
+
+	设置权限
+	sudo vim /home/bens/subversion/code/conf/zuthz
+
+		[/]
+		#根目录设置权限
+		bens = rw
+		*=r
+
+
+	设置用户及密码
+	sudo vim /home/bens/subversion/code/passwd	
+
+		[users]
+		#用户名 = 密码
+		bens = xf123456
+
+
+	启动服务
+	sudo svnserve -d -r /home/bens/subversion/	
+
+	停止服务
+	sudo killall svnserve
+
+	访问,浏览器不能访问，只能用工具直接连接
+	svn://172.16.21.123/code/
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
