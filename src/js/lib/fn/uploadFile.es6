@@ -1,7 +1,31 @@
 //文件上传
 //h5 需要支持 formData和xmlHttpRequest2
+//server 需要支持 options请求,特别是跨域的情况,不支持请不要设置progress回调
+
+
+
+// new upload({
+// 	inputId:'file',                 //@param:str    input type=file的id
+// 	uploadKey:'file',               //@param:str    input type=file的name
+// 	submitBtnID:'btnId',            //@param:str    上传按钮id
+//                                          //设置上传按钮id,则需要点击按钮上传,
+//                                          //不设置该id选择文件后立即上传
+// 	uploadSize:1024*1024*2,         //@param:number  上传文件大小限制(字节),默认2m
+// 	uploadOtherParam:{              //@param:json    上传文件时附带的其它表单
+// 		uploadUser:123
+// 	},
+// 	serverUrl:'http://172.16.21.90:10101/test/api/upload',  //@param:str  服务器地址
+// 	uploadType:['image/jpeg','image/png','image/gif'],      //@param:array 允许上传的文件类型
+// 	success:function(e){console.log(e)},         //@param:function  成功回调返回报文
+// 	error:function(e){console.log(e)},           //@param:function  失败回调返回报文
+// 	progress:function(a){console.log(a)}         //@param:function  进度回调,返回百分比 0-100
+// });
+
+
+
 
 let $$ = require('../event/$$');
+require('../jq/extend');
 
 let init = Symbol(),
 	addEvent = Symbol(),
@@ -17,12 +41,12 @@ class uploadFile{
 		this.uploadKey = opt.uploadKey || 'file';
 		this.uploadType = opt.uploadType || ['image/jpeg','image/png','image/gif'];
 		this.submitBtnID = opt.submitBtnID || "";
-		this.uploadSize = opt.uploadSize || 1024*1024*20000;
+		this.uploadSize = opt.uploadSize || 1024*1024*2;
 		this.uploadOtherParam = opt.uploadOtherParam || {};
 		this.serverUrl = opt.serverUrl || "";
 		this.success = opt.success || function(){};
 		this.error = opt.error || function(){};
-		this.progress = opt.progress || function(){};
+		this.progress = opt.progress || null;
 
 
 		if(!this.inputId || !this.serverUrl){
@@ -120,9 +144,21 @@ class uploadFile{
 				_this[showError](xhr.status);
 			}
 		};
-		xhr.onprogress = function(a){
-			console.log(a)
-		};
+
+		if(_this.progress){
+			xhr.upload.onprogress = function(progress){
+				if(progress.lengthComputable){
+					let total = progress.total,
+						loaded = progress.loaded,
+						pre = (loaded/total)*100;
+					pre = pre.toFixed(2);
+					_this.progress(pre);
+				}else{
+					_this.progress(0);
+				}
+			};
+		}
+
 
 		xhr.send(form);
 	}
