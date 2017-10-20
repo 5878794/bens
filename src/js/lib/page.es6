@@ -327,6 +327,16 @@ let page = {
 		};
 	})(),
 
+	//后退刷新页面  //待测试
+	historyBackRefresh:function(callback){
+		window.onpageshow=function(e){
+			//从缓存加载页面 e.persisted=true
+			if(e.persisted){
+				window.location.reload();
+			}
+		}
+	},
+
 	//获取用户token
 	//如果非app需要使用，要在setting中设置
 	//tokenKeyFromUrl中需要设置获取时的key
