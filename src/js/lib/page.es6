@@ -328,8 +328,10 @@ let page = {
 	})(),
 
 	//后退刷新页面  //待测试
-	historyBackRefresh:function(callback){
+	//  必须页面打开就执行不能放到ready里面
+	historyBackRefresh:function(){
 		window.onpageshow=function(e){
+			console.log(e.persisted)
 			//从缓存加载页面 e.persisted=true
 			if(e.persisted){
 				window.location.reload();
@@ -607,14 +609,14 @@ let page = {
 		var _this = this;
 		console.log(text);
 
-		if(this[isDebug]){
+		// if(this[isDebug]){
 			text = text || "系统错误，请稍后在试";
-		}else{
-			text = "系统错误，请稍后在试";
-		}
+		// }else{
+		// 	text = "系统错误，请稍后在试";
+		// }
 
 		this.alert(text,function(){
-			if(_this[isApp] && !this[isDebug]){
+			if(!_this[isDebug]){
 				_this.goBack();
 			}
 		});
