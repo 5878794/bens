@@ -1,7 +1,7 @@
 
 //ios的checkbox的  开关按钮
 
-// new DEVICE.iosCheckBox({
+// let a = new DEVICE.iosCheckBox({
 //    dom:$("body"),                    //要放置的容器
 //    isCheck:false,                    //默认状态是否选中
 //    selectBg:"green",                 //选中后的边框颜色
@@ -14,6 +14,9 @@
 //        console.log(state);           //输出选中状态 true /false
 //    }
 // });
+
+// a.check(true);            //手动选中
+// a.check(false);           //手动不选中
 
 
 require("./../jq/extend");
@@ -190,6 +193,31 @@ class checkBox{
 			},false,"easein","transform")
 		}
 	}
+
+
+
+	//手动设置开关状态
+	//true:选中
+	//false:不选中
+	check(state){
+		if(this.isAnimate){
+			let _this = this;
+			setTimeout(function(){
+				_this.check(state);
+			},100);
+			return;
+		}
+
+		if(state){
+			this.state = false;
+			this._animate();
+		}else{
+			this.state = true;
+			this._animate();
+		}
+	}
+
+
 }
 
 
