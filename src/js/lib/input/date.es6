@@ -7,6 +7,7 @@
 // 	selected:"2016-12-12",      //@param:str    初始显示的日期， 默认：当前日期
 // 	minDate:"1950-1-1",         //@param:str    最小显示时间 默认：1950-1-1
 // 	maxDate:"2050-12-12",       //@param:str    最大显示时间 默认：2050-12-12
+//  isShowDay:true,               //@param:bool   是否显示日,默认：true
 // 	viewPort:750m,                //@param:number 设置psd的大小，布局需要使用rem 默认：750
 //  success:function(rs){
 //          //rs返回选择的年月日   yyyy-mm-dd
@@ -65,6 +66,7 @@ class dateChoose extends zz{
 		this.day = data[2] || "";
 		this.minDate = opt.minDate || "1950-1-1";
 		this.maxDate = opt.maxDate || "2050-12-12";
+		this.isShowDay = $.isBoolean(opt.isShowDay)? opt.isShowDay : true;
 		this.callback = opt.success || function(){};
 		this.error = opt.error || function(){};
 
@@ -93,7 +95,10 @@ class dateChoose extends zz{
 		//点击的列对象是哪一个
 		this[touchDomN] = 0;
 		//滚动列的宽度
-		this[celWidth] = window.innerWidth/3;
+		this[celWidth] = (this.isShowDay)?
+							window.innerWidth/3 :
+						    window.innerWidth/2;
+
 		//dom排列顺序，用于判断点击的是年月日中的哪一列
 		this[touchDomList] = [];
 		//年月日列Y轴移动的距离
@@ -110,15 +115,24 @@ class dateChoose extends zz{
 		this[handlerMinMaxDate]();
 
 		this[createDataMain]();
+
 		this.domBody
 			.append(this.yearBodyDom)
-			.append(this.monthBodyDom)
-			.append(this.dayBodyDom);
-		this[touchDomList] = [this.yearBodyDom,this.monthBodyDom,this.dayBodyDom];
+			.append(this.monthBodyDom);
+		this[touchDomList] = [this.yearBodyDom,this.monthBodyDom];
+
+		if(this.isShowDay){
+			this.domBody.append(this.dayBodyDom);
+			this[touchDomList].push(this.dayBodyDom);
+		}
 
 		this[createListYear](this.year);
 		this[createListMonth](this.month);
-		this[createListDay](this.day);
+
+		if(this.isShowDay){
+			this[createListDay](this.day);
+		}
+
 
 		this[createDateZZ]();
 		this[refreshParam]();
@@ -161,15 +175,19 @@ class dateChoose extends zz{
 		this.domBody
 			.addClass("box_h");
 
-		let div = $("<div><p></p></div>");
+		let div = $("<div><p></p></div>"),
+			width = (this.isShowDay)? '33.333333%' : '50%';
 		div.css({
-			width:"33.333333%",
+			width:width,
 			overflow:"hidden"
 		});
 
 		this.yearBodyDom = div.clone();
 		this.monthBodyDom = div.clone();
-		this.dayBodyDom = div.clone();
+
+		if(this.isShowDay){
+			this.dayBodyDom = div.clone();
+		}
 	}
 
 	//创建效果遮罩层
@@ -474,14 +492,19 @@ class dateChoose extends zz{
 	//刷新参数
 	[refreshParam](){
 		let yearDomHeight = this.yearBodyDom.find("p").height(),
-			monthDomHeight = this.monthBodyDom.find("p").height(),
-			dayDomHeight = this.dayBodyDom.find("p").height();
+			monthDomHeight = this.monthBodyDom.find("p").height();
 
 		this[maxScrollValue] = [
 			yearDomHeight - this[bodyDomHeight],
-			monthDomHeight - this[bodyDomHeight],
-			dayDomHeight - this[bodyDomHeight]
+			monthDomHeight - this[bodyDomHeight]
 		];
+
+		if(this.isShowDay){
+			let dayDomHeight = this.dayBodyDom.find("p").height();
+			this[maxScrollValue].push(dayDomHeight - this[bodyDomHeight])
+		}
+
+
 	}
 
 	//创建事件监听
@@ -618,13 +641,17 @@ class dateChoose extends zz{
 		if(n==0){
 			this[createListMonth]();
 			this[rollBackTop](1);
-			this[createListDay]();
-			this[rollBackTop](2);
+			if(this.isShowDay){
+				this[createListDay]();
+				this[rollBackTop](2);
+			}
 			this[refreshParam]();
 		}
 		if(n==1){
-			this[createListDay]();
-			this[rollBackTop](2);
+			if(this.isShowDay){
+				this[createListDay]();
+				this[rollBackTop](2);
+			}
 			this[refreshParam]();
 		}
 	}
@@ -646,11 +673,18 @@ class dateChoose extends zz{
 	}
 
 	success(){
-		let year = this[getCelVal](0),
-			month = this[getCelVal](1),
-			day = this[getCelVal](2);
+		if(this.isShowDay){
+			let year = this[getCelVal](0),
+				month = this[getCelVal](1),
+				day = this[getCelVal](2);
 
-		this.callback(year+"-"+month+"-"+day);
+			this.callback(year+"-"+month+"-"+day);
+		}else{
+			let year = this[getCelVal](0),
+				month = this[getCelVal](1);
+
+			this.callback(year+"-"+month);
+		}
 	}
 
 	cancel(){
