@@ -8,6 +8,7 @@
 
 let svgObj = require("./../svg/svg"),
 	init = Symbol('init'),
+	device = require('./../device'),
 	typeInfo = [
 		{
 			name:'月经期',
@@ -15,11 +16,11 @@ let svgObj = require("./../svg/svg"),
 			val:'10'
 		},{
 			name:'安全期',
-			color:'07ecc2',
+			color:'#07ecc2',
 			val:'15'
 		},{
 			name:'易孕期',
-			color:'ff4b6f',
+			color:'#ff4b6f',
 			val:'90'
 		}
 	],
@@ -27,7 +28,20 @@ let svgObj = require("./../svg/svg"),
 	getSvgWidth = Symbol(),
 	setBodyStyle = Symbol(),
 	getRealPoint = Symbol(),
-	createLine = Symbol();
+	createLine = Symbol(),
+	createY = Symbol(),
+	createX = Symbol(),
+	weekList = {
+		'0':'日',
+		'1':'一',
+		'2':'二',
+		'3':'三',
+		'4':'四',
+		'5':'五',
+		'6':'六'
+	},
+	createInfo = Symbol(),
+	createMain = Symbol();
 
 
 
@@ -36,7 +50,7 @@ let svgObj = require("./../svg/svg"),
 class graph4{
 	constructor(opt={}){
 		this.body = opt.body || $("body");
-		this.data = opt.data || [];         //[{x:0,y:0},...]
+		this.data = opt.data || [];         //[{x:0,y:0,isToday:false},...]
 		this.y = opt.y || [0,20,40,60,80,100];
 		this.yTitle = opt.yTitle || '怀孕几率(%)';
 		this.typeInfo = opt.typeInfo || typeInfo;
@@ -44,24 +58,24 @@ class graph4{
 		this.todayBg = '#fbc114';
 		this.todayColor = '#51301e';
 		this.xDateColor = '#ababab';
-		this.xDateFontsize = 22;
+		this.xDateFontsize = 11;
 		this.color = '#666666';
-		this.fontsize = 24;
-		this.infoFontSize = 22;
-		this.infoColor = '#666666';
+		this.fontsize = 12;
+		// this.infoFontSize = 11;
+		// this.infoColor = '#666666';
 		this.yTitleColor = '#ababab';
-		this.yTitleFontSize = 22;
-		this.lineColor = '#cecece';
+		this.yTitleFontSize = 11;
+		this.lineColor = '#ececec';
 
 		//是否显示线条颜色说明块
 		this.isShowInfo = opt.isShowInfo || false;
 
 		//svg 除曲线图外的空白区域（空白区域包含x、y信息）
-		this.leftPadding = opt.leftPadding || 140;
-		this.bottomPadding = opt.bottomPadding || 120;
+		this.leftPadding = opt.leftPadding || 70;
+		this.bottomPadding = opt.bottomPadding || 60;
 		this.topPadding = opt.topPadding || 40;
 		this.rightPadding = opt.rightPadding || 20;
-		this.infoHeight = opt.infoHeight || 50;
+		this.infoHeight = opt.infoHeight || 25;
 
 
 		//svg的宽、高
@@ -83,6 +97,10 @@ class graph4{
 		this[getSvgWidth]();
 		this[createSVG]();
 		this[createLine]();
+		this[createY]();
+		this[createX]();
+		this[createInfo]();
+		this[createMain]();
 
 		this.body.html(this.body.html());
 	}
@@ -131,7 +149,8 @@ class graph4{
 	[createLine](){
 		let g = this.svg.createElement({
 			tag:"g",
-			attr:{}
+			attr:{_name:'wg'}
+
 		});
 
 
@@ -181,6 +200,159 @@ class graph4{
 		this.svg.svg.append(g);
 	}
 
+	//创建y轴
+	[createY](){
+		let g = this.svg.createElement({
+			tag:"g",
+			attr:{_name:'y'}
+		});
+
+		let x= this.leftPadding/2;
+		this.y.map(val=>{
+			let y = this.height - this.bottomPadding - val*this.yScale,
+				text = this.svg.createElement({
+				tag: "text",
+				val: val.toString(),
+				attr: {
+					x:x,
+					y:y,
+					fill:this.color,
+					"text-anchor":"middle",
+					"dominant-baseline":"middle",  //垂直底部居中
+					"font-size":this.fontsize+"px"
+				}
+			});
+
+			g.append(text);
+		});
+
+
+		//创建y的名称
+		let yName = this.svg.createElement({
+			tag: "text",
+			val: this.yTitle,
+			attr: {
+				x:x,
+				y:this.topPadding/2,
+				fill:this.yTitleColor,
+				"text-anchor":"middle",
+				"dominant-baseline":"middle",  //垂直底部居中
+				"font-size":this.yTitleFontSize+"px"
+			}
+		});
+		g.append(yName);
+
+		this.svg.svg.append(g);
+	}
+
+	//创建x轴
+	[createX](){
+		//生成容器
+		let g = this.svg.createElement({
+			tag:"g",
+			attr:{_name:'x'}
+		});
+
+
+		//生成日期
+		let y = this.height - this.bottomPadding + this.bottomPadding/4,
+			y1 = y + this.bottomPadding/4;
+		for(let i=0,l=this.data.length;i<l;i++){
+			let x = this.leftPadding + i * this.xySpacing,
+				val = this.data[i].x.split('-');
+			val = val[1]+'-'+val[2];
+
+			if(this.data[i].isToday){
+				let grap = this.svg.createElement({
+					tag:'rect',
+					attr:{
+						x:x - this.xDateFontsize*1.5,
+						y:y - this.xDateFontsize/2 -2,
+						width:this.xDateFontsize*3,
+						height:this.xDateFontsize+4,
+						rx:this.xDateFontsize/2,
+						ry:this.xDateFontsize/2,
+						fill:this.todayBg,
+					}
+				});
+				g.append(grap);
+			}
+			let text = this.svg.createElement({
+				tag: "text",
+				val: val,
+				attr: {
+					x:x,
+					y:y,
+					fill:(this.data[i].isToday)? this.todayColor : this.xDateColor,
+					"text-anchor":"middle",
+					"dominant-baseline":"middle",  //垂直底部居中
+					"font-size":this.xDateFontsize+"px"
+				}
+			});
+
+			//生成星期
+			let this_date = this.data[i].x;
+			this_date = (device.isIphone || device.isIpad)? this_date.replace(/\-/ig,'\/') : this_date;
+			let week = new Date(this_date).getDay().toString();
+			week = weekList[week];
+			let text1 = this.svg.createElement({
+				tag: "text",
+				val: week,
+				attr: {
+					x:x,
+					y:y1,
+					fill:this.color,
+					"text-anchor":"middle",
+					"dominant-baseline":"middle",  //垂直底部居中
+					"font-size":this.fontsize+"px"
+				}
+			});
+			g.append(text);
+			g.append(text1);
+		}
+
+
+		this.svg.svg.append(g);
+	}
+
+	//创建图示区域
+	[createInfo](){
+		// div+css单独写
+	}
+
+	//创建曲线
+	[createMain](){
+		let path = 'M';
+
+		this.data.map((rs,i)=>{
+			let y = rs.y,
+				x = i,
+				p = this[getRealPoint](x,y);
+
+			path += ' ' + p;
+			// if(i == 0 && this.data.length >=2){
+			// 	let p2 = this[getRealPoint](x+this.xySpacing,y+this.xySpacing);
+			// 	path += ' Q '+p2;
+			// }else{
+				path += ' L';
+			// }
+		});
+		path = path.substr(0,path.length-1);
+
+		let line = this.svg.createElement({
+			tag:"path",
+			attr:{
+				d:path,
+				fill:"none",
+				stroke:this.color,
+				"stroke-width":"1",
+				"stroke-linecap": "round"
+			}
+		});
+
+		this.svg.svg.append(line);
+		console.log(path)
+	}
 }
 
 
