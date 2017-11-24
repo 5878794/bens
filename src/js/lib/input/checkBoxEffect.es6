@@ -149,7 +149,7 @@ class checkBox{
 		},false);
 	}
 
-	_animate(){
+	_animate(notCallback){
 		var _this = this;
 
 		if(this.isAnimate){return;}
@@ -172,7 +172,9 @@ class checkBox{
 			},this.spd,function(){
 				_this.state = true;
 				_this.isAnimate = false;
-				_this.callback(true);
+				if(!notCallback){
+					_this.callback(true);
+				}
 			},false,"easein","transform")
 		}else{
 			this.body.css({
@@ -189,7 +191,9 @@ class checkBox{
 			},this.spd,function(){
 				_this.state = false;
 				_this.isAnimate = false;
-				_this.callback(false);
+				if(!notCallback){
+					_this.callback(false);
+				}
 			},false,"easein","transform")
 		}
 	}
@@ -200,6 +204,10 @@ class checkBox{
 	//true:选中
 	//false:不选中
 	check(state){
+		if(state == this.state){
+			return;
+		}
+
 		if(this.isAnimate){
 			let _this = this;
 			setTimeout(function(){
@@ -210,10 +218,10 @@ class checkBox{
 
 		if(state){
 			this.state = false;
-			this._animate();
+			this._animate(true);
 		}else{
 			this.state = true;
-			this._animate();
+			this._animate(true);
 		}
 	}
 

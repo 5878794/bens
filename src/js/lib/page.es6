@@ -817,6 +817,31 @@ let page = {
     //删除html标签
     delHtmlTag(str){
         return str.replace(/<[^>]+>/g,"");    //去掉所有的html标记
+    },
+
+    //获取本地缓存数据
+    appLocalData:{
+        get(key){
+            return new Promise(success=>{
+                success();
+            })
+        },
+        set(key,val){
+
+        },
+        del(key){
+
+        }
+    },
+    mdfSoftKeyBoardBug(){
+        $('input').each(function(){
+            this.addEventListener('touchstart',function(e){
+                e.stopPropagation();
+            },false)
+        });
+        document.body.addEventListener('touchstart',function(){
+            $('input').blur();
+        },false)
     }
 
 };
@@ -827,7 +852,7 @@ page[init](function(){
 
     //自动缓存参数，非app用
     page[autoSaveUrlParam]();
-
+    page.mdfSoftKeyBoardBug();
 
 }).then(()=>{
     if(page[isDebug]){
@@ -838,8 +863,9 @@ page[init](function(){
         console.log(e);
         page.alert("程序初始化错误");
     }else{
-        page.alert("程序初始化错误;");
-        window.history.go(-1);
+        page.alert("程序初始化错误;",function(){
+            page.goBack();
+        });
     }
 });
 module.exports = page;

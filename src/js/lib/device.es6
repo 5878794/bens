@@ -10,17 +10,17 @@ window.requestAnimationFrame =  window.requestAnimationFrame ||
 window.cancelAnimationFrame =   window.cancelAnimationFrame ||
 								window.webkitCancelAnimationFrame ||
 								window.webkitCancelRequestAnimationFrame ||
-								window.mozCancelRequestAnimationFrame ||
-								window.oCancelRequestAnimationFrame ||
-								window.msCancelRequestAnimationFrame ||
+								// window.mozCancelRequestAnimationFrame ||
+								// window.oCancelRequestAnimationFrame ||
+								// window.msCancelRequestAnimationFrame ||
 								clearTimeout;
 
-//
+
 // window.navigator.getUserMedia =    window.navigator.getUserMedia ||
 // 									window.navigator.webkitGetUserMedia ||
 // 									window.navigator.mozGetUserMedia ||
 // 									window.navigator.msGetUserMedia;
-//
+
 // window.PeerConnection = window.PeerConnection ||
 // 						window.webkitPeerConnection ||
 // 						window.webkitRTCPeerConnection ||

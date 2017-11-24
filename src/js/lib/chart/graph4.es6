@@ -1,7 +1,7 @@
 
 
 
-//生成曲线图效果4
+//生成曲线图效果4  月经的
 
 
 
@@ -31,6 +31,7 @@ let svgObj = require("./../svg/svg"),
 	createLine = Symbol(),
 	createY = Symbol(),
 	createX = Symbol(),
+	createFilter = Symbol(),
 	weekList = {
 		'0':'日',
 		'1':'一',
@@ -66,6 +67,7 @@ class graph4{
 		this.yTitleColor = '#ababab';
 		this.yTitleFontSize = 11;
 		this.lineColor = '#ececec';
+		this.lineColors = ['rgb(255,173,75)','rgb(0,253,194)','rgb(255,104,138)'];
 
 		//是否显示线条颜色说明块
 		this.isShowInfo = opt.isShowInfo || false;
@@ -88,7 +90,6 @@ class graph4{
 
 
 		this.svg = null;
-
 		this[init]();
 	}
 
@@ -100,6 +101,7 @@ class graph4{
 		this[createY]();
 		this[createX]();
 		this[createInfo]();
+		// this[createFilter]();
 		this[createMain]();
 
 		this.body.html(this.body.html());
@@ -320,38 +322,123 @@ class graph4{
 		// div+css单独写
 	}
 
-	//创建曲线
-	[createMain](){
-		let path = 'M';
-
-		this.data.map((rs,i)=>{
-			let y = rs.y,
-				x = i,
-				p = this[getRealPoint](x,y);
-
-			path += ' ' + p;
-			// if(i == 0 && this.data.length >=2){
-			// 	let p2 = this[getRealPoint](x+this.xySpacing,y+this.xySpacing);
-			// 	path += ' Q '+p2;
-			// }else{
-				path += ' L';
-			// }
+	//创建滤镜
+	[createFilter](){
+		//生成容器
+		let defs = this.svg.createElement({
+			tag:"defs",
+			attr:{}
 		});
-		path = path.substr(0,path.length-1);
 
-		let line = this.svg.createElement({
-			tag:"path",
+		let filter = this.svg.createElement({
+			tag:'filter',
 			attr:{
-				d:path,
-				fill:"none",
-				stroke:this.color,
-				"stroke-width":"1",
-				"stroke-linecap": "round"
+				id:'filter',
+				x:0,y:0,width:'1000%',height:'1000%'
 			}
 		});
 
-		this.svg.svg.append(line);
-		console.log(path)
+		let feOffset = this.svg.createElement({
+			tag:'feOffset',
+			attr:{
+				result:'offOut',
+				in:'SourceGraphic',
+				dx:0,
+				dy:9
+			}
+		});
+
+		let feGaussianBlur = this.svg.createElement({
+			tag:'feGaussianBlur',
+			attr:{
+				result:'blurOut',
+				in:'offOut',
+				stdDeviation:'5'
+			}
+		});
+
+		// let feBlend = this.svg.createElement({
+		// 	tag:'feBlend',
+		// 	attr:{
+		// 		in:'SourceGraphic',
+		// 		in2:'blurOut',
+		// 		mode:'normal'
+		// 	}
+		// });
+
+		filter.append(feOffset).append(feGaussianBlur);
+		defs.append(filter);
+		this.svg.svg.append(defs);
+
+	}
+
+	//创建曲线
+	[createMain](){
+		//生成容器
+		let g = this.svg.createElement({
+			tag:"g",
+			attr:{_name:'line'}
+		});
+
+
+		for(let i=0,l=this.data.length-1;i<l;i++){
+			let rs = this.data[i],
+				rs1 = this.data[i+1],
+				p1x = i,
+				p1y = rs.y,
+				p2x = i+1,
+				p2y = rs1.y;
+
+			if(!p1y || !p2y){
+				continue;
+			}
+				// p3x = i+1,
+				// p3y = p2y+1,
+				// p4x = i,
+				// p4y = p1y+1,
+				// p5x = i,
+				// p5y = p1y+2,
+				// p6x = i+1,
+				// p6y = p2y+2,
+			let	p1 = this[getRealPoint](p1x,p1y),
+				p2 = this[getRealPoint](p2x,p2y),
+				// p3 = this[getRealPoint](p3x,p3y),
+				// p4 = this[getRealPoint](p4x,p4y),
+				// p5 = this[getRealPoint](p5x,p5y),
+				// p6 = this[getRealPoint](p6x,p6y),
+				maxY = (p1y>p2y)? p1y : p2y,
+				color = (maxY<=10)? this.lineColors[0] :
+						(maxY<=15)? this.lineColors[1] :
+									this.lineColors[2];
+
+			let line = this.svg.createElement({
+				tag:"path",
+				attr:{
+					d:'M '+p1+' L '+p2,
+					fill:'none',
+					stroke:color,
+					'stroke-width':'4px',
+					"stroke-linecap": "round"
+				}
+			});
+			// let line1 = this.svg.createElement({
+			// 	tag:"path",
+			// 	attr:{
+			// 		d:'M '+p4+' L '+p3+' L '+p6+' L '+p5+' Z',
+			// 		fill:color,
+			// 		stroke:color,
+			// 		'stroke-width':'10px',
+			// 		filter:'url(#filter)',
+			// 		"stroke-linecap": "round"
+			// 	}
+			// });
+
+			g.append(line);
+			// g.append(line1);
+
+		}
+
+		this.svg.svg.append(g);
 	}
 }
 
