@@ -3,7 +3,7 @@
 let device = require("./device"),
     getUrlParam = require("./fn/getParamFromUrl"),
     session = require("./h5/sessionData"),
-
+    localData = require('./h5/localData'),
     isDebug = Symbol("isDebug"),
     isApp = Symbol("isApp"),
     hasAllReady = Symbol("hasAllReady"),
@@ -822,15 +822,47 @@ let page = {
     //获取本地缓存数据
     appLocalData:{
         get(key){
-            return new Promise(success=>{
-                success();
+            return new Promise((success,error)=>{
+                if(page[isApp]){
+                    YJH.AppUserInfoManager.getSpecifiedUserInfo(function(rs){
+                        rs = rs.result || '{}';
+                        rs = JSON.parse(rs);
+                        success(rs[key]);
+                    },function(rs){
+                        rs = rs.des || '系统接口错误';
+                        error(rs)
+                    })
+                }else{
+                    let data = localData.getItem(key);
+                    success(data);
+                }
+
             })
         },
         set(key,val){
+            return new Promise((success,error)=>{
+                if(page[isApp]){
+                    YJH.AppUserInfoManager.getSpecifiedUserInfo(function(rs){
+                        rs = rs.result || '{}';
+                        rs = JSON.parse(rs);
+                        rs[key] = val;
+                        rs = JSON.stringify(rs);
+                        YJH.AppUserInfoManager.setSpecifiedUserInfo(rs,function(){
+                            success();
+                        },function(rs){
+                            rs = rs.des || '系统接口错误';
+                            error(rs)
+                        })
+                    },function(rs){
+                        rs = rs.des || '系统接口错误';
+                        error(rs)
+                    })
+                }else{
+                    localData.setItem(key,val);
+                    success();
+                }
 
-        },
-        del(key){
-
+            })
         }
     },
     mdfSoftKeyBoardBug(){
