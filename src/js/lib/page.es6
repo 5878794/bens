@@ -225,7 +225,7 @@ let page = {
         callback = callback || function() {};
 
         if(this[isApp]){
-            YJH.H5Dialogs.alert(text.toString(), callback, "系统提示");
+            YJH.H5Dialogs.alert(text.toString(), callback, "提示");
         }else{
             alert(text);
             callback();
@@ -248,7 +248,7 @@ let page = {
                         success();
                     }
                 },
-                "系统提示",
+                "提示",
                 ["取消", "确定"]
             )
         }else{
@@ -647,7 +647,7 @@ let page = {
         console.log(text);
 
         // if(this[isDebug]){
-        text = text || "系统错误，请稍后在试";
+        text = text || "网络连接出现了一点问题，请重新尝试";
         // }else{
         // 	text = "系统错误，请稍后在试";
         // }
@@ -833,7 +833,7 @@ let page = {
                         rs = JSON.parse(rs);
                         success(rs[key]);
                     },function(rs){
-                        rs = rs.des || '系统接口错误';
+                        rs = rs.des || '网络连接出现了一点问题，请重新尝试';
                         error(rs)
                     })
                 }else{
@@ -854,11 +854,11 @@ let page = {
                         YJH.AppUserInfoManager.setSpecifiedUserInfo(rs,function(){
                             success();
                         },function(rs){
-                            rs = rs.des || '系统接口错误';
+                            rs = rs.des || '网络连接出现了一点问题，请重新尝试';
                             error(rs)
                         })
                     },function(rs){
-                        rs = rs.des || '系统接口错误';
+                        rs = rs.des || '网络连接出现了一点问题，请重新尝试';
                         error(rs)
                     })
                 }else{
@@ -897,9 +897,9 @@ page[init](function(){
 }).catch(e=>{
     if(page[isDebug]){
         console.log(e);
-        page.alert("程序初始化错误");
+        page.alert("网络连接出现了一点问题，请重新尝试");
     }else{
-        page.alert("程序初始化错误;",function(){
+        page.alert("网络连接出现了一点问题，请重新尝试;",function(){
             page.goBack();
         });
     }
