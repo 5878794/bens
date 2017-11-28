@@ -335,9 +335,11 @@ let page = {
         if(SETTING.isAPP && device.isAndroid){
             //原生提供
             window.addEventListener('view_visibilitychange', function(e) {
-                for(var i= 0,l=fn.length;i<l;i++){
-                    fn[i]();
-                }
+                setTimeout(function(){
+                    for(var i= 0,l=fn.length;i<l;i++){
+                        fn[i]();
+                    }
+                },100)
             }, false);
         }else{
             document.addEventListener('visibilitychange', function(e) {
@@ -345,9 +347,11 @@ let page = {
                     isHiddened = true;
                 }else{
                     if(isHiddened){
-                        for(var i= 0,l=fn.length;i<l;i++){
-                            fn[i]();
-                        }
+                        setTimeout(function(){
+                            for(var i= 0,l=fn.length;i<l;i++){
+                                fn[i]();
+                            }
+                        },100);
                     }
                 }
             }, false);
