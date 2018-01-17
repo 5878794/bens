@@ -5,7 +5,7 @@
 // 	                自身周围24个点的平均值  半径2
 
 
-module.exports = function(number){
+module.exports = function(){
 	let newImage = new ImageData(this.width,this.height),
 		newWidth  = newImage.width,
 		newHeight = newImage.height,
