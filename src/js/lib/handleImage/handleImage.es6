@@ -43,6 +43,8 @@ let FILTERS = {
 	sculpture:require('./filter/sculpture'),
 	//反色
 	antiColor:require('./filter/antiColor'),
+	//模糊
+	blurry:require('./filter/blurry'),
 	//缩放（临近插值法，有锯齿，速度快）
 	scaleByNear:require('./filter/scaleByNear'),
 	//缩放 （双线行插值法，效果一般，速度一般）
@@ -202,6 +204,54 @@ class handleImage{
 				return await filterPlus.call(this,opt);
 			};
 		}
+	}
+
+	//获取半径内的点   (很慢。。。)
+	// 半径1  取3*3 个点
+	// 半径2  取5*5 个点
+	getPointInRadius(opt){
+		let x = opt.x,
+			y = opt.y,
+			width = opt.width,
+			height = opt.height,
+			radius = opt.radius;
+
+
+		//生成x，y点范围
+		let xs = [],ys = [];
+		for(let i=-radius,l=radius;i<=l;i++){
+			let thisX = x+i,
+				thisY = y+i;
+			// thisX = (thisX < 0)? 0 : (thisX>width)? width : thisX;
+			// thisY = (thisY < 0)? 0 : (thisY>height)? height : thisY;
+
+			if(i<0){
+				thisX = (thisX<0)? 0 : thisX;
+				thisY = (thisY<0)? 0 :  thisY;
+			}else{
+				thisX = (thisX>width)? width : thisX;
+				thisY = (thisY>height)? height : thisY;
+			}
+
+			xs.push(thisX);
+			ys.push(thisY);
+		}
+
+		//输出一维的点   先横向在纵向  计算数据的实际位置
+		let backData = [];
+		for(let _y=0,_yl=ys.length;_y<_yl;_y++){
+			let thisY = ys[_y];
+			for(let _x=0,_xl=xs.length;_x<_xl;_x++){
+				let thisX = xs[_x];
+
+				backData.push(
+					(thisY*width+thisX)*4
+				)
+			}
+		}
+
+		return backData;
+
 	}
 }
 
