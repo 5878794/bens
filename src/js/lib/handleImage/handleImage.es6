@@ -33,12 +33,25 @@ let FILTERS = {
 	blackAndWhite:require('./filter/blackAndWhite'),
 	//调节亮度
 	lightness:require('./filter/lightness'),
+	//锐化
+	sharpen:require('./filter/sharpen'),
+	//柔化
+	soften:require('./filter/soften'),
+	//扩散
+	diffusion:require('./filter/diffusion'),
+	//雕刻
+	sculpture:require('./filter/sculpture'),
+	//反色
+	antiColor:require('./filter/antiColor'),
 	//缩放（临近插值法，有锯齿，速度快）
 	scaleByNear:require('./filter/scaleByNear'),
 	//缩放 （双线行插值法，效果一般，速度一般）
 	scaleByDoubleLine:require('./filter/scaleByDoubleLine'),
 	//缩放 (双三次插值) 速度较慢，效果较好
 	scaleByDoubleThreeTimes:require('./filter/scaleByDoubleThreeTimes'),
+
+
+
 
 	test:function(){}
 };
