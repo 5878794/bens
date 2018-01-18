@@ -15,6 +15,9 @@ module.exports = function(number){
 		oldHeight = this.height,
 		_this = this,
 		softenRadius = number || 1;
+	window.oldRgbaData = oldRgbaData;
+
+	let getPointsFn = _this.createGetPointsInRadius(softenRadius);
 
 	// let getVal = function(p00,p10,p20,p01,p11,p21,p02,p12,p22){
 	// 	let r = (   oldRgbaData[p00] +
@@ -67,6 +70,42 @@ module.exports = function(number){
 		return {r,g,b,a};
 	};
 
+
+	let createGetVal2 = function(r){
+		var str = '';
+		var length = (r*2+1)*(r*2+1);
+
+		str += 'var r=\(';
+		for(var i=0,l=length;i<l;i++){
+			str += 'oldRgbaData[point['+i+']]+'
+		}
+		str = str.substr(0,str.length-1);
+		str += '\)\/'+length+'; \n ';
+
+
+		str += 'var g=\(';
+		for(var i=0,l=length;i<l;i++){
+			str += 'oldRgbaData[point['+i+']+1]+'
+		}
+		str = str.substr(0,str.length-1);
+		str += '\)\/'+length+'; \n ';
+
+		str += 'var b=\(';
+		for(var i=0,l=length;i<l;i++){
+			str += 'oldRgbaData[point['+i+']+2]+'
+		}
+		str = str.substr(0,str.length-1);
+		str += '\)\/'+length+'; \n ';
+
+
+		str+= 'var a=oldRgbaData[point[('+length+'-1)/2]+3];';
+
+		str+='return {r:r,g:g,b:b,a:a};';
+
+		return new Function('point',str);
+	};
+	let getVal2 = createGetVal2(softenRadius);
+
 	//传入点新点图像点坐标点，通过原来点图像点计算新增
 	let fn = function(x,y){
 		//获取周边9个点
@@ -94,14 +133,16 @@ module.exports = function(number){
 		//
 		// let rgba = getVal(p00,p10,p20,p01,p11,p21,p02,p12,p22);
 
-		let points = _this.getPointInRadius({
-			x:x,
-			y:y,
-			width:oldWidth,
-			height:oldHeight,
-			radius:softenRadius
-		});
-		let rgba = getVal1(points);
+		// let points = _this.getPointInRadius({
+		// 	x:x,
+		// 	y:y,
+		// 	width:oldWidth,
+		// 	height:oldHeight,
+		// 	radius:softenRadius
+		// });
+		let points = getPointsFn(x,y,oldWidth,oldHeight);
+		// let rgba = getVal1(points);
+		let rgba = getVal2(points);
 
 		return {
 			r:rgba.r,

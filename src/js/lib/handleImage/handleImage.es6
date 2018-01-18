@@ -256,6 +256,56 @@ class handleImage{
 		return backData;
 
 	}
+
+	//动态创建获取周围点的函数
+	createGetPointsInRadius(r){
+		var str = '';
+		//x
+		for(var i=0,l=r*2+1;i<l;i++){
+
+			var val = i-r;
+			str+= 'var x'+i+'=x+\('+val+'\); \r ';
+
+			if(i<r){
+				str+= 'x'+i+'=\(x'+i+'<0\)? 0 : x'+i+'; \n ';
+			}else if(i>r){
+				str+= 'x'+i+'=\(x'+i+'>width\)? width : x'+i+'; \n ';
+			}else{
+				str+= ' \n ';
+			}
+		}
+		//y
+
+		for(var i=0,l=r*2+1;i<l;i++){
+
+			var val = i-r;
+			str+= 'var y'+i+'=y+\('+val+'\); \r ';
+
+			if(i<r){
+				str+= 'y'+i+'=\(y'+i+'<0\)? 0 : y'+i+'; \n ';
+			}else if(i>r){
+				str+= 'y'+i+'=\(y'+i+'>height\)? height : y'+i+'; \n ';
+			}else{
+				str+= ' \n ';
+			}
+		}
+
+		str += ' \n ';
+
+		//points
+		str += 'var points=[]; \n ';
+		for(var y=0,yl=r*2+1;y<yl;y++){
+			for(var x=0,xl=r*2+1;x<xl;x++){
+				str+= 'points.push\('+
+					'\(y'+y+'*width+x'+x+'\)*4'
+					+'\);  \n ';
+			}
+		}
+
+		str += 'return points; \n ';
+
+		return new Function('x','y','width','height',str);
+	}
 }
 
 
