@@ -26,6 +26,7 @@ let init = Symbol(),
 
 
 //下面的包自己设置  不用的就不引入了
+//未设置动态值  性能不够
 let FILTERS = {
 	//转灰图
 	gray:require('./filter/gray'),
@@ -45,6 +46,8 @@ let FILTERS = {
 	antiColor:require('./filter/antiColor'),
 	//模糊
 	blurry:require('./filter/blurry'),
+	//高斯模糊
+	gaussianBlur:require('./filter/gaussianBlur'),
 	//缩放（临近插值法，有锯齿，速度快）
 	scaleByNear:require('./filter/scaleByNear'),
 	//缩放 （双线行插值法，效果一般，速度一般）
