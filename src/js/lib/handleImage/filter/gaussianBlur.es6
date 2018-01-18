@@ -3,7 +3,7 @@
 //原理:
 //http://blog.csdn.net/u012992171/article/details/51023768
 
-//number:半径
+//number:模糊半径
 
 module.exports = function(number){
 	let newImage = new ImageData(this.width,this.height),
@@ -55,40 +55,40 @@ module.exports = function(number){
 
 	let filter = getFilterFn();
 
-	let getVal = function(p00,p10,p20,p01,p11,p21,p02,p12,p22){
-		let r = oldRgbaData[p00]*filter[0] +
-				oldRgbaData[p10]*filter[1] +
-				oldRgbaData[p20]*filter[2] +
-				oldRgbaData[p01]*filter[3] +
-				oldRgbaData[p11]*filter[4] +
-				oldRgbaData[p21]*filter[5] +
-				oldRgbaData[p02]*filter[6] +
-				oldRgbaData[p12]*filter[7] +
-				oldRgbaData[p22]*filter[8],
-			g = oldRgbaData[p00+1]*filter[0] +
-				oldRgbaData[p10+1]*filter[1] +
-				oldRgbaData[p20+1]*filter[2] +
-				oldRgbaData[p01+1]*filter[3] +
-				oldRgbaData[p11+1]*filter[4] +
-				oldRgbaData[p21+1]*filter[5] +
-				oldRgbaData[p02+1]*filter[6] +
-				oldRgbaData[p12+1]*filter[7] +
-				oldRgbaData[p22+1]*filter[8],
-			b = oldRgbaData[p00+2]*filter[0] +
-				oldRgbaData[p10+2]*filter[1] +
-				oldRgbaData[p20+2]*filter[2] +
-				oldRgbaData[p01+2]*filter[3] +
-				oldRgbaData[p11+2]*filter[4] +
-				oldRgbaData[p21+2]*filter[5] +
-				oldRgbaData[p02+2]*filter[6] +
-				oldRgbaData[p12+2]*filter[7] +
-				oldRgbaData[p22+2]*filter[8],
-			a = oldRgbaData[p00+3];
-
-
-
-		return {r,g,b,a};
-	};
+	// let getVal = function(p00,p10,p20,p01,p11,p21,p02,p12,p22){
+	// 	let r = oldRgbaData[p00]*filter[0] +
+	// 			oldRgbaData[p10]*filter[1] +
+	// 			oldRgbaData[p20]*filter[2] +
+	// 			oldRgbaData[p01]*filter[3] +
+	// 			oldRgbaData[p11]*filter[4] +
+	// 			oldRgbaData[p21]*filter[5] +
+	// 			oldRgbaData[p02]*filter[6] +
+	// 			oldRgbaData[p12]*filter[7] +
+	// 			oldRgbaData[p22]*filter[8],
+	// 		g = oldRgbaData[p00+1]*filter[0] +
+	// 			oldRgbaData[p10+1]*filter[1] +
+	// 			oldRgbaData[p20+1]*filter[2] +
+	// 			oldRgbaData[p01+1]*filter[3] +
+	// 			oldRgbaData[p11+1]*filter[4] +
+	// 			oldRgbaData[p21+1]*filter[5] +
+	// 			oldRgbaData[p02+1]*filter[6] +
+	// 			oldRgbaData[p12+1]*filter[7] +
+	// 			oldRgbaData[p22+1]*filter[8],
+	// 		b = oldRgbaData[p00+2]*filter[0] +
+	// 			oldRgbaData[p10+2]*filter[1] +
+	// 			oldRgbaData[p20+2]*filter[2] +
+	// 			oldRgbaData[p01+2]*filter[3] +
+	// 			oldRgbaData[p11+2]*filter[4] +
+	// 			oldRgbaData[p21+2]*filter[5] +
+	// 			oldRgbaData[p02+2]*filter[6] +
+	// 			oldRgbaData[p12+2]*filter[7] +
+	// 			oldRgbaData[p22+2]*filter[8],
+	// 		a = oldRgbaData[p00+3];
+	//
+	//
+	//
+	// 	return {r,g,b,a};
+	// };
 
 	let getVal1 = function(points){
 		let rgba = [];
