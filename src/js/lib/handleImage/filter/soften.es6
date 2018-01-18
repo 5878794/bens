@@ -15,7 +15,7 @@ module.exports = function(number){
 		oldHeight = this.height,
 		_this = this,
 		softenRadius = number || 1;
-	window.oldRgbaData = oldRgbaData;
+	// window.oldRgbaData = oldRgbaData;
 
 	let getPointsFn = _this.createGetPointsInRadius(softenRadius);
 
@@ -102,7 +102,7 @@ module.exports = function(number){
 
 		str+='return {r:r,g:g,b:b,a:a};';
 
-		return new Function('point',str);
+		return new Function('point','oldRgbaData',str);
 	};
 	let getVal2 = createGetVal2(softenRadius);
 
@@ -142,7 +142,7 @@ module.exports = function(number){
 		// });
 		let points = getPointsFn(x,y,oldWidth,oldHeight);
 		// let rgba = getVal1(points);
-		let rgba = getVal2(points);
+		let rgba = getVal2(points,oldRgbaData);
 
 		return {
 			r:rgba.r,
