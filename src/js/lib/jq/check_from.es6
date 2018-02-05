@@ -31,17 +31,19 @@
 	let rules = {
 		//不大于多少个字符
 		max:function(str,number){
+			let str1 = str.replace(/\n/ig,' ');
 			let regStr = "^.{0,"+number+"}$",
 				reg = new RegExp(regStr);
 
-			return reg.test(str);
+			return reg.test(str1);
 		},
 		//不少于多少个字符
 		min:function(str,number){
+			let str1 = str.replace(/\n/ig,' ');
 			let regStr = "^.{"+number+",}$",
 				reg = new RegExp(regStr);
 
-			return reg.test(str);
+			return reg.test(str1);
 		},
 		//判断非空
 		must:function(str){
@@ -131,6 +133,15 @@
 			var reg = /^[\u4e00-\u9fa5a-zA-Z0-9_]+$/;
 			return reg.test(str);
 		},
+        //附文本
+        pick: function(str) {
+            if (str.length == 0) {
+                return true;
+            }
+
+            var reg = /^[\u4e00-\u9fa5a-zA-Z0-9,。，！？:：‘’"!]+$/;
+            return reg.test(str);
+        },
 		//文件大小
 		fileType:function(file,type){
 			let fileType = file.type;
