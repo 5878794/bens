@@ -1,6 +1,6 @@
 // 文字变换效果 (如:发送短信后倒计时效果)
 
-
+//初始化
 // let a = new fn({
 // 	dom:$('#aa'),               //容器dom @param:jqobj
 // 	bg:'rgb(255,255,255)',      //背景色  必须rgb  默认:rgb(255,255,255)
@@ -8,8 +8,12 @@
 // 	fontColor:'rgb(0,0,0)',     //字体颜色 @param:rgb    默认:rgb(0,0,0)
 // 	textAlign:'center'
 // });
+
+//显示文字
 // window.a.show(2);
 
+//销毁
+// window.a.destroy();
 
 
 
@@ -62,7 +66,7 @@ class textChangeEffect{
 		//当前显示的文字转成像素点的集合
 		this.nowPoints = [];
 
-
+		this.animate = null;
 		this.canvas = null;
 		this.ctx = null;
 
@@ -261,7 +265,7 @@ class textChangeEffect{
 	//显示切换的动画效果
 	[animatePoint](startArray,endArray,time,callback){
 		let _this = this;
-		var a = new animate({
+		this.animate = new animate({
 			start:0,                  //@param:number   初始位置
 			end:1,                    //@param:number   结束位置
 			time:time,                 //@param:number   动画执行时间  ms
@@ -287,13 +291,16 @@ class textChangeEffect{
 			},
 			endFn:function(){         //@param:fn       动画结束执行
 				callback();
+				setTimeout(function(){
+					_this.animate = null;
+				},0)
 			},
 			alternate:false,          //@param:boolean  动画结束时是否反向运行，默认：false
 			infinite:false            //@param:boolean  动画是否循环执行，默认：false
 			// 设置该参数endFn将失效
 		});
 
-		a.play();
+		this.animate.play();
 		// a.stop();
 	}
 
@@ -310,6 +317,14 @@ class textChangeEffect{
 	[clearCanvas](){
 		this.ctx.fillStyle = this.bg;
 		this.ctx.fillRect(0,0,this.canvasWidth,this.canvasHeight);
+	}
+
+	destroy(){
+		if(this.animate){
+			this.animate.stop();
+			this.animate = null;
+		}
+		$(this.canvas).remove();
 	}
 }
 
