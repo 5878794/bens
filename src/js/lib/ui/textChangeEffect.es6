@@ -6,7 +6,8 @@
 // 	bg:'rgb(255,255,255)',      //背景色  必须rgb  默认:rgb(255,255,255)
 // 	fontSize:12,                //字体大小 @param:number  单位px
 // 	fontColor:'rgb(0,0,0)',     //字体颜色 @param:rgb    默认:rgb(0,0,0)
-// 	textAlign:'center'
+// 	textAlign:'center',
+//  fontSizeUnit:'rem'          //字体大小使用单位 @param:str  默认:rem
 // });
 
 //显示文字
@@ -44,6 +45,8 @@ class textChangeEffect{
 		this.fontColor = opt.fontColor || 'rgb(0,0,0)';
 		//文字水平对齐方向
 		this.textAlign = opt.textAlign || 'center';
+		//字体使用单位
+		this.fontSizeUnit = opt.fontSizeUnit || 'rem';
 
 		//文字颜色的RGB
 		this.fontR = '';
@@ -149,7 +152,7 @@ class textChangeEffect{
 		//写入文字
 		ctx.fillStyle = this.fontColor;
 		let size = this.fontSize * this.scale;
-		ctx.font = size+'px sans-serif';
+		ctx.font = size+this.fontSizeUnit+' sans-serif';
 		ctx.textBaseline = 'middle';
 
 		let type,       //文字对齐方式
