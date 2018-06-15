@@ -21,6 +21,7 @@ div, p, span, a, ul, li, input, textarea{
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
     box-sizing: border-box;
+    font-size: 0.24rem;
 }
 
 
@@ -126,6 +127,29 @@ a:active{
 
 .notbreak{
     white-space:nowrap;
+}
+
+
+.scroll_x{
+    overflow-y: hidden; overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+.scroll_x::-webkit-scrollbar{
+    display: none;
+}
+.scroll_y{
+    overflow-x: hidden; overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+}
+.scroll_y::-webkit-scrollbar{
+    display: none;
+}
+.scroll_xy{
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
+}
+.scroll_xy::-webkit-scrollbar{
+    display: none;
 }
 
 
@@ -394,38 +418,38 @@ a:active{
 
 /*添加字体*/
 /*@font-face {*/
-    /*font-family: "pertibd";*/
-    /*src:url('./../font/PERTIBD.TTF?t=1526994860275') format('truetype'); !* chrome, firefox, opera, Safari, Android, iOS 4.2+*!*/
+/*font-family: "pertibd";*/
+/*src:url('./../font/PERTIBD.TTF?t=1526994860275') format('truetype'); !* chrome, firefox, opera, Safari, Android, iOS 4.2+*!*/
 /*}*/
 
 /*.pertibd {*/
-    /*font-family:"pertibd" !important;*/
+/*font-family:"pertibd" !important;*/
 /*}*/
 
 
 
 /*.test{*/
-    /*animation:lineAnimate 1.5s infinite linear;*/
+/*animation:lineAnimate 1.5s infinite linear;*/
 /*}*/
 
 
 /*@keyframes lineAnimate {*/
-    /*0% {*/
-        /*transform: translateY(0%) scaleY(0)*/
-    /*}*/
-    /*10% {*/
-        /*transform: translateY(0%) scaleY(0.5)*/
-    /*}*/
-    /*30% {*/
-        /*transform: translateY(50%) scaleY(1)*/
-    /*}*/
-    /*45% {*/
-        /*transform: translateY(200%) scaleY(0.5)*/
-    /*}*/
-    /*55% {*/
-        /*transform: translateY(200%) scaleY(0)*/
-    /*}*/
-    /*100% {*/
-        /*transform: translateY(200%) scaleY(0)*/
-    /*}*/
+/*0% {*/
+/*transform: translateY(0%) scaleY(0)*/
+/*}*/
+/*10% {*/
+/*transform: translateY(0%) scaleY(0.5)*/
+/*}*/
+/*30% {*/
+/*transform: translateY(50%) scaleY(1)*/
+/*}*/
+/*45% {*/
+/*transform: translateY(200%) scaleY(0.5)*/
+/*}*/
+/*55% {*/
+/*transform: translateY(200%) scaleY(0)*/
+/*}*/
+/*100% {*/
+/*transform: translateY(200%) scaleY(0)*/
+/*}*/
 /*}*/
