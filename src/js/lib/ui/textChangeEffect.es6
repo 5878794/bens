@@ -27,6 +27,7 @@ let createCanvas = Symbol(),
 	getShowFontColorRGBA = Symbol(),
 	animatePoint = Symbol(),
 	createMainCanvas = Symbol(),
+	handlerAnimatePoints = Symbol(),
 	getChangeArray = Symbol();
 
 let animate = require('../fn/jsAnimate');
@@ -68,6 +69,7 @@ class textChangeEffect{
 
 		//当前显示的文字转成像素点的集合
 		this.nowPoints = [];
+		this.nowImageData = null;
 
 		this.animate = null;
 		this.canvas = null;
@@ -128,14 +130,21 @@ class textChangeEffect{
 			//在canvas上写文字,转成图片数据
 		let imgData = this[textToImageData](str),
 			//获取图片上非背景色的像素点集合
-			array = this[getTextPointArray](imgData),
+			{imageData,array} = this[getTextPointArray](imgData),
 			_this = this,
+			//将不需要移动的点对齐
+			points = this[handlerAnimatePoints](this.nowPoints,array),
 			//获取变换前后点的位置
-			{startArray,endArray} = this[getChangeArray](array);
+			{startArray,endArray} = this[getChangeArray](points.startArray,points.endArray);
+
+
+		// console.log(startArray,endArray)
+
 
 		//动画变换这些点
-		this[animatePoint](startArray,endArray,500,function(){
+		this[animatePoint](startArray,endArray,700,function(){
 			_this.nowPoints = endArray;
+			_this.nowImageData = imageData;
 		});
 	}
 
@@ -179,13 +188,18 @@ class textChangeEffect{
 			height = data.height,
 			newData = [];
 
+		let imageData = [];
+
 		for(let y=0,yl=height;y<yl;y++){
+
+			let nowRowImageData = new Array(width);
+			imageData.push(nowRowImageData);
+
 			for(let x=0,xl=width;x<xl;x++){
 				let n = (y*width+x)*4,
 					r = imgData[n],
 					g = imgData[n+1],
-					b = imgData[n+2],
-					a = imgData[n+3];
+					b = imgData[n+2];
 
 				if(r!=this.bgR || g!=this.bgG || b!=this.bgB){
 					newData.push({
@@ -193,21 +207,27 @@ class textChangeEffect{
 						y:y,
 						r:r,
 						g:g,
-						b:b,
-						a:a
+						b:b
 					});
+					nowRowImageData[x] = {
+						x:x,
+						y:y,
+						r:r,
+						g:g,
+						b:b
+					}
 				}
 			}
 		}
 
-		return newData;
+		return {imageData,array:newData};
 	}
 
 	//获取变换前后点的位置
-	[getChangeArray](array){
-		let endNumber = array.length,
+	[getChangeArray](start,end){
+		let endNumber = end.length,
 			//初始显示的像素点长度
-			startNumber = this.nowPoints.length,
+			startNumber = start.length,
 			startArray,
 			endArray,
 			//画布中心点坐标
@@ -224,18 +244,17 @@ class textChangeEffect{
 		//补齐变换前和变换后的像素点数量
 		if(endNumber > startNumber){
 			//增加新的像素点
-			//渐显的初始位置为中心点,初始透明色
+			//渐显的初始位置为中心点,初始背景色
 			let add = endNumber - startNumber;
 
 
 			for(let i=0,l=add;i<l;i++){
-				this.nowPoints.push({
+				start.push({
 					x:pX,
 					y:centerY,
-					r:this.fontR,
-					g:this.fontG,
-					b:this.fontB,
-					a:0
+					r:this.bgR,
+					g:this.bgG,
+					b:this.bgB
 				});
 			}
 
@@ -245,22 +264,21 @@ class textChangeEffect{
 			let cut = startNumber - endNumber;
 
 			for(let i=0,l=cut;i<l;i++){
-				let point = this.nowPoints[startNumber-1-i];
-				array.push({
+				// let point = this.nowPoints[startNumber-1-i];
+				end.push({
 					x:pX,
 					y:centerY,
-					r:point.r,
-					g:point.g,
-					b:point.b,
-					a:0
+					r:this.bgR,
+					g:this.bgG,
+					b:this.bgB
 				})
 			}
 		}
 
 
 		//最终获取到变换前、变换后的非背景色的像素点的集合
-		startArray = this.nowPoints;
-		endArray = array;
+		startArray = start;
+		endArray = end;
 
 		return {startArray,endArray};
 	}
@@ -311,7 +329,7 @@ class textChangeEffect{
 	[drawPoint](array){
 		this[clearCanvas]();
 		array.map(rs=>{
-			this.ctx.fillStyle = 'rgba('+rs.r+','+rs.g+','+rs.b+','+rs.a+')';
+			this.ctx.fillStyle = 'rgb('+rs.r+','+rs.g+','+rs.b+')';
 			this.ctx.fillRect(rs.x,rs.y,1,1);
 		});
 	}
@@ -320,6 +338,57 @@ class textChangeEffect{
 	[clearCanvas](){
 		this.ctx.fillStyle = this.bg;
 		this.ctx.fillRect(0,0,this.canvasWidth,this.canvasHeight);
+	}
+
+	[handlerAnimatePoints](startArray,endArray){
+		let startImageData = this.nowImageData;
+
+		//第一次画
+		if(!startImageData){
+			return {startArray,endArray}
+		}
+
+		//非第一次
+		let newEndArray = [],
+			newStartArray = [],
+			notFind = [];
+
+
+		//查找有相同坐标的点
+		endArray.map(rs=>{
+			let x = rs.x,
+				y = rs.y,
+				val = startImageData[y][x];
+
+			if(val){
+				newEndArray.push(rs);
+				newStartArray.push(val);
+				startImageData[y][x] = null;
+			}else{
+				notFind.push(rs);
+			}
+		});
+
+		//将初始数组中未匹配的点加入newStartArray的后面
+		for(let y=0,yl=startImageData.length;y<yl;y++){
+			for(let x=0,xl=startImageData[y].length;x<xl;x++){
+				if(startImageData[y][x]){
+					newStartArray.push(startImageData[y][x]);
+				}
+			}
+		}
+
+
+		//将notFind的点加入newEndArray的后面
+		notFind.map(rs=>{
+			newEndArray.push(rs);
+		});
+
+
+		return {
+			startArray:newStartArray,
+			endArray:newEndArray
+		}
 	}
 
 	destroy(){
