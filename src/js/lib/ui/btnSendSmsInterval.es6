@@ -49,6 +49,8 @@ let btnSendSmsInterval = function(opt){
 	this.ajaxFn = opt.ajaxFn || function(){};
 	this.intervalTime = opt.intervalTime || 60;
 	this.intervalText = opt.intervalText || "{x}秒后重试";
+	//不要启用 手机canvas有锯齿问题没解决
+	this.useAnimate = opt.useAnimate || false;
 
 	if(!this.btn || !this.phoneInputId){
 		console.log("btnSendSmsInterval 参数错误！");
@@ -108,9 +110,14 @@ btnSendSmsInterval.prototype = {
 		//计时器开始
 		var _time = 0;
 
-		_this.dom.text('');
-		this.textEffectInterval(_this.dom);
-		_this.textEffectFn.show(_this.intervalTime);
+
+
+		if(_this.useAnimate){
+			_this.dom.text('');
+			_this.textEffectInterval(_this.dom);
+			_this.textEffectFn.show(_this.intervalTime);
+		}
+
 
 
 		this._interval = setInterval(function(){
@@ -122,7 +129,10 @@ btnSendSmsInterval.prototype = {
 					.text(_this.startText);
 				//事件绑定
 				_this.bindEvent();
-				_this.textEffectFn.destroy();
+				if(_this.useAnimate){
+					_this.textEffectFn.destroy();
+				}
+
 
 				//清除定时器
 				clearInterval(_this._interval);
@@ -131,7 +141,12 @@ btnSendSmsInterval.prototype = {
 					_text = _this.intervalText.replace("{x}",__time);
 				// _this.dom.text(_text);
 				// console.log(_text)
-				_this.textEffectFn.show(_text);
+				if(_this.useAnimate){
+					_this.textEffectFn.show(_text);
+				}else{
+					_this.dom.text(_text);
+				}
+
 			}
 		},1000)
 
