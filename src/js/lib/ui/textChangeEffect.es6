@@ -315,7 +315,7 @@ class textChangeEffect{
 			class:"",           //@param:str      tween动画方式,默认：easeIn 详见函数内tween函数
 			stepFn:function(per){     //@param:fn       每步执行函数,返回当前属性值
 				per = per.toFixed(9);
-				console.log(per)
+				// console.log(per)
 
 				let newArray = [];
 				for(let i=0,l=startArray.length;i<l;i++){
@@ -334,7 +334,7 @@ class textChangeEffect{
 				_this[drawPoint](newArray);
 			},
 			endFn:function(){         //@param:fn       动画结束执行
-				console.log('end')
+				// console.log('end')
 				callback();
 				setTimeout(function(){
 					_this.animate = null;
