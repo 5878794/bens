@@ -33,7 +33,7 @@
 
 
 var Sys = {},
-	DEVICE;
+	DEVICE = {};
 var ua = navigator.userAgent.toLowerCase();
 var s = ua.match(/ipad; cpu os ([\d_]+)/)? Sys.ipad = s[1].replace(/_/g, ".") :
 		(s = ua.match(/iphone os ([\d_]+)/)) ? Sys.iphone = s[1].replace(/_/g, ".") :
