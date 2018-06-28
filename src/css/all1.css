@@ -48,7 +48,7 @@ body{
     font-family: "微软雅黑", Arial, "宋体";
     /*font-family: 'Open Sans', sans-serif ;*/
     color:#333;
-    min-width: 320px;
+    /*min-width: 320px;*/
 }
 
 
@@ -130,9 +130,13 @@ a:active{
 }
 
 
+
+/*容器需要设置overflow:hidden*/
+/*注意会自动padding 0.2rem 已便于隐藏ios的滚动条*/
 .scroll_x{
     overflow-y: hidden; overflow-x: auto;
     -webkit-overflow-scrolling: touch;
+    padding-bottom: 0.2rem;
 }
 .scroll_x::-webkit-scrollbar{
     display: none;
@@ -140,6 +144,7 @@ a:active{
 .scroll_y{
     overflow-x: hidden; overflow-y: auto;
     -webkit-overflow-scrolling: touch;
+    padding-right: 0.2rem;
 }
 .scroll_y::-webkit-scrollbar{
     display: none;
@@ -147,10 +152,16 @@ a:active{
 .scroll_xy{
     overflow: auto;
     -webkit-overflow-scrolling: touch;
+    padding-bottom: 0.2rem;
+    padding-right: 0.2rem;
 }
 .scroll_xy::-webkit-scrollbar{
     display: none;
 }
+
+
+
+
 
 
 /*
@@ -169,7 +180,9 @@ a:active{
 }
 
 
-
+.none{
+    display: none;
+}
 
 /*纵向排列 左上*/
 .box_slt{
