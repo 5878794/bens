@@ -1,5 +1,8 @@
 //无限旋转 最终停在指定的角度
 
+//  360／rotateSpd 必须是整数     eg:10,20,30,18
+
+
 
 var device = require("./../device"),
 	nextFrame = device.nextFrame,
