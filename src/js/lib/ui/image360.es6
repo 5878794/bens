@@ -1,4 +1,4 @@
-//360度全景图
+//360度全景图  球形模型贴图
 // 需要自己加载THREE.js
 // THREE.WebGLRenderer 96
 
