@@ -2,6 +2,12 @@
 // 需要自己加载THREE.js
 // THREE.WebGLRenderer 96
 
+// new fn({
+// 	body:document.getElementById('aaa'),
+// 	image:'./1.png'
+// })
+
+
 
 let createWorld = Symbol(),
 	createSphere = Symbol(),
@@ -160,7 +166,7 @@ class image360{
 		if (!this.isTouch) { return; }
 		this.isTouch = false;
 		let point = this.point[this.point.length-1];
-		console.log(point)
+
 		let {radianX, radianY} = this[getRadian](point.x, point.y);
 		this.radianX += radianX;
 		this.radianY += radianY;
@@ -181,12 +187,23 @@ class image360{
 		m_y = (m_y > this.r)? this.r : m_y;
 		m_y = (m_y < -this.r)? -this.r : m_y;
 
-		let radianX = Math.asin(m_x/this.r),
-			radianY = Math.asin(m_y/this.r);
+		let radianX = Math.sin(Math.asin(m_x/this.r)),
+			radianY = Math.sin(Math.asin(m_y/this.r));
 
 		// console.log(radianX,radianY);
 		this.sphere.rotation.x = this.radianY+radianY;
 		this.sphere.rotation.y = this.radianX+radianX;
+
+		// Math.sin(80*Math.PI/180)
+		// 50度的幅度约0.75   上下增加移动的弧度
+		if(this.radianY+radianY > 0.75){
+			radianY = 0.75-this.radianY;
+			this.sphere.rotation.x = 0.75;
+		}
+		if(this.radianY+radianY < -0.75){
+			radianY = -0.75-this.radianY;
+			this.sphere.rotation.x = -0.75;
+		}
 
 		return {radianX, radianY};
 	}
