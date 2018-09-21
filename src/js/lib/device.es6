@@ -16,6 +16,20 @@ window.cancelAnimationFrame =   window.cancelAnimationFrame ||
 								clearTimeout;
 
 
+var passiveSupported = false;
+
+try {
+	var options = Object.defineProperty({}, "passive", {
+		get: function() {
+			passiveSupported = true;
+		}
+	});
+
+	window.addEventListener("test", null, options);
+} catch(err) {}
+
+
+
 // window.navigator.getUserMedia =    window.navigator.getUserMedia ||
 // 									window.navigator.webkitGetUserMedia ||
 // 									window.navigator.mozGetUserMedia ||
@@ -521,6 +535,8 @@ var DEVICE = {};
 		val = (val<min)? min : val;
 		return val;
 	};
+
+	DEVICE.eventParam = (passiveSupported)? {passive:false} : false;
 
 })();
 

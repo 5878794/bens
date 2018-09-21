@@ -128,14 +128,17 @@ class image360{
 		let _this = this;
 
 		this.body.addEventListener(device.START_EV,this[touchStartFn] = function(e){
+			e.preventDefault();
 			_this[touchStart](e);
-		},false);
+		},device.eventParam);
 		this.body.addEventListener(device.MOVE_EV,this[touchMoveFn] = function(e){
+			e.preventDefault();
 			_this[touchMove](e);
-		},false);
+		},device.eventParam);
 		this.body.addEventListener(device.END_EV,this[touchEndFn] = function(e){
+			e.preventDefault();
 			_this[touchEnd](e);
-		},false);
+		},device.eventParam);
 	}
 
 	[touchStart](e){
@@ -179,7 +182,8 @@ class image360{
 		let startPoint = this.point[0],
 			s_x = startPoint.x,
 			s_y = startPoint.y,
-			m_x = x - s_x,
+			//*2 增加横向移动速度
+			m_x = (x - s_x)*2,
 			m_y = y - s_y;
 
 		m_x = (m_x > this.r)? this.r : m_x;
