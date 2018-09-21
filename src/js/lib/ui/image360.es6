@@ -69,7 +69,7 @@ class image360{
 		//创建场景
 		this.scene = new THREE.Scene();
 		//创建相机
-		this.camera = new THREE.PerspectiveCamera( 90, this.bodyWidth/this.bodyHeight, 1, 1000 );
+		this.camera = new THREE.PerspectiveCamera( 75, this.bodyWidth/this.bodyHeight, 1, 2000 );
 		//创建渲染器
 		this.renderer = new THREE.WebGLRenderer();
 
@@ -124,7 +124,6 @@ class image360{
 
 	//添加事件监听
 	[addEvent](){
-		// new THREE.OrbitControls(this.camera)
 		let _this = this;
 
 		this.body.addEventListener(device.START_EV,this[touchStartFn] = function(e){
