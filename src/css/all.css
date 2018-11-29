@@ -46,9 +46,9 @@ input:-moz-placeholder {
 body{
     font-family: "微软雅黑", Arial, "宋体";
     /*font-family: 'Open Sans', sans-serif ;*/
-    color:#fff;
+    /*color:#fff;*/
     min-width: 320px;
-    background: #000;
+    /*background: #000;*/
 }
 
 
@@ -418,6 +418,38 @@ a:active{
 .hidden{
     display: none;
 }
+
+
+
+
+/*容器需要设置overflow:hidden*/
+/*注意会自动padding 0.2rem 已便于隐藏ios的滚动条*/
+.scroll_x{
+    overflow-y: hidden; overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 0.2rem;
+}
+.scroll_x::-webkit-scrollbar{
+    display: none;
+}
+.scroll_y{
+    overflow-x: hidden; overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    padding-right: 0.2rem;
+}
+.scroll_y::-webkit-scrollbar{
+    display: none;
+}
+.scroll_xy{
+    overflow: auto;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: 0.2rem;
+    padding-right: 0.2rem;
+}
+.scroll_xy::-webkit-scrollbar{
+    display: none;
+}
+
 
 
 
