@@ -50,7 +50,7 @@ class treeSelect{
 	[createDom](){
 		this.data.map(rs=>{
 			if(rs.parent == '0'){
-				this[createItem](rs,document.body);
+				this[createItem](rs,this.dom);
 			}else{
 				let parentId = 'id'+rs.parent,
 					body = document.getElementById(parentId);
@@ -141,6 +141,13 @@ class treeSelect{
 				});
 			}
 		})
+	}
+
+	//注销
+	destroy(){
+		let list = $(this.dom).find('a');
+		$$(list).unbind(true);
+		$(this.dom).html('');
 	}
 }
 
