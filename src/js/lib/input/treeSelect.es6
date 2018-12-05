@@ -64,7 +64,7 @@ class treeSelect{
 		body = $(body);
 
 		let main = $('<div></div>'),
-			div = $('<a code="'+data.code+'">'+data.name+'</a>'),
+			div = $('<a code="'+data.code+'" text="'+data.name+'">'+data.name+'</a>'),
 			img = $('<img src="'+arrowImage+'"/>'),
 			children = $('<p id="id'+data.code+'"></p>');
 
