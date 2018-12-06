@@ -14,7 +14,8 @@
 
 
 let $$ = require('../lib/event/$$'),
-	showTree1 = require('./treeSelect1');
+	showTree1 = require('./treeSelect1'),
+	stopBodyScroll = require('../lib/event/divScrollBodyNotScroll');
 
 
 let createDom = function(){
@@ -33,11 +34,12 @@ let createDom = function(){
 		width:'95%',
 		height:'95%',
 		background:'#fff',
-		'padding':'0.2rem 0.2rem 0 0.2rem',
+		'padding':'0.2rem',
 		'box-sizing':'border-box'
 	}).addClass('box_slc');
 	main.addClass('boxflex1').css({
-		overflow:'auto',
+		'overflow-x':'hidden',
+		'overflow-y':'scroll',
 		width:'100%',
 		'-webkit-overflow-scrolling': 'touch'
 	});
@@ -68,6 +70,13 @@ module.exports = function(opt,type){
 		opt.dom = main.get(0);
 		$('body').append(zz);
 
+		//阻止body滚动
+		let cc = new stopBodyScroll({
+			canScrollDom:main,
+			notScrollDom:zz
+		});
+
+
 		//生成树形菜单
 		let dd;
 		if(type == 1){
@@ -86,6 +95,7 @@ module.exports = function(opt,type){
 			let data = dd.getSelectVal();
 			success(data);
 			dd.destroy();
+			cc.destroy();
 			$$(btn).unbind(true);
 			$$(zz).unbind(true);
 			zz.remove();
