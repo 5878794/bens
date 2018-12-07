@@ -50,7 +50,7 @@ class treeSelect1 extends treeSelect{
 			display:'block',
 			position:'absolute',
 			left:0,
-			top:0,
+			top:'5px',
 			padding:0,margin:0
 		});
 		label.append(checkbox);

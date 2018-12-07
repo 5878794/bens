@@ -62,11 +62,14 @@ class treeSelect{
 	//生成列表元素
 	[createItem](data,body){
 		body = $(body);
+		let bodyText = (body.attr('text'))? body.attr('text') : '';
+		bodyText = (bodyText)? bodyText+'$$$$'+data.name : data.name;
+
 
 		let main = $('<div></div>'),
 			div = $('<a code="'+data.code+'" text="'+data.name+'">'+data.name+'</a>'),
 			img = $('<img src="'+arrowImage+'"/>'),
-			children = $('<p id="id'+data.code+'"></p>');
+			children = $('<p text="'+bodyText+'" id="id'+data.code+'"></p>');
 
 		div.css({
 			display:'block',
@@ -74,13 +77,14 @@ class treeSelect{
 			'padding-left':this.listPaddingLeft,
 			'line-height':this.fontSize,
 			'font-size':this.fontSize,
-			'padding-bottom':'10px'
+			'padding-bottom':'5px',
+			'padding-top':'5px'
 		});
 		children.css({'padding-left':this.listPaddingLeft,margin:0});
 		img.css({
 			position:'absolute',
 			left:0,
-			top:0,
+			top:'5px',
 			width:this.fontSize,
 			height:this.fontSize,
 			transform:'rotate(-90deg)'

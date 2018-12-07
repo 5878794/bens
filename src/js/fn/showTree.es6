@@ -15,6 +15,8 @@
 
 let $$ = require('../lib/event/$$'),
 	showTree1 = require('./treeSelect1'),
+	showTree2 = require('./treeSelect2'),
+	showTree3 = require('./treeSelect3'),
 	stopBodyScroll = require('../lib/event/divScrollBodyNotScroll');
 
 
@@ -88,6 +90,12 @@ module.exports = function(opt,type){
 			// 	notEdit:['010103']                  //不能修改的选项的code
 			// });
 			dd = new showTree1(opt);
+		}else if(type == 2){
+			dd = new showTree2(opt);
+		}else if(type == 3){
+			dd = new showTree3(opt);
+		}else{
+			throw '树形结构菜单的类型不存在，只有1-3类'
 		}
 
 		//点击返回数据
