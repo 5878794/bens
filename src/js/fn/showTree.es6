@@ -1,15 +1,6 @@
 //显示树形菜单。。。。
 
-//type1
-//最后一层是checkbox的
-//异步最终返回结果  [{name:'',code:''}]格式
-// eg:
-// 	let data = await showDom({
-// 		data:treeData,                  //数据  数据查看 ../code/temp_TreeCode.js
-// 		selected:['010101','010103'],   //初始选中的选项的code
-// 		notEdit:['010103']              //不能修改的选项的code
-// 	},1);
-// 	console.log(data);
+// type 说明见下面
 
 
 
@@ -17,6 +8,7 @@ let $$ = require('../lib/event/$$'),
 	showTree1 = require('./treeSelect1'),
 	showTree2 = require('./treeSelect2'),
 	showTree3 = require('./treeSelect3'),
+	showTree4 = require('./treeSelect4'),
 	stopBodyScroll = require('../lib/event/divScrollBodyNotScroll');
 
 
@@ -91,11 +83,18 @@ module.exports = function(opt,type){
 			// });
 			dd = new showTree1(opt);
 		}else if(type == 2){
+			//每级都是checkbox
+			//最终输出带层级的文本
 			dd = new showTree2(opt);
-		}else if(type == 3){
+		}else if(type == 3) {
+			//最后一级是checkbox
+			//最终输出带层级的文本
 			dd = new showTree3(opt);
+		}else if(type == 4){
+			//倒数第二级是checkbox
+			dd = new showTree4(opt);
 		}else{
-			throw '树形结构菜单的类型不存在，只有1-3类'
+			throw '树形结构菜单的类型不存在，只有1-4类'
 		}
 
 		//点击返回数据
