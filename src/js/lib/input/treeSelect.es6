@@ -48,15 +48,34 @@ class treeSelect{
 
 	//生成dom
 	[createDom](){
-		this.data.map(rs=>{
+		let data = JSON.parse(JSON.stringify(this.data));
+
+		for(let i=0;i<data.length;i++){
+			let rs = data[i];
 			if(rs.parent == '0'){
 				this[createItem](rs,this.dom);
 			}else{
 				let parentId = 'id'+rs.parent,
 					body = document.getElementById(parentId);
-				this[createItem](rs,body);
+				if(body){
+					//父级存在直接添加
+					this[createItem](rs,body);
+				}else{
+					//父级不存在 放到数组后面
+					//循环用的数组的动态长度
+					data.push(rs);
+				}
 			}
-		});
+		}
+		// this.data.map(rs=>{
+		// 	if(rs.parent == '0'){
+		// 		this[createItem](rs,this.dom);
+		// 	}else{
+		// 		let parentId = 'id'+rs.parent,
+		// 			body = document.getElementById(parentId);
+		// 		this[createItem](rs,body);
+		// 	}
+		// });
 	}
 
 	//生成列表元素
