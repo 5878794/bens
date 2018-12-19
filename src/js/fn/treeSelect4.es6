@@ -100,7 +100,6 @@ class treeSelect4 extends treeSelect{
 			let id = rs.parent().attr('id');
 			findDom[id] = rs.parent().parent();
 		});
-		console.log(findDom)
 		let backData = [];
 		for(let val of Object.values(findDom)){
 			backData.push(val);

@@ -13,6 +13,7 @@ let $$ = require('../event/$$'),
 	handleData = Symbol(),
 	createDom = Symbol(),
 	createItem = Symbol(),
+	checkParentIsExist = Symbol(),
 	clearLastLayerArrow = Symbol(),
 	addEvent = Symbol(),
 	closeAllTree = Symbol();
@@ -27,6 +28,8 @@ class treeSelect{
 		this.listPaddingLeft = '25px';
 		this.fontSize = '16px';
 
+		this.codes = {};
+
 		this[handleData]();
 		this[createDom]();
 		this[clearLastLayerArrow]();
@@ -37,6 +40,14 @@ class treeSelect{
 	//数据处理排序
 	//根据数据
 	[handleData](){
+		//数据code parent 转字符串  并记录存在的code
+		this.data = this.data.map(rs=>{
+			rs.parent = rs.parent.toString();
+			rs.code = rs.code.toString();
+			this.codes[rs.code] = rs;
+			return rs;
+		});
+
 		//以parent（父级id）属性排序
 		this.data = this.data.sort(function(a,b){
 			a.parent = (a.parent)? a.parent : '0';
@@ -45,9 +56,28 @@ class treeSelect{
 		})
 	}
 
+	//检查父级id是否存在并可以到跟节点
+	[checkParentIsExist](code){
+		let _this = this;
+		let checkFn = function(parentId){
+			if(_this.codes[parentId]){
+				if(_this.codes[parentId].parent == '0'){
+					return true;
+				}else{
+					checkFn(_this.codes[parentId].parent);
+				}
+			}else{
+				return false;
+			}
+		};
+
+		return checkFn(this.codes[code].parent);
+	}
+
 
 	//生成dom
 	[createDom](){
+		this.dom.style.display = 'none';
 		let data = JSON.parse(JSON.stringify(this.data));
 
 		for(let i=0;i<data.length;i++){
@@ -57,16 +87,23 @@ class treeSelect{
 			}else{
 				let parentId = 'id'+rs.parent,
 					body = document.getElementById(parentId);
+
 				if(body){
 					//父级存在直接添加
 					this[createItem](rs,body);
 				}else{
 					//父级不存在 放到数组后面
 					//循环用的数组的动态长度
-					data.push(rs);
+
+					// 判断是否真的有父级的id存在 避免死循环
+					if(this[checkParentIsExist](rs.code)){
+						data.push(rs);
+					}
 				}
 			}
 		}
+
+		this.dom.style.display = 'block';
 		// this.data.map(rs=>{
 		// 	if(rs.parent == '0'){
 		// 		this[createItem](rs,this.dom);

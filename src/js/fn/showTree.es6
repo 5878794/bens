@@ -164,9 +164,8 @@ module.exports = function(opt,type){
 			// 	notEdit:['010103']                  //不能修改的选项的code
 			// });
 			//TODO
-			opt.data = manData;
-
-			opt.data = handleDataForMan(opt.data);
+			// opt.data = manData;
+			// opt.data = handleDataForMan(opt.data);
 			dd = new showTree1(opt);
 		}else if(type == 2){
 			//每级都是checkbox

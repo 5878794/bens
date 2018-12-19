@@ -94,6 +94,9 @@ let PAGE = {
 		$$(doms).myclickok(function(){
 			//清除列表事件（因列表展开层是嵌套在列表中，会导致事件穿透）
 			$$(doms).unbind(true);
+			$(this).css({
+				'will-change':'all'
+			});
 			//显示动画
 			_this.showAnimate($(this).find('.item'));
 		});
@@ -205,7 +208,8 @@ let PAGE = {
 					'z-index':'auto',
 					position: 'absolute',
 					left:'0.2rem', top:'0.2rem',
-					overflow:'hidden'
+					overflow:'hidden',
+					'will-change':'auto'
 				});
 			}
 		});
