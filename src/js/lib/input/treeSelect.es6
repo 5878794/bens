@@ -16,6 +16,7 @@ let $$ = require('../event/$$'),
 	checkParentIsExist = Symbol(),
 	clearLastLayerArrow = Symbol(),
 	addEvent = Symbol(),
+	createCloneDom = Symbol(),
 	closeAllTree = Symbol();
 
 let arrowImage = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAABVUlEQVRYR+2Vv0rDUBTGvxMFR1NfwCniU7g4uTioiCAuVoSknXwRlyZBUBcRRNShj+BjNOIrJOLa5iu3mFJK2tykgTjcTBnOPd/v/E7+CBq+pOF8GABjwBgwBoyB/2nA7n1vWzK8pchWHf8KAlGyMbpBe/d3vl+ugVYwuBPIdR3hWQ8Cfuw5XU2ArwMw7YvIeh0QJIck9pPuzqcWgCqyg+hQyPdVISbhIseJ5/Tzhln6EE4ggA8B1qqYIDAicLQoXPUsfAs2/ejEEryUhVDhKXH203HelsEXAqjDfxCvogGs6gkwJU6LwrUMZPQtPzqH4KkIQoWDuIg7zrPO2rQMZI3sMLoU4n4RRNnwUgZmISziYX46FU7BVeI6jzqTZzWlDEzXEUauEMFsUCpolw2vZCAPggIvdp2wzOQrGZiuozfYU/d5XzhdmEor0G2uU2cAjIHGDYwBh8hvIXuOOLoAAAAASUVORK5CYII=';
@@ -25,11 +26,14 @@ class treeSelect{
 		this.dom = opt.dom || document.body;
 		this.data = opt.data || [];
 
-		this.listPaddingLeft = '25px';
-		this.fontSize = '16px';
+		this.listPaddingLeft = '0.36rem';
+		this.fontSize = '0.24rem';
+		this.paddingTop = '0.07rem';
 
 		this.codes = {};
+		this.listDom = null;
 
+		this[createCloneDom]();
 		this[handleData]();
 		this[createDom]();
 		this[clearLastLayerArrow]();
@@ -54,6 +58,38 @@ class treeSelect{
 			b.parent = (b.parent)? b.parent : '0';
 			return a.parent.localeCompare(b.parent);
 		})
+	}
+
+	[createCloneDom](){
+		let main = $('<div></div>'),
+			div = $('<a></a>'),
+			img = $('<img src="'+arrowImage+'"/>'),
+			children = $('<p></p>');
+
+		div.css({
+			display:'block',
+			position:'relative',
+			'padding-left':this.listPaddingLeft,
+			'line-height':this.fontSize,
+			'font-size':this.fontSize,
+			'padding-bottom':this.paddingTop,
+			'padding-top':this.paddingTop
+		});
+		children.css({'padding-left':this.listPaddingLeft,margin:0});
+		img.css({
+			position:'absolute',
+			display:'block',
+			left:0,
+			top:this.paddingTop,
+			width:this.fontSize,
+			height:this.fontSize,
+			transform:'rotate(-90deg)'
+		}).addClass('hover_animate1');
+
+		div.append(img).append('<span></span>');
+		main.append(div).append(children);
+
+		this.listDom = main;
 	}
 
 	//检查父级id是否存在并可以到跟节点
@@ -121,34 +157,45 @@ class treeSelect{
 		let bodyText = (body.attr('text'))? body.attr('text') : '';
 		bodyText = (bodyText)? bodyText+'$$$$'+data.name : data.name;
 
-
-		let main = $('<div></div>'),
-			div = $('<a code="'+data.code+'" text="'+data.name+'">'+data.name+'</a>'),
-			img = $('<img src="'+arrowImage+'"/>'),
-			children = $('<p text="'+bodyText+'" id="id'+data.code+'"></p>');
-
-		div.css({
-			display:'block',
-			position:'relative',
-			'padding-left':this.listPaddingLeft,
-			'line-height':this.fontSize,
-			'font-size':this.fontSize,
-			'padding-bottom':'5px',
-			'padding-top':'5px'
+		let thisDom = this.listDom.clone();
+		thisDom.find('a').attr({
+			code:data.code,
+			text:data.name
+		}).find('span').text(data.name);
+		thisDom.find('p').attr({
+			text:bodyText,
+			id:'id'+data.code
 		});
-		children.css({'padding-left':this.listPaddingLeft,margin:0});
-		img.css({
-			position:'absolute',
-			left:0,
-			top:'5px',
-			width:this.fontSize,
-			height:this.fontSize,
-			transform:'rotate(-90deg)'
-		}).addClass('hover_animate1');
+		body.append(thisDom);
 
-		div.append(img);
-		main.append(div).append(children);
-		body.append(main);
+
+		// let main = $('<div></div>'),
+		// 	div = $('<a code="'+data.code+'" text="'+data.name+'">'+data.name+'</a>'),
+		// 	img = $('<img src="'+arrowImage+'"/>'),
+		// 	children = $('<p text="'+bodyText+'" id="id'+data.code+'"></p>');
+		//
+		// div.css({
+		// 	display:'block',
+		// 	position:'relative',
+		// 	'padding-left':this.listPaddingLeft,
+		// 	'line-height':this.fontSize,
+		// 	'font-size':this.fontSize,
+		// 	'padding-bottom':'5px',
+		// 	'padding-top':'5px'
+		// });
+		// children.css({'padding-left':this.listPaddingLeft,margin:0});
+		// img.css({
+		// 	position:'absolute',
+		// 	left:0,
+		// 	top:'5px',
+		// 	width:this.fontSize,
+		// 	height:this.fontSize,
+		// 	transform:'rotate(-90deg)'
+		// }).addClass('hover_animate1');
+		//
+		// div.append(img);
+		// main.append(div).append(children);
+		// body.append(main);
 	}
 
 	//清除最后一层多箭头
