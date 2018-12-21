@@ -46,18 +46,17 @@ class treeSelect{
 	[handleData](){
 		//数据code parent 转字符串  并记录存在的code
 		this.data = this.data.map(rs=>{
-			rs.parent = rs.parent.toString();
+			rs.parent = (rs.parent)? rs.parent.toString() : '0';
 			rs.code = rs.code.toString();
 			this.codes[rs.code] = rs;
 			return rs;
 		});
-
 		//以parent（父级id）属性排序
-		this.data = this.data.sort(function(a,b){
-			a.parent = (a.parent)? a.parent : '0';
-			b.parent = (b.parent)? b.parent : '0';
-			return a.parent.localeCompare(b.parent);
-		})
+		// this.data = this.data.sort(function(a,b){
+		// 	a.parent = (a.parent)? a.parent : '0';
+		// 	b.parent = (b.parent)? b.parent : '0';
+		// 	return a.parent.localeCompare(b.parent);
+		// })
 	}
 
 	[createCloneDom](){
@@ -100,7 +99,7 @@ class treeSelect{
 				if(_this.codes[parentId].parent == '0'){
 					return true;
 				}else{
-					checkFn(_this.codes[parentId].parent);
+					return checkFn(_this.codes[parentId].parent);
 				}
 			}else{
 				return false;
@@ -160,7 +159,8 @@ class treeSelect{
 		let thisDom = this.listDom.clone();
 		thisDom.find('a').attr({
 			code:data.code,
-			text:data.name
+			text:data.name,
+			desc:data.desc
 		}).find('span').text(data.name);
 		thisDom.find('p').attr({
 			text:bodyText,
