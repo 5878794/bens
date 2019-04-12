@@ -1,4 +1,5 @@
 //弹出层fixed定位滚动时阻止body滚动
+////注意：canScrollDom 不要设置padding或margin
 
 //初始化
 // let aa = new divScrollBodyNotScroll({
@@ -37,6 +38,7 @@ class divScrollBodyNotScroll extends basTouch{
 		let target = this.target;
 
 		while(
+			target &&
 			target != this.canScrollDom &&
 			target != this.notScrollDom
 		){
