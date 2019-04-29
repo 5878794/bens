@@ -567,5 +567,14 @@ DEVICE.sleep = function(stamp){
 };
 
 
+DEVICE.inputBlur = function(){
+	//input移除焦点
+	$('input').blur();
+	//解决ios页面顶上去后不能恢复的问题，导致页面焦点错位
+	let top = $(document).scrollTop();
+	$(document).scrollTop(top);
+};
+
+
 
 module.exports = DEVICE;
