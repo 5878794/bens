@@ -24,7 +24,10 @@ module.exports = {
 				exclude: /node_modules/,
 				query: {
 					presets: ['es2015','stage-3'],
-					plugins: ["transform-decorators-legacy"]
+					plugins: [
+						"transform-custom-element-classes",
+						"transform-decorators-legacy"
+					]
 				}
 			}
 		]

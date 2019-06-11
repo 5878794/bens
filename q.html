@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1, maximum-scale=1">
+    <title>Title</title>
+    <script>bens={};</script>
+    <script src="js/jquery-3.1.1.min.js"></script>
+    <script src="js/polyfill.js"></script>
+    <script src="three.min.js"></script>
+    <style>*{padding: 0;margin: 0;}</style>
+
+
+</head>
+<body>
+
+
+    <div id="aaa" style="width:400px; height: 300px;"></div>
+
+
+</body>
+</html>
+
+
+<script>
+    var scene = new THREE.Scene();
+    //创建相机
+    var camera = new THREE.PerspectiveCamera( 120, 400/300, 1, 2000 );
+    camera.position.z = 0;
+    camera.lookAt(500,0,0);
+    //创建渲染器
+    var renderer = new THREE.WebGLRenderer();
+    renderer.setSize( 400, 300 );
+    renderer.setPixelRatio( window.devicePixelRatio );
+    renderer.setClearColor( 0x000000, 1 );
+
+
+    document.getElementById('aaa').appendChild( renderer.domElement );
+
+
+
+    new THREE.TextureLoader().load('./444.jpg', function (texture) {
+        var geometry = new THREE.SphereGeometry( 500, 20, 20 );
+        geometry.scale( -1, 1, 1 );
+
+        var jpg = new THREE.MeshBasicMaterial({
+            map: texture
+        });
+
+        var mesh = new THREE.Mesh( geometry, jpg );
+        scene.add(mesh);
+
+    });
+
+
+
+
+    var animate = function () {
+        requestAnimationFrame( animate );
+
+        renderer.render( scene, camera );
+    };
+    animate();
+</script>
