@@ -117,7 +117,8 @@ scrollBanner.prototype = {
 			background: this.pointBg,
 			"border-radius": "5px",
 			float: "left",
-			border:"1pt solid transparent"
+			border:"1pt solid transparent",
+			'box-sizing':'border-box'
 		}).addClass("border_box");
 
 		for (var i = 0, l = this.imgLength; i < l; i++) {

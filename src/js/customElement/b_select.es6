@@ -87,6 +87,7 @@ class bSelect extends HTMLElement{
 
 
 		this.shadow.appendChild(this.body.get(0));
+
 	}
 
 	createBody(){
