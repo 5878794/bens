@@ -61,7 +61,6 @@ class bSelect extends HTMLElement{
 	attributeChangedCallback(name, oldValue, newValue) {
 		// if(name == 'val'){
 		// 	setTimeout(()=>{
-		console.log('change:'+name)
 				this[showVal]();
 			// },0);
 		// }
