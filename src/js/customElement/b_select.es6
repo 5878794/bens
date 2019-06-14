@@ -6,6 +6,13 @@
 
 
 // html:
+// 可设置的属性,也可以在js中设置
+// js中设置直接   banner.xxx = xxx;
+// @attr:title              str：弹出选择时的标题
+// @attr:val                str：当前选中的值。 多选逗号隔开 1,2,3
+// @attr:placeholder        str：val为空时显示
+// @attr:isRadio            Boolean：是否是单选
+// @attr:viewPort           number:设置viewport大小
 // 	<b-select style="..."></b-select>
 
 // js:
@@ -15,17 +22,13 @@
 // 		{key:'3',val:'不告诉你'}
 // 	];
 // 	let dom = $('b-select');
-//
-//	//可以写到dom上  除val和data
-// 	dom.attr({
-// 		val:'',
-// 		radio:'true',
-// 		viewport:'750',
-// 		title:'请选择您的年龄',
-// 		placeholder:'请选择你的年龄'
-// 	}).data({
-// 		data:data
-// 	});
+
+//  dom.data =data;     //必须在js中设置
+//  dom.val = '';
+//  dom.radio = true;
+//  dom.viewport = 750;
+//  dom.title = '请选择您的年龄';
+//  dom.placeholder = '请选择你的年龄';
 
 //polyfill 需要
 require('@webcomponents/custom-elements');
@@ -33,8 +36,15 @@ require('@webcomponents/shadydom');
 
 
 let $$ = require('../lib/event/$$'),
-	selectFn = require('../lib/input/select');
-
+	selectFn = require('../lib/input/select'),
+	bodyDom = Symbol('body'),
+	init = Symbol('init'),
+	createBody = Symbol('createBody'),
+	addEvent = Symbol('addEvent'),
+	selectData = Symbol('selectData'),
+	bindData = Symbol('bindData'),
+	showSelect = Symbol('showSelect'),
+	showVal = Symbol('showVal');
 
 
 class bSelect extends HTMLElement{
@@ -42,25 +52,25 @@ class bSelect extends HTMLElement{
 	//注册要监听的属性
 	static get observedAttributes() {
 		return [
-			"val"
-			// "title",
-			// "placeholder"
+			"val",
+			"placeholder"
 		];
 	}
 
 	//元素属性改变回调
 	attributeChangedCallback(name, oldValue, newValue) {
-		if(name == 'val'){
-			setTimeout(()=>{
-				this.showVal();
-			},0);
-		}
+		// if(name == 'val'){
+		// 	setTimeout(()=>{
+		console.log('change:'+name)
+				this[showVal]();
+			// },0);
+		// }
 	}
 
 	//元素加入页面回调
 	connectedCallback() {
 		// console.log('connect');
-		this.showVal();
+		this[showVal]();
 	}
 
 	//元素删除回调
@@ -74,23 +84,25 @@ class bSelect extends HTMLElement{
 		//创建shadow容器
 		this.shadow = this.attachShadow({mode: 'open'});
 
-		this.body = null;
+		this[bodyDom] = null;
+		this[selectData] = [];
+		this[bindData] = [];
 
-		this.init();
+		this[init]();
 	}
 
 
-	init(){
-		this.createBody();
-		this.addEvent();
+	[init](){
+		this[createBody]();
+		this[addEvent]();
 
 
 
-		this.shadow.appendChild(this.body.get(0));
+		this.shadow.appendChild(this[bodyDom].get(0));
 
 	}
 
-	createBody(){
+	[createBody](){
 		let div = $('<div></div>'),
 			span = $('<span class="val"></span>'),
 			span1 = $('<span class="placeholder"></span>');
@@ -109,21 +121,21 @@ class bSelect extends HTMLElement{
 		});
 
 		div.append(span).append(span1);
-		this.body = div;
+		this[bodyDom] = div;
 	}
 
-	addEvent(){
+	[addEvent](){
 		let _this = this;
 
-		$$(this.body).myclickok(function(){
-			_this.showSelect();
+		$$(this[bodyDom]).myclickok(function(){
+			_this[showSelect]();
 		});
 	}
 
-	showSelect(){
+	[showSelect](){
 		let dom = $(this),
 			selected = dom.attr('val'),
-			data = dom.data('data'),
+			data = this[bindData],
 			title = dom.attr('title') || '请选择',
 			isRadio = (dom.attr('radio') === 'true'),
 			viewPort = dom.attr('viewport') || 750;
@@ -167,9 +179,9 @@ class bSelect extends HTMLElement{
 		});
 	}
 
-	showVal(){
+	[showVal](){
 		let val = $(this).attr('val'),
-			data = $(this).data('data'),
+			data = this[bindData],
 			placeholder = $(this).attr('placeholder'),
 			text = [];
 
@@ -199,6 +211,54 @@ class bSelect extends HTMLElement{
 	}
 
 
+	get data(){
+		return this[bindData];
+	}
+	set data(val){
+		this[bindData] = val;
+		this[showVal]();
+	}
+
+	get val(){
+		return $(this).attr('val');
+	}
+	//val 单选时候是  eg:1
+	//val 多选时候是  eg:1,2,3
+	set val(val){
+		$(this).attr({val:val});
+		this[showVal]();
+	}
+
+	get placeholder(){
+		return $(this).attr('placeholder');
+	}
+	set placeholder(text){
+		$(this).attr({'placeholder':text});
+		this[showVal]();
+	}
+
+	get isRadio(){
+		return ($(this).attr('radio') === 'true');
+	}
+	set isRadio(state){
+		state = (state)? true : false;
+		$(this).attr({radio:state});
+	}
+
+	get viewPort(){
+		return parseInt($(this).attr('viewport'));
+	}
+	set viewPort(val){
+		val = parseInt(val);
+		$(this).attr({'viewport':val});
+	}
+
+	get title(){
+		return $(this).attr('title');
+	}
+	set title(text){
+		$(this).attr({title:text});
+	}
 }
 
 

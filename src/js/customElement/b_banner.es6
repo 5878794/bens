@@ -5,6 +5,7 @@
 
 // html:
 //  可设置的属性,也可以在js中设置，最后需要运行banner.run方法才会生效
+//  js中设置直接   banner.xxx = xxx;
 //  @attr:intervals             number 动画间隔时间
 //  @attr:animateTime           number 动画时间
 //  @attr:leftBtnId             str 左边按钮的id
@@ -16,12 +17,12 @@
 //  //获取元素
 // 	let banner = $('b-banner').get(0);
 //  //设置数据
-// 	banner.bindData([
+// 	banner.data = [
 // 		{href:'#',image:'http://pic37.nipic.com/20140113/8800276_184927469000_2.png'},
 // 		{href:'#',image:'http://pic15.nipic.com/20110628/1369025_192645024000_2.jpg'},
 // 		{href:'#',image:'http://k.zol-img.com.cn/sjbbs/7692/a7691515_s.jpg'},
 // 		{href:'#',image:'http://pic9.nipic.com/20100923/2531170_140325352643_2.jpg'}
-// 	]);
+// 	];
 //  //开始执行
 // 	banner.run();
 
@@ -41,6 +42,8 @@ let bannerFn = require('../lib/ui/bannerScroll'),
 	objFn = Symbol('obj'),
 	init = Symbol('init'),
 	createBody = Symbol('createBody'),
+	createList = Symbol('createList'),
+	bindData = Symbol('bindData'),
 	setParam = Symbol('setParam');
 
 
@@ -88,6 +91,7 @@ class bBanner extends HTMLElement{
 
 		this.changeStartFn = null;
 		this.changeEndFn = null;
+		this[bindData] = [];
 
 		this.param = {
 			intervals:2000,
@@ -151,9 +155,10 @@ class bBanner extends HTMLElement{
 		this[bodyDom] = div;
 	}
 
-	bindData(data){
+	[createList](){
 		// data=[{href:'',image:''}];
 
+		let data = this[bindData];
 		data.map(rs=>{
 			this[bodyDom].append('<a href="'+rs.href+'" style="background-image:url('+rs.image+');background-size:100% 100%;"></a>')
 		});
@@ -163,6 +168,8 @@ class bBanner extends HTMLElement{
 		if(this[objFn]){
 			this[objFn].destroy();
 		}
+
+		this[createList]();
 
 		let _this = this,
 			win = this[winDom],
@@ -194,6 +201,13 @@ class bBanner extends HTMLElement{
 				}
 			}        //@param:fn       滑动结束时执行函数，传递当前要滑动到的页面number
 		})
+	}
+
+	get data(){
+		return this[bindData];
+	}
+	set data(data){
+		this[bindData] = data;
 	}
 
 	get changeStart(){
