@@ -38,6 +38,8 @@ var scrollBanner = function (data) {
 	this.pointSelectBg = "#000";
 	this.changeStartFn = data.changeStartFn || function(){};
 	this.changeEndFn = data.changeEndFn || function(){};
+	this.pointMarginBottom = data.pointMarginBottom || '40px';
+
 
 	this.winWidth = parseInt(this.win.width());
 	this.winHeight = parseInt(this.win.height());
@@ -101,7 +103,7 @@ scrollBanner.prototype = {
 			width: width + "px",
 			height: "10px",
 			position: "absolute",
-			bottom: "40px",
+			bottom: this.pointMarginBottom,
 			left: "50%",
 			"margin-left": -width / 2 + "px",
 			display:display,

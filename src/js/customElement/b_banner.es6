@@ -3,6 +3,31 @@
 //==========================================================
 
 
+// html:
+//  可设置的属性,也可以在js中设置，最后需要运行banner.run方法才会生效
+//  @attr:intervals             number 动画间隔时间
+//  @attr:animateTime           number 动画时间
+//  @attr:leftBtnId             str 左边按钮的id
+//  @attr:rightBtnId            str 右边按钮的id
+//  @attr:pointMarginBottom     str 指示点距离底部的距离 eg:10px或10rem
+// 	<b-banner style="..."></b-banner>
+
+// js
+//  //获取元素
+// 	let banner = $('b-banner').get(0);
+//  //设置数据
+// 	banner.bindData([
+// 		{href:'#',image:'http://pic37.nipic.com/20140113/8800276_184927469000_2.png'},
+// 		{href:'#',image:'http://pic15.nipic.com/20110628/1369025_192645024000_2.jpg'},
+// 		{href:'#',image:'http://k.zol-img.com.cn/sjbbs/7692/a7691515_s.jpg'},
+// 		{href:'#',image:'http://pic9.nipic.com/20100923/2531170_140325352643_2.jpg'}
+// 	]);
+//  //开始执行
+// 	banner.run();
+
+
+
+
 
 
 //polyfill 需要
@@ -16,7 +41,6 @@ let bannerFn = require('../lib/ui/bannerScroll'),
 	objFn = Symbol('obj'),
 	init = Symbol('init'),
 	createBody = Symbol('createBody'),
-	addItem = Symbol('addItem'),
 	setParam = Symbol('setParam');
 
 
@@ -24,12 +48,14 @@ class bBanner extends HTMLElement{
 
 	//注册要监听的属性
 	static get observedAttributes() {
+		//监听的属性需要全部小写
 		return [
 			"intervals",
-			"animateTime",
-			"showPoints",
-			"leftBtnId",
-			"rightBtnId"
+			"animatetime",
+			"showpoints",
+			"leftbtnid",
+			"rightbtnid",
+			"pointmarginbottom"
 		];
 	}
 
@@ -62,11 +88,15 @@ class bBanner extends HTMLElement{
 
 		this.changeStartFn = null;
 		this.changeEndFn = null;
-		this.intervals = 2000;
-		this.animateTime = 600;
-		this.showPoints = true;
-		this.leftBtnId = null;
-		this.rightBtnId = null;
+
+		this.param = {
+			intervals:2000,
+			animateTime:600,
+			showPoints:true,
+			leftBtnId:null,
+			rightBtnId:null,
+			pointMarginBottom:null
+		};
 
 
 		this[init]();
@@ -78,17 +108,19 @@ class bBanner extends HTMLElement{
 			animateTime = $(this).attr('animateTime') || 600,
 			showPoints = $(this).attr('showPoints') || false,
 			leftBtnId = $(this).attr('leftBtnId') || null,
-			rightBtnId = $(this).attr('rightBtnId') || null;
+			rightBtnId = $(this).attr('rightBtnId') || null,
+			pointMarginBottom = $(this).attr('pointMarginBottom') || null;
 
 		intervals = parseInt(intervals);
 		animateTime = parseInt(animateTime);
 		showPoints = (showPoints === 'true');
 
-		this.intervals = intervals;
-		this.animateTime = animateTime;
-		this.showPoints = showPoints;
-		this.leftBtnId = leftBtnId;
-		this.rightBtnId = rightBtnId;
+		this.param.intervals = intervals;
+		this.param.animateTime = animateTime;
+		this.param.showPoints = showPoints;
+		this.param.leftBtnId = leftBtnId;
+		this.param.rightBtnId = rightBtnId;
+		this.param.pointMarginBottom = pointMarginBottom;
 	}
 
 
@@ -119,7 +151,7 @@ class bBanner extends HTMLElement{
 		this[bodyDom] = div;
 	}
 
-	[addItem](data){
+	bindData(data){
 		// data=[{href:'',image:''}];
 
 		data.map(rs=>{
@@ -127,22 +159,20 @@ class bBanner extends HTMLElement{
 		});
 	}
 
-	run(data){
+	run(){
 		if(this[objFn]){
 			this[objFn].destroy();
 		}
 
-		this[addItem](data);
-
-
 		let _this = this,
 			win = this[winDom],
 			body = this[bodyDom],
-			intervals = this.intervals,
-			animateTime = this.animateTime,
-			showPoints = this.showPoints,
-			leftBtn = (this.leftBtnId)? $('#'+this.leftBtnId) : null,
-			rightBtn = (this.rightBtnId)? $('#'+this.rightBtnId) : null;
+			intervals = this.param.intervals,
+			animateTime = this.param.animateTime,
+			showPoints = this.param.showPoints,
+			pointMarginBottom = this.param.pointMarginBottom,
+			leftBtn = (this.param.leftBtnId)? $('#'+this.param.leftBtnId) : null,
+			rightBtn = (this.param.rightBtnId)? $('#'+this.param.rightBtnId) : null;
 
 		this[objFn] = new bannerFn({
 			win: win,                      //@param:jqobj    外层窗口
@@ -150,6 +180,7 @@ class bBanner extends HTMLElement{
 			time: intervals,                         //@param:number   滑动间隔时间
 			animateTime: animateTime,             //@param:number   滑动动画时间
 			showPoint:showPoints,                    //@param:number   是否显示下面的小点
+			pointMarginBottom:pointMarginBottom,     //@param：str 显示的指示点距离底部距离
 			leftBtn:leftBtn,    //@param:jqobj    左滑动按钮
 			rightBtn:rightBtn,      //@param:jqobj    右滑动按钮
 			changeStartFn:function(page){
@@ -175,13 +206,57 @@ class bBanner extends HTMLElement{
 	get changeEnd(){
 		return this.changeEndFn;
 	}
-
 	set changeEnd(fn){
 		this.changeEndFn = fn;
 	}
 
+	get intervals(){
+		return this.param.intervals;
+	}
+	set intervals(val){
+		val = parseInt(val);
+		//属性有监听，赋值属性会自动写入this对象
+		$(this).attr({intervals:val});
+	}
 
+	get animateTime(){
+		return this.param.animateTime;
+	}
+	set animateTime(val){
+		val = parseInt(val);
+		//属性有监听，赋值属性会自动写入this对象
+		$(this).attr({animateTime:val});
+	}
 
+	get showPoints(){
+		return this.param.showPoints;
+	}
+	set showPoints(isShow){
+		isShow = (isShow)? true : false;
+		$(this).attr({showPoints:isShow});
+	}
+
+	get leftBtnId(){
+		return this.param.leftBtnId;
+	}
+	set leftBtnId(id){
+		$(this).attr({leftBtnId:id});
+	}
+
+	get rightBtnId(){
+		return this.param.leftBtnId;
+	}
+	set rightBtnId(id){
+		$(this).attr({rightBtnId:id});
+	}
+
+	get pointMarginBottom(){
+		return this.param.pointMarginBottom;
+	}
+	//val:  40px  /   10rem  带单位的
+	set pointMarginBottom(val){
+		$(this).attr({pointMarginBottom:val});
+	}
 }
 
 

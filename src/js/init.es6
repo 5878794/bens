@@ -41,12 +41,13 @@ var page = {
 
 	setBanner(){
 		let banner = $('b-banner').get(0);
-		banner.run([
+		banner.bindData([
 			{href:'#',image:'http://pic37.nipic.com/20140113/8800276_184927469000_2.png'},
 			{href:'#',image:'http://pic15.nipic.com/20110628/1369025_192645024000_2.jpg'},
 			{href:'#',image:'http://k.zol-img.com.cn/sjbbs/7692/a7691515_s.jpg'},
 			{href:'#',image:'http://pic9.nipic.com/20100923/2531170_140325352643_2.jpg'}
-		])
+		]);
+		banner.run();
 	}
 };
 
