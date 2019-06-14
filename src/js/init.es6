@@ -3,7 +3,7 @@
 
 require('./customElement/b_select');
 require('./customElement/b_banner');
-
+require('./customElement/b_switch');
 
 
 $(window).ready(function(){
@@ -29,7 +29,7 @@ var page = {
 
 		dom.data =data;
 		// dom.val = '';
-		dom.radio = true;
+		dom.isRadio = true;
 		dom.viewport = 750;
 		dom.title = '请选择您的年龄';
 		dom.placeholder = '请选择你的年龄';
