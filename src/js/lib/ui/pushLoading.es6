@@ -32,6 +32,7 @@ let app = require("../device"),
 	refreshParam = Symbol("setParam"),
 	setLoadingDomStyle = Symbol("setLoadingDomStyle"),
 	addEvent = Symbol("addEvent"),
+	scrollFn = Symbol('scrollFn'),
 	touchStartFn = Symbol("touchStartFn"),
 	touchMoveFn = Symbol("touchMoveFn"),
 	touchEndFn = Symbol("touchEndFn"),
@@ -97,6 +98,7 @@ class pushLoading{
 			"line-height":height+"px"
 		});
 
+		body.append(dom);
 		return dom;
 	}
 
@@ -127,7 +129,7 @@ class pushLoading{
 		body.css({
 			"padding-bottom":this[bodyPaddingBottom]+"px"
 		});
-		body.append(this.loadingDom);
+
 	}
 
 	//设置参数
@@ -144,7 +146,7 @@ class pushLoading{
 	[addEvent](){
 		let _this = this;
 		if(!app.isAndroid){
-			window.addEventListener("scroll",function(){
+			window.addEventListener("scroll",this[scrollFn] = function(){
 				_this[iosScroll]();
 			},false);
 			document.addEventListener(app.END_EV,this[touchEndFn] = function(e){
@@ -335,6 +337,26 @@ class pushLoading{
 		this.loadingDom.css({"z-index":-1});
 		this[isLoading] = false;
 		this[refreshParam]();
+	}
+
+	destroy(){
+		if(!app.isAndroid){
+			window.removeEventListener("scroll",this[scrollFn],false);
+			document.removeEventListener(app.END_EV,this[touchEndFn],false);
+		}else{
+			document.removeEventListener(app.START_EV,this[touchStartFn],false);
+			document.removeEventListener(app.MOVE_EV,this[touchMoveFn],false);
+			document.removeEventListener(app.END_EV,this[touchEndFn],false);
+		}
+
+		body.css({"padding-bottom":0});
+		this.loadingDom.remove();
+	}
+
+
+	firstLoad(){
+		this[isLoading] = true;
+		this.loadingFn.call(this.loadingDom);
 	}
 
 }

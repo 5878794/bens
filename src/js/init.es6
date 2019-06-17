@@ -4,6 +4,7 @@
 require('./customElement/b_select');
 require('./customElement/b_banner');
 require('./customElement/b_switch');
+require('./customElement/b_push_load');
 
 
 $(window).ready(function(){
@@ -17,6 +18,7 @@ var page = {
 		this.setSelect();
 		this.setBanner();
 		this.setSwitch();
+		this.setBPushLoad();
 	},
 
 	setSelect(){
@@ -52,6 +54,38 @@ var page = {
 		let switchDom = $('b-switch').get(0);
 		switchDom.circleColor = 'green';
 		switchDom.val = false;
+	},
+
+	setBPushLoad(){
+		let dom = $('b-push-load').get(0),
+			that = this;
+
+		$(dom).attr({viewport:750});
+		dom.getData = async function(pageIndex,pageSize){
+
+			if(pageIndex == 1){
+				// alert('loading')
+			}
+
+			let data = await that.getData();
+			for(let i=0,l=20;i<l;i++){
+				$('body').append('<div style="width:100%;height:20px;">'+i+'</div>')
+			}
+
+			if(pageIndex == 1){
+				// alert('hide loading')
+			}
+			this.loadOk();
+		}
+
+
+	},
+	getData(){
+		return new Promise(success=>{
+			setTimeout(function(){
+				success([]);
+			},2000)
+		})
 	}
 };
 
