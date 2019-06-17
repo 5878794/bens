@@ -16,7 +16,7 @@ var page = {
 	init(){
 		this.setSelect();
 		this.setBanner();
-
+		this.setSwitch();
 	},
 
 	setSelect(){
@@ -46,6 +46,12 @@ var page = {
 			{href:'https://www.baidu.com',image:'http://pic9.nipic.com/20100923/2531170_140325352643_2.jpg'}
 		];
 		banner.run();
+	},
+
+	setSwitch(){
+		let switchDom = $('b-switch').get(0);
+		switchDom.circleColor = 'green';
+		switchDom.val = false;
 	}
 };
 
