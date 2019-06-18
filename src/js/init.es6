@@ -5,6 +5,7 @@ require('./customElement/b_select');
 require('./customElement/b_banner');
 require('./customElement/b_switch');
 require('./customElement/b_push_load');
+require('./customElement/b_pull_refresh');
 
 
 $(window).ready(function(){
@@ -19,6 +20,7 @@ var page = {
 		this.setBanner();
 		this.setSwitch();
 		this.setBPushLoad();
+		this.setBPullRefresh();
 	},
 
 	setSelect(){
@@ -52,8 +54,8 @@ var page = {
 
 	setSwitch(){
 		let switchDom = $('b-switch').get(0);
-		switchDom.circleColor = 'green';
-		switchDom.val = false;
+		// switchDom.circleColor = 'green';
+		// switchDom.val = false;
 	},
 
 	setBPushLoad(){
@@ -86,6 +88,12 @@ var page = {
 				success([]);
 			},2000)
 		})
+	},
+
+	setBPullRefresh(){
+		let dom = $('b-pull-refresh').get(0);
+
+
 	}
 };
 
