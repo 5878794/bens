@@ -208,7 +208,7 @@ scrollBanner.prototype = {
 				_this.leftPx = parseInt(_this.body.css("left"));
 				_this.intervalFn = null;
 				_this.startEvent(e);
-			}, false);
+			}, device.eventParam);
 			win_obj.addEventListener(device.MOVE_EV, _this.moveEventFn = function (e) {
 				_this.savePoint(e);
 
@@ -228,7 +228,7 @@ scrollBanner.prototype = {
 					_this.moveEvent(e, pointsx);
 				}
 
-			}, false);
+			}, device.eventParam);
 			win_obj.addEventListener(device.END_EV, _this.endEventFn = function (e) {
 				_this.endEvent(e);
 				if (!_this.intervalFn) {
