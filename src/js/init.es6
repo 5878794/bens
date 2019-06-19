@@ -104,10 +104,10 @@ var page = {
 
 	setSmsBtn(){
 		let dom = $('b-sms-btn').get(0);
-		dom.intervalTime = 50;
+		dom.intervalTime = 60;
 		dom.intervalText = '{x}秒';
-		dom.fontColor = 'rgb(0,0,0)';
-		dom.bgColor = 'rgb(200,200,200)';
+		dom.fontColor = 'rgb(32,95,254)';
+		dom.bgColor = 'rgb(255,255,255)';
 		dom.fontSize = '12';
 		dom.runFn = async function(){
 			await device.sleep(1);

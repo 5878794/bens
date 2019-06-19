@@ -178,7 +178,7 @@ class bSmsBtn extends HTMLElement{
 		div.css({
 			width:'100%',
 			height:'100%',
-			display:'flex',
+			display:'block',
 			'line-height':'100%',
 			'text-align':'center'
 		});

@@ -59,12 +59,12 @@ let btnSendSmsInterval = function(opt){
 
 btnSendSmsInterval.prototype = {
 	init:function(){
-		this.dom.css({
-			background:this.bgColor,
-			'font-size':this.fontSize+this.fontSizeUnit,
-			'text-align':this.textAlign,
-			color:this.fontColor
-		});
+		// this.dom.css({
+		// 	background:this.bgColor,
+		// 	'font-size':this.fontSize+this.fontSizeUnit,
+		// 	'text-align':this.textAlign,
+		// 	color:this.fontColor
+		// });
 
 
 		this.bindEvent();
@@ -131,7 +131,7 @@ btnSendSmsInterval.prototype = {
 	textEffectInterval:function(btnDom){
 		this.textEffectFn = new textChangeEffect({
 			dom:btnDom,                 //容器dom @param:jqobj
-			bg:this.bg,      //背景色  必须rgb  默认:rgb(255,255,255)
+			bg:this.bgColor,      //背景色  必须rgb  默认:rgb(255,255,255)
 			fontSize:this.fontSize,                //字体大小 @param:number  单位px
 			fontColor:this.fontColor,     //字体颜色 @param:rgb    默认:rgb(0,0,0)
 			textAlign:this.textAlign,
