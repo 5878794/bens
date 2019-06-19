@@ -1,11 +1,14 @@
 
-
+let device = require('./lib/device');
 
 require('./customElement/b_select');
 require('./customElement/b_banner');
 require('./customElement/b_switch');
 require('./customElement/b_push_load');
 require('./customElement/b_pull_refresh');
+require('./customElement/b_sms_btn');
+
+
 
 
 $(window).ready(function(){
@@ -21,6 +24,7 @@ var page = {
 		this.setSwitch();
 		this.setBPushLoad();
 		this.setBPullRefresh();
+		this.setSmsBtn();
 	},
 
 	setSelect(){
@@ -94,6 +98,27 @@ var page = {
 		let dom = $('b-pull-refresh').get(0);
 
 
+	},
+
+
+
+	setSmsBtn(){
+		let dom = $('b-sms-btn').get(0);
+		dom.intervalTime = 50;
+		dom.intervalText = '{x}秒';
+		dom.fontColor = 'rgb(0,0,0)';
+		dom.bgColor = 'rgb(200,200,200)';
+		dom.fontSize = '12';
+		dom.runFn = async function(){
+			await device.sleep(1);
+			console.log(1);
+
+			dom.success();
+		};
+		dom.run();
 	}
+
+
+
 };
 
