@@ -244,7 +244,7 @@ class bodyStyle{
 		this.domZZ.get(0).addEventListener(app.START_EV,startFn = function(e){
 			points = [];
 			savePoint(e);
-		},false);
+		},app.eventParam);
 
 
 		this.domZZ.get(0).addEventListener(app.MOVE_EV,moveFn = function(e){
@@ -259,7 +259,7 @@ class bodyStyle{
 			if(_this.domBody.scrollTop()==maxScrollTop && e_p<s_p){
 				e.preventDefault();
 			}
-		},false);
+		},app.eventParam);
 	}
 
 	//取消阻止div顶部时下啦触发下啦刷新
