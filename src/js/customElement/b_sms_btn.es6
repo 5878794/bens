@@ -47,6 +47,13 @@
 // dom.run();
 
 
+
+//polyfill 需要
+require('@webcomponents/custom-elements');
+require('@webcomponents/shadydom');
+
+
+
 let btnSendSmsFn = require('../lib/ui/btnSendSmsInterval_custom'),
 	device = require('../lib/device');
 

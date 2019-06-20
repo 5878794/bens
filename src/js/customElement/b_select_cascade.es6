@@ -1,53 +1,67 @@
 
+
 //==========================================================
-//select选择控件  可以单选、多选
+//cascade级联选择控件
 //==========================================================
 
 
 
 // html:
 // 可设置的属性,也可以在js中设置
-// js中设置直接   banner.xxx = xxx;
+// js中设置直接   dom.xxx = xxx;
 // @attr:title              str：弹出选择时的标题
-// @attr:val                str：当前选中的值。 多选逗号隔开 1,2,3
+// @attr:val                str：当前选中的值。 逗号隔开 1,2,3
 // @attr:placeholder        str：val为空时显示
-// @attr:isRadio            Boolean：是否是单选
+// @attr:startParentId      str：第一级菜单的父级id
 // @attr:viewPort           number:设置viewport大小
-// 	<b-select style="..."></b-select>
+// 	<b-select-cascade style="..."></b-select-cascade>
 
 // js:
 // 	let data = [                      //@param:array(必填)      select的数据
-// 		{key:"1",val:"男"},
-// 		{key:"2",val:"女"},
-// 		{key:'3',val:'不告诉你'}
+// 		{key: 2, val: '北京', parent: 1},
+// 		{key: 3, val: '东城区', parent: 3924},
+// 		{key: 4, val: '西城区', parent: 3924},
+// 		{key: 5, val: '朝阳区', parent: 3924}
 // 	];
-// 	let dom = $('b-select');
+// 	let dom = $('b-select-cascade');
 
 //  dom.data =data;     //必须在js中设置
-//  dom.val = '';
-//  dom.radio = true;
+//  dom.val = '1,2,3';
+//  dom.startParentId = '1';
 //  dom.viewport = 750;
-//  dom.title = '请选择您的年龄';
-//  dom.placeholder = '请选择你的年龄';
+//  dom.title = '请选择';
+//  dom.placeholder = '请选择';
+
+
+
+
+
+
 
 //polyfill 需要
 require('@webcomponents/custom-elements');
 require('@webcomponents/shadydom');
 
 
+
 let $$ = require('../lib/event/$$'),
-	selectFn = require('../lib/input/select'),
-	bodyDom = Symbol('body'),
+	cascadeFn = require('../lib/input/cascade');
+
+
+let showVal = Symbol('showVal'),
+	bodyDom = Symbol('bodyDom'),
+	selectData = Symbol('selectData'),
+	bindData = Symbol('bindData'),
 	init = Symbol('init'),
 	createBody = Symbol('createBody'),
 	addEvent = Symbol('addEvent'),
-	selectData = Symbol('selectData'),
-	bindData = Symbol('bindData'),
-	showSelect = Symbol('showSelect'),
-	showVal = Symbol('showVal');
+	showSelect = Symbol('showSelect');
 
 
-class bSelect extends HTMLElement{
+
+
+
+class bSelectCascade extends HTMLElement{
 
 	//注册要监听的属性
 	static get observedAttributes() {
@@ -61,8 +75,8 @@ class bSelect extends HTMLElement{
 	attributeChangedCallback(name, oldValue, newValue) {
 		// if(name == 'val'){
 		// 	setTimeout(()=>{
-				this[showVal]();
-			// },0);
+		this[showVal]();
+		// },0);
 		// }
 	}
 
@@ -136,13 +150,14 @@ class bSelect extends HTMLElement{
 			selected = dom.attr('val'),
 			data = this[bindData],
 			title = dom.attr('title') || '请选择',
-			isRadio = (dom.attr('radio') === 'true'),
+			startParentId = dom.attr('startParentId') || '1',
 			viewPort = dom.attr('viewport') || 750;
 		viewPort = parseInt(viewPort);
 
 		//处理data 让key全部转换成字符串
 		data.map(rs=>{
 			rs.key = rs.key.toString();
+			rs.parent = rs.parent.toString();
 		});
 
 		//处理选中的数组 初始传入为 1,2,3 要转换成数组
@@ -153,11 +168,11 @@ class bSelect extends HTMLElement{
 		});
 
 
-		new selectFn({
+		new cascadeFn({
 			titleText:title,       //@param:str             标题  默认：请选择
-			data:data,
-			selected:newSelected,           //@param:array(必填)    选中的key
-			radio:isRadio,                  //@param:boolean          单选还是多选   默认true
+			areaData:data,
+			areaSelected:newSelected,           //@param:array(必填)    选中的key
+			startParentId:startParentId,                  //@param:boolean          单选还是多选   默认true
 			viewPort:viewPort,                //@param:number 设置psd的大小，布局需要使用rem 默认：750
 			success:function(rs){
 				//返回选择的对象
@@ -221,11 +236,9 @@ class bSelect extends HTMLElement{
 	get val(){
 		return $(this).attr('val');
 	}
-	//val 单选时候是  eg:1
-	//val 多选时候是  eg:1,2,3
+	//val  eg:1,2,3
 	set val(val){
 		$(this).attr({val:val});
-		// this[showVal]();
 	}
 
 	get placeholder(){
@@ -233,22 +246,19 @@ class bSelect extends HTMLElement{
 	}
 	set placeholder(text){
 		$(this).attr({'placeholder':text});
-		// this[showVal]();
 	}
 
-	get isRadio(){
-		return ($(this).attr('radio') === 'true');
+	get startParentId(){
+		return $(this).attr('startParentId');
 	}
-	set isRadio(state){
-		state = (state)? true : false;
-		$(this).attr({radio:state});
+	set startParentId(val){
+		$(this).attr({startParentId:val});
 	}
 
 	get viewPort(){
 		return parseInt($(this).attr('viewport'));
 	}
 	set viewPort(val){
-		val = parseInt(val);
 		$(this).attr({'viewport':val});
 	}
 
@@ -261,5 +271,5 @@ class bSelect extends HTMLElement{
 }
 
 
-customElements.define('b-select', bSelect );
+customElements.define('b-select-cascade', bSelectCascade );
 

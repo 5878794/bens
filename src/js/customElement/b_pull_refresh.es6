@@ -23,6 +23,10 @@
 
 
 
+//polyfill 需要
+require('@webcomponents/custom-elements');
+require('@webcomponents/shadydom');
+
 
 let pullRefreshFn = require('../lib/ui/pullRefresh');
 

@@ -7,8 +7,9 @@ require('./customElement/b_switch');
 require('./customElement/b_push_load');
 require('./customElement/b_pull_refresh');
 require('./customElement/b_sms_btn');
+require('./customElement/b_select_cascade');
 
-
+let cascadeData = require('./lib/code/areaCode');
 
 
 $(window).ready(function(){
@@ -25,6 +26,8 @@ var page = {
 		this.setBPushLoad();
 		this.setBPullRefresh();
 		this.setSmsBtn();
+		this.setCascade();
+
 	},
 
 	setSelect(){
@@ -93,15 +96,11 @@ var page = {
 			},2000)
 		})
 	},
-
 	setBPullRefresh(){
 		let dom = $('b-pull-refresh').get(0);
 
 
 	},
-
-
-
 	setSmsBtn(){
 		let dom = $('b-sms-btn').get(0);
 		dom.intervalTime = 60;
@@ -116,9 +115,15 @@ var page = {
 			dom.success();
 		};
 		dom.run();
+	},
+
+
+
+	setCascade(){
+		let dom = $('b-select-cascade').get(0);
+		dom.data = cascadeData;
+		dom.val = '2,3924,3';
 	}
-
-
 
 };
 

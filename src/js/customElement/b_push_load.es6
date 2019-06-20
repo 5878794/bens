@@ -41,6 +41,10 @@
 // };
 
 
+//polyfill 需要
+require('@webcomponents/custom-elements');
+require('@webcomponents/shadydom');
+
 
 let pushLoadingFn = require('../lib/ui/pushLoading'),
 	$$ = require('../lib/event/$$');
