@@ -8,6 +8,7 @@ require('./customElement/b_push_load');
 require('./customElement/b_pull_refresh');
 require('./customElement/b_sms_btn');
 require('./customElement/b_select_cascade');
+require('./customElement/b_select_date');
 
 let cascadeData = require('./lib/code/areaCode');
 
