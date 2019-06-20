@@ -123,12 +123,12 @@ class bodyStyle{
 			position:"absolute",
 			left:0,bottom:0,
 			background:this.bg,
-			display:"box",
-			"box-orient":"vertical",
+			// display:"box",
+			// "box-orient":"vertical",
 			color:this.fontColor,
 			"font-size":this.fontSize+"px",
 			'z-index':1001
-		});
+		}).addClass('box_slt');
 
 		this.domMain = div;
 	}
@@ -191,7 +191,7 @@ class bodyStyle{
 	//创建主窗口
 	[createBody](){
 		var div = $("<div></div>");
-		div.addClass("boxflex1");
+		div.addClass("boxflex1").css({width:'100%'});
 
 		this.domBody = div;
 	}
