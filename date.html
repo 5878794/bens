@@ -1,0 +1,286 @@
+<!--网红钟-->
+<!--TODO 从59转到0要回转-->
+
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1, maximum-scale=1">
+    <title>Title</title>
+    <script src="js/jquery-3.1.1.min.js"></script>
+    <style>
+        *{padding: 0;margin: 0;}
+        html,body{overflow: hidden;width: 100%;height: 100%;background: #000;}
+        .main{
+            width: 100vw; height: 100vw;
+            position: absolute; left:0; top:50%;
+            margin-top: -50vw;
+            font-size:2vw;
+            color:#777;
+        }
+        .year,
+        .month,
+        .day,
+        .minute,
+        .hour,
+        .second{
+            position: absolute; width: 100%; height: 100%;
+            left:0;top:0;
+            line-height: 100vw;
+            text-align: center;
+            transition: all 0.4s ease-out;
+            transform:rotateZ(0deg);
+        }
+
+        .year{color: #fff !important;}
+
+
+    </style>
+</head>
+<script>
+    $(document).ready(function(){
+        PAGE.init();
+    });
+
+    var PAGE = {
+        year:0,
+        days:31,
+        init:function(){
+            this.createYear();
+            this.createMonth();
+            this.createDay();
+            this.createHour();
+            this.createMinute();
+            this.createSecond();
+
+            var _this = this;
+            setTimeout(function(){
+                _this.show();
+            },0);
+            setInterval(function(){
+                _this.showNow();
+            },1000);
+
+        },
+        getMonthDay:function(year,month){
+                //获取这个月的最大天数
+            var day = 0;
+            switch(month){
+                case 1:
+                case 3:
+                case 5:
+                case 7:
+                case 8:
+                case 10:
+                case 12:
+                    day = 31;
+                    break;
+                case 4:
+                case 6:
+                case 9:
+                case 11:
+                    day = 30;
+                    break;
+                case 2:
+                    if ((year % 4 == 0 && year % 100 != 0) || (year % 400 == 0)) {
+                        day = 29;
+                    }else{
+                        day = 28;
+                    }
+                    break;
+                default:
+                    day = 31;
+            }
+
+            return day;
+        },
+        createDom:function(body,data,width){
+            width = width || '20vw';
+            if(typeof data === 'string'){
+                body.text(data);
+                return;
+            }
+
+            for(var i=0,l=data.length;i<l;i++){
+                var item = $('<div>'+data[i]+'</div>');
+                item.css({
+                    opacity:0,
+                    width:width,
+                    height:'20vw',
+                    position:'absolute',
+                    left:'50%',
+                    top:'50%',
+                    'margin-top':'-10vw',
+                    'text-align':'right',
+                    'line-height':'20vw',
+                    'transform-origin':'left center',
+                    'transition':'all 0.8s ease-out',
+                    'transform':'rotateZ(0deg)'
+                });
+                body.append(item);
+            }
+        },
+        createYear:function(){
+            var body = $('.year'),
+                data = new Date().getFullYear()+'年';
+
+            this.year = data;
+
+            this.createDom(body,data);
+        },
+        createMonth:function(){
+            var body = $('.month'),
+                data = ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月'];
+
+            this.createDom(body,data,'12vw');
+        },
+        createDay:function(){
+            var body = $('.day'),
+                data = [];
+
+            var nowDate = new Date(),
+                year = nowDate.getFullYear(),
+                month = nowDate.getMonth()+1,
+                days = this.getMonthDay(year,month);
+            this.days = days;
+
+            for(var i=1,l=days;i<=l;i++){
+                data.push(i+'日');
+            }
+
+            this.createDom(body,data,'20vw');
+        },
+        createHour:function(){
+            var body = $('.hour'),
+                data = [];
+
+            for(var i=1,l=24;i<=l;i++){
+                data.push(i+'时')
+            }
+
+            this.createDom(body,data,'28vw');
+        },
+        createMinute:function(){
+            var body = $('.minute'),
+                data = [];
+
+            for(var i=0,l=59;i<=l;i++){
+                data.push(i+'分')
+            }
+
+            this.createDom(body,data,'36vw');
+        },
+        createSecond:function(){
+            var body = $('.second'),
+                data = [];
+
+            for(var i=0,l=59;i<=l;i++){
+                data.push(i+'秒')
+            }
+
+            this.createDom(body,data,'44vw');
+        },
+        show:function(){
+            var months = $('.month').find('div'),
+                days = $('.day').find('div'),
+                hour = $('.hour').find('div'),
+                minute = $('.minute').find('div'),
+                second = $('.second').find('div');
+
+            var fn = function(dom,desc){
+                var l = dom.length,
+                        deg = 360/l;
+
+                dom.each(function(i){
+                    var val = (desc)? 360-i*deg : -i*deg;
+                    $(this).css({
+                        transform:'rotateZ('+val+'deg)',
+                        opacity:1
+                    })
+                })
+            };
+
+            fn(months,true);
+            fn(days,false);
+            fn(hour,true);
+            fn(minute,false);
+            fn(second,true);
+        },
+        showNow:function(){
+            var date = new Date(),
+                year = date.getFullYear(),
+                month = date.getMonth()+1,
+                day = date.getDate(),
+                hour = date.getHours(),
+                minute=  date.getMinutes(),
+                second = date.getSeconds(),
+                daysNumber = this.getMonthDay(year,month);
+
+
+            var yearDom = $('.year'),
+                monthDom = $('.month'),
+                dayDom = $('.day'),
+                hourDom = $('.hour'),
+                minuteDom = $('.minute'),
+                secondDom = $('.second');
+
+            if(this.year != year+'年'){
+                yearDom.text(yearDom);
+            }
+
+            var monthDeg = (month-1)*30,
+                dayDeg = (day-1)*360/daysNumber,
+                hourDeg = (hour-1)*15,
+                minuteDeg = (minute)*6,
+                secondDeg = (second)*6;
+
+            secondDeg = (secondDeg == 0)? 360 : secondDeg;
+
+            $('.main').find('div').css({color:'#777'});
+            monthDom.css({
+                transform:'rotateZ('+monthDeg+'deg)'
+            });
+            monthDom.find('div').eq(month-1).css({color:'#fff'});
+
+            dayDom.css({
+                transform:'rotateZ('+dayDeg+'deg)'
+            });
+            dayDom.find('div').eq(day-1).css({color:'#fff'});
+
+
+            hourDom.css({
+                transform:'rotateZ('+hourDeg+'deg)'
+            });
+            hourDom.find('div').eq(hour-1).css({color:'#fff'});
+
+            minuteDom.css({
+                transform:'rotateZ('+minuteDeg+'deg)'
+            });
+            minuteDom.find('div').eq(minute).css({color:'#fff'});
+
+            secondDom.css({
+                transform:'rotateZ('+secondDeg+'deg)'
+            });
+            secondDom.find('div').eq(second).css({color:'#fff'});
+        }
+    }
+
+</script>
+<body>
+
+<div class="main">
+    <div class="year"></div>
+    <div class="month"></div>
+    <div class="day"></div>
+    <div class="hour"></div>
+    <div class="minute"></div>
+    <div class="second"></div>
+</div>
+
+
+
+
+</body>
+</html>
+
