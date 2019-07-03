@@ -1,6 +1,7 @@
 
 
 //复制文字到剪贴板
+//注：必须在点击事件等用户操作行为中执行才能写入剪贴板
 
 
 function clipboardCopy (text) {
