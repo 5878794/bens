@@ -108,8 +108,6 @@ class textChangeEffect{
 		//以为retina屏 所以之前根据屏蔽点密度进行了放大,现在需要缩小画布
 		//主要目的去除锯齿、毛边等
 		$(this.canvas).css({
-			width:this.canvas.width+'px',
-			height:this.canvas.height+'px',
 			'transform-origin':'left top',
 			'-webkit-transform-origin':'left top',
 			transform:'scale('+1/this.scale+')',
