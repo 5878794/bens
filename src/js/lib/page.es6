@@ -77,7 +77,7 @@ let page = {
     [pageReady](){
         return new Promise(success=>{
             $(document).ready(function(){
-                console.log('page ok')
+                console.log('page ok');
                 success();
             });
         })
@@ -93,11 +93,12 @@ let page = {
                     // _this[appAutoGetUrl](function(){
                     //     success();
                     // });
+                    console.log('app ok');
                     success();
 
                 }, false);
             }else{
-                console.log('app ok')
+                console.log('is not app');
                 success();
             }
         })
@@ -105,17 +106,25 @@ let page = {
     //微信ready
     [weChatReady](){
         let _this = this;
-
         return new Promise(async (success,error)=>{
             if(_this[isApp]){
+                console.log('app not need wx js');
                 success();
                 return;
             }
 
             if(this[needWeChatApi].length == 0){
+                console.log('not need wx api');
                 success();
                 return;
             }
+
+            if(!device.isWeChat){
+                console.log('not in wx');
+                success();
+                return;
+            }
+
 
             //加载微信js
             await _this.loadScript(SETTING.weChatJsUrl);
@@ -132,7 +141,7 @@ let page = {
                     success();
                 }
             });
-
+            console.log('wx api ok');
             success();
             // wx.ready(function(){
             //     success();
