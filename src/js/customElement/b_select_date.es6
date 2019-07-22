@@ -108,10 +108,10 @@ class bSelectDate extends HTMLElement{
 			height:'100%'
 		});
 		span.css({
-			color:'#333'
+			// color:'#333'
 		});
 		span1.css({
-			color:'#ccc'
+			// color:'#ccc'
 		});
 
 		div.append(span).append(span1);
