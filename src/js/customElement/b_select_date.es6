@@ -105,9 +105,7 @@ class bSelectDate extends HTMLElement{
 
 		div.css({
 			width:'100%',
-			height:'40px',
-			background:'#fff',
-			border:'1px solid #ccc'
+			height:'100%'
 		});
 		span.css({
 			color:'#333'

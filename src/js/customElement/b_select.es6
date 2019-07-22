@@ -108,9 +108,7 @@ class bSelect extends HTMLElement{
 
 		div.css({
 			width:'100%',
-			height:'40px',
-			background:'#fff',
-			border:'1px solid #ccc'
+			height:'100%'
 		});
 		span.css({
 			color:'#333'
@@ -152,7 +150,7 @@ class bSelect extends HTMLElement{
 			newSelected.push(rs.toString());
 		});
 
-console.log(title,data)
+
 		new selectFn({
 			titleText:title,       //@param:str             标题  默认：请选择
 			data:data,
