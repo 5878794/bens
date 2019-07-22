@@ -21,7 +21,7 @@
 // 		{key:"2",val:"女"},
 // 		{key:'3',val:'不告诉你'}
 // 	];
-// 	let dom = $('b-select');
+// 	let dom = $('b-select').get(0);
 
 //  dom.data =data;     //必须在js中设置
 //  dom.val = '';
@@ -133,7 +133,7 @@ class bSelect extends HTMLElement{
 
 	[showSelect](){
 		let dom = $(this),
-			selected = dom.attr('val'),
+			selected = dom.attr('val') || '',
 			data = this[bindData],
 			title = dom.attr('title') || '请选择',
 			isRadio = (dom.attr('radio') === 'true'),
@@ -152,7 +152,7 @@ class bSelect extends HTMLElement{
 			newSelected.push(rs.toString());
 		});
 
-
+console.log(title,data)
 		new selectFn({
 			titleText:title,       //@param:str             标题  默认：请选择
 			data:data,

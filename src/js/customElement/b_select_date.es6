@@ -18,7 +18,7 @@
 // 	<b-select style="..."></b-select>
 
 // js:
-// 	let dom = $('b-select-date');
+// 	let dom = $('b-select-date').get(0);
 
 //  dom.val = '';
 //  dom.viewport = 750;
