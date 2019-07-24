@@ -15,8 +15,11 @@
 
 //js：
 //  let dom = $('b-push-load').get(0);
+//  dom.pageSizes = 10;
 //  dom.viewport = 750;
 
+//  数据筛选后重新计算分页
+//  dom.reload();
 
 //  注意是异步函数，并会加载第一页数据
 //  第一页要加的loading 需要判断pageIndex参数
@@ -64,6 +67,7 @@ class bPushLoad extends HTMLElement{
 		//监听的属性需要全部小写
 		return [
 			'viewport',
+			'pageSizes',
 			'bottomfixeddivheight'
 		];
 	}
@@ -71,10 +75,12 @@ class bPushLoad extends HTMLElement{
 	//元素属性改变回调
 	attributeChangedCallback(name, oldValue, newValue) {
 		let viewport = $(this).attr('viewport') || 750,
-			bottomfixeddivheight = $(this).attr('bottomfixeddivheight') || 0;
+			bottomfixeddivheight = $(this).attr('bottomfixeddivheight') || 0,
+			pagesize = $(this).attr('pagesizes') || 20;
 
 		this.param.viewPort = 750;
 		this.param.bottomFixedDivHeight = 0;
+		this.pageSize = pagesize;
 
 	}
 
@@ -140,6 +146,13 @@ class bPushLoad extends HTMLElement{
 		});
 	}
 
+	reload(){
+		this[fn].destroy();
+		this[addFn]();
+		this.pageIndex = 1;
+		this[fn].firstLoad();
+	}
+
 	get getData(){
 		return this[getDataFn];
 	}
@@ -186,6 +199,22 @@ class bPushLoad extends HTMLElement{
 	set bottomFixedDivHeight(val){
 		this.param.bottomFixedDivHeight = val;
 		$(this).attr({bottomFixedDivHeight:val});
+	}
+
+	//
+	get pageSizes(){
+		return this.pageSize;
+	}
+	set pageSizes(val){
+		this.pageSize = val;
+		$(this).attr({pageSizes:val});
+	}
+
+	get index(){
+		return this.pageIndex;
+	}
+	set index(val){
+		this.pageIndex = val;
 	}
 }
 
