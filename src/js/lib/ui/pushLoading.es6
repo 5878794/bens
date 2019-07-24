@@ -359,15 +359,6 @@ class pushLoading{
 		this[isLoading] = true;
 		this.loadingFn.call(this.loadingDom);
 	}
-
-	showLoadingDom(){
-		//css 在  all.css中
-		this.loadingDom.removeClass('hidden');
-	}
-
-	hideLoadingDom(){
-		this.loadingDom.addClass('hidden');
-	}
 }
 
 
