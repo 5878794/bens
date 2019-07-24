@@ -353,6 +353,11 @@ class pushLoading{
 			document.removeEventListener(app.END_EV,this[touchEndFn],false);
 		}
 	}
+
+	firstLoad(){
+		this[isLoading] = true;
+		this.loadingFn.call(this.loadingDom);
+	}
 }
 
 
