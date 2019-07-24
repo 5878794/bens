@@ -139,6 +139,12 @@ class bPushLoad extends HTMLElement{
 			loadingFn:function(){               //加载函数
 				_this[bodyDom].text("正在加载");
 
+				if(_this.pageIndex == 1){
+					$(this).addClass('hidden');
+				}else{
+					$(this).removeClass('hidden');
+				}
+
 				_this[getDataFn].call(_this,_this.pageIndex,_this.pageSize);
 			},
 			viewport:this.param.viewport,                       //psd大小   使用rem布局
