@@ -16,9 +16,10 @@ function clipboardCopy (text) {
 	// Put the text to copy into a <span>
 	var span = document.createElement('span');
 	span.textContent = text;
+	span.style.webkitUserSelect = 'text';
 
 	// Preserve consecutive spaces and newlines
-	span.style.whiteSpace = 'pre'
+	span.style.whiteSpace = 'pre';
 
 	// Add the <span> to the page
 	document.body.appendChild(span);
@@ -48,6 +49,7 @@ function clipboardCopy (text) {
 		? Promise.resolve()
 		: Promise.reject(); // eslint-disable-line prefer-promise-reject-errors
 }
+
 
 
 module.exports = clipboardCopy;
