@@ -131,9 +131,19 @@ class bPushLoad extends HTMLElement{
 		this[fn] = new pushLoadingFn({
 			loadingDom:_this[bodyDom],
 			canLoadingFn:function(){            //拖动到能下载加载时触发到函数
+				if(_this.pageIndex == 1){
+					$(this).addClass('hidden');
+				}else{
+					$(this).removeClass('hidden');
+				}
 				_this[bodyDom].text("释放加载");
 			},
 			notCanLoadingFn:function(){         //拖动到不能下载加载时触发到函数
+				if(_this.pageIndex == 1){
+					$(this).addClass('hidden');
+				}else{
+					$(this).removeClass('hidden');
+				}
 				_this[bodyDom].text("上拉加载");
 			},
 			loadingFn:function(){               //加载函数
