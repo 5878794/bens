@@ -13,18 +13,21 @@
 
 let setFn = function(psdWidth){
 	var psd_width = psdWidth,
-		win_width = window.innerWidth,
+		win_width = window.innerWidth || window.outerWidth,
 		viewport = document.querySelector('meta[name="viewport"]'),
-		// dpr = window.devicePixelRatio || 1,
-		// scale = 1 / dpr,
+		dpr = window.devicePixelRatio || 1,
+		scale = 1 / dpr,
 		rem;
 
 	// 设置meta
 	// 由于cordova app内嵌初始屏幕宽度获取有问题,只能设置width=device-width 不能设置实际的像素宽度在缩放
+	// 需要自行切换注释
 	if(viewport){
-		viewport.setAttribute('content', 'width= device-width,initial-scale=1,maximum-scale=1, minimum-scale=1,user-scalable=no');
+		viewport.setAttribute('content', 'width= '+win_width*dpr+',initial-scale='+scale+',maximum-scale='+scale+', minimum-scale='+scale+',user-scalable=no');
+		// viewport.setAttribute('content', 'width= device-width,initial-scale=1,maximum-scale=1, minimum-scale=1,user-scalable=no');
 	}else{
-		$("head").append('<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1, maximum-scale=1">');
+		$("head").append('<meta name="viewport" content="width='+win_width*dpr+', initial-scale='+scale+', user-scalable=no, minimum-scale='+scale+', maximum-scale='+scale+'">');
+		// $("head").append('<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no, minimum-scale=1, maximum-scale=1">');/**/
 	}
 
 
@@ -42,7 +45,7 @@ let setFn = function(psdWidth){
 
 		win_width = window.innerWidth;
 		let _rem = win_width/psd_width*100;
-		console.log(win_width,psd_width,rem)
+		console.log(win_width,psd_width,rem,1)
 		if(rem != _rem){
 			rem = _rem;
 			style.innerHTML = "html{font-size:"+rem+"px!important;}";
