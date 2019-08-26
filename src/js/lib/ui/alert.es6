@@ -27,7 +27,7 @@ module.exports = function(isAlert,msg,titleMsg='系统提示',iconSrc,width=0,he
 				position:'fixed',
 				left:0,top:0,width:'100%',height:'100%',
 				background:'rgba(0,0,0,0)',
-				'z-index':'99999'
+				'z-index':'199999'
 			});
 			body.css({
 				width:r2p(580)+'px',
@@ -132,7 +132,8 @@ module.exports = function(isAlert,msg,titleMsg='系统提示',iconSrc,width=0,he
 			})
 
 		};
-		let destroy = function(state){
+		let destroy = async function(state){
+			await device.sleep(0.2);
 			$$(btnDom).unbind(true);
 			mainDom.remove();
 			success(state);
