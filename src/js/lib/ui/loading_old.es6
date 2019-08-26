@@ -88,7 +88,7 @@ __loading.prototype = {
 
 
 
-var a = function(obj,scale){
+var a = function(obj){
 	obj = obj || $("body");
 	this.win = $.getDom(obj);
 
@@ -103,7 +103,7 @@ var a = function(obj,scale){
 	this.downfn = null;     //阻止事件冒泡和默认事件
 	this.movefn = null;
 	this.endfn = null;
-	this.scale = scale*3 || 1;
+	this.scale = window.devicePixelRatio || 1;
 
 	this._init();
 };
@@ -122,7 +122,7 @@ a.prototype = {
 
 		$(win).css(device.fixObjCss({
 			position:"fixed",
-			"z-index":"99999",
+			"z-index":"199999",
 			left:0,
 			top:0,
 			width:"100%",
