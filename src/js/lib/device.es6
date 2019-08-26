@@ -536,8 +536,9 @@ var DEVICE = {};
 		return val;
 	};
 
-	DEVICE.eventParam = (passiveSupported)? {passive:false} : false;
-
+	//passive:false 才能调用  e.preventDefault();
+	DEVICE.eventParam = (passiveSupported)? {passive:false,capture:false} : false;
+	DEVICE.eventParam1 = (passiveSupported)? {passive:false,capture:true} : true;
 })();
 
 
