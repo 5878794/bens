@@ -1,5 +1,8 @@
 
 //loading动画   具体参数见函数
+//可以多次实例化，可以多次调用show后在hide，show和hide次数要相同
+
+
 //var a = new DEVICE.loading();
 //a.show("loading");
 //a.hide();
@@ -86,9 +89,15 @@ __loading.prototype = {
 	}
 };
 
-
+var tempLoadObj = null;
 
 var a = function(obj){
+	if(tempLoadObj){
+		return tempLoadObj;
+	}else{
+		tempLoadObj = this;
+	}
+
 	obj = obj || $("body");
 	this.win = $.getDom(obj);
 
@@ -104,6 +113,7 @@ var a = function(obj){
 	this.movefn = null;
 	this.endfn = null;
 	this.scale = window.devicePixelRatio || 1;
+	this.runNumber = 0;
 
 	this._init();
 };
@@ -177,6 +187,9 @@ a.prototype = {
 	},
 	//显示
 	show:function(text){
+		this.runNumber++;
+		if(this.runNumber != 1){return;}
+
 		$(this.text).text(text);
 		$(this.div).css(device.fixObjCss({
 			display:"box"
@@ -188,6 +201,9 @@ a.prototype = {
 	},
 	//隐藏
 	hide:function(){
+		this.runNumber--;
+		if(this.runNumber != 0){return;}
+
 		this.div.style.display = "none";
 		this.canvas.stop();
 	},
