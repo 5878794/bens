@@ -181,9 +181,9 @@ a.prototype = {
 	_addEven:function(){
 		var _box = this.div,
 			_this = this;
-		_box.addEventListener(device.START_EV,_this.downfn = function(e){e.stopPropagation();e.preventDefault();},false);
-		_box.addEventListener(device.MOVE_EV,_this.movefn = function(e){e.stopPropagation();e.preventDefault();},false);
-		_box.addEventListener(device.END_EV,_this.endfn = function(e){e.stopPropagation();e.preventDefault();},false);
+		_box.addEventListener(device.START_EV,_this.downfn = function(e){e.stopPropagation();e.preventDefault();},device.eventParam);
+		_box.addEventListener(device.MOVE_EV,_this.movefn = function(e){e.stopPropagation();e.preventDefault();},device.eventParam);
+		_box.addEventListener(device.END_EV,_this.endfn = function(e){e.stopPropagation();e.preventDefault();},device.eventParam);
 	},
 	//显示
 	show:function(text){
@@ -212,9 +212,9 @@ a.prototype = {
 		this.canvas.destroy();
 		this.canvas = null;
 		var _this = this;
-		this.div.removeEventListener(device.START_EV,_this.downfn,false);
-		this.div.removeEventListener(device.MOVE_EV,_this.movefn,false);
-		this.div.removeEventListener(device.END_EV,_this.endfn,false);
+		this.div.removeEventListener(device.START_EV,_this.downfn,device.eventParam);
+		this.div.removeEventListener(device.MOVE_EV,_this.movefn,device.eventParam);
+		this.div.removeEventListener(device.END_EV,_this.endfn,device.eventParam);
 		$(this.div).remove();
 	}
 };
