@@ -28,6 +28,7 @@ class writeWord{
 			height = parseInt(dom.height());
 
 		this.offset = dom.offset();
+		this.offset.top = this.offset.top - window.scrollY;
 
 		dom.append($(canvas));
 
@@ -78,7 +79,6 @@ class writeWord{
 		this.hasTouch = true;
 
 		let p = this.getPointXY(e);
-
 		this.ctx.beginPath();
 		this.ctx.moveTo(p.x, p.y);
 	}
@@ -88,7 +88,6 @@ class writeWord{
 		let p = this.getPointXY(e),
 			x = p.x,
 			y = p.y;
-
 
 		this.ctx.lineTo(x, y);
 		this.ctx.stroke();
@@ -103,6 +102,21 @@ class writeWord{
 		var imgBase64 = this.canvas.toDataURL();
 
 		return imgBase64;
+	}
+
+	emptyCanvas(){
+		let width = this.canvas.width,
+			height = this.canvas.height;
+		this.ctx.fillStyle = this.bgColor;
+		this.ctx.fillRect(0, 0, width, height);
+	}
+
+
+	destroy(){
+		this.canvas.removeEventListener(device.START_EV,this.sfn,device.eventParam);
+		this.canvas.removeEventListener(device.MOVE_EV,this.mfn,device.eventParam);
+		this.canvas.removeEventListener(device.END_EV,this.efn,device.eventParam);
+		$('#'+this.domId).html('');
 	}
 
 }
