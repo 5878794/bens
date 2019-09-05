@@ -311,7 +311,9 @@ showPicture.prototype = {
 		});
 	},
 	destroy:function(){
-		this.scaleFn.destroy();
+		if(this.scaleFn){
+			this.scaleFn.destroy();
+		}
 		window.removeEventListener(device.START_EV,this.temp_s_fn,false);
 		window.removeEventListener(device.MOVE_EV,this.temp_m_fn,false);
 		this.leftBtn.unbind("click");
