@@ -1,9 +1,9 @@
 
-let device = require('./lib/device'),
-	write = require('./lib/ui/writeWord');
+let device = require('./lib/device');
 
 
-
+require('./customElement/pc/table/b_row');
+require('./customElement/pc/table/b_cel');
 
 $(window).ready(function(){
 	console.log('ready')
@@ -13,10 +13,7 @@ $(window).ready(function(){
 
 var page = {
 	init(){
-		window.aa = new write({
-			domId:'test',
-			lineWidth:4
-		})
+
 
 	}
 
