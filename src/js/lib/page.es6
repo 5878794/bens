@@ -392,7 +392,7 @@ let page = {
 
         //app页面跳转是新开webView
         //所有使用是否显示判断
-        if(SETTING.isAPP && device.isAndroid){
+        if(SETTING.isAPP){
             if(device.isAndroid){
                 //原生提供api
                 window.addEventListener('view_visibilitychange', function(e) {
