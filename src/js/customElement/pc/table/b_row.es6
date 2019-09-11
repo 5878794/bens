@@ -17,7 +17,9 @@ require('@webcomponents/shadydom');
 let addStyleFile = require('../../fn/addStyleFile');
 
 let bodyDom = Symbol(),
-	createDom = Symbol();
+	setTitleRow = Symbol(),
+	createDom = Symbol(),
+	createSlot = Symbol();
 
 
 class bRow extends HTMLElement{
@@ -29,17 +31,18 @@ class bRow extends HTMLElement{
 		//设置标签类型 b-row 的
 		$(this).css({display:'block'});
 
-		//添加子元素
-		let slot = $('<slot></slot>');
-		this[bodyDom].append(slot);
-
+		this[setTitleRow]();
 	}
 
 	constructor(){
 		super();
+
+		this.rowData = null;
+
 		//创建shadow容器
 		this.shadow = this.attachShadow({mode: 'open'});
 		this[createDom]();
+		this[createSlot]();
 		this.shadow.appendChild(this[bodyDom].get(0));
 
 
@@ -52,6 +55,37 @@ class bRow extends HTMLElement{
 		});
 
 		this[bodyDom] = dom;
+	}
+
+	[createSlot](){
+		//添加子元素
+		let slot = $('<slot></slot>');
+		this[bodyDom].append(slot);
+	}
+
+	[setTitleRow](){
+		if(!this.data){
+			//插入标题行
+			let bd = $(this).parents('b-table').get(0),
+				row = $(this).clone();
+
+			console.log(bd.titleRow)
+			bd.titleRow = row;
+		}else{
+			//插入数据行
+
+		}
+	}
+
+
+	set data(val){
+		this.rowData = val;
+
+
+	}
+
+	get data(){
+		return this.rowData;
 	}
 }
 

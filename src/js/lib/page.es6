@@ -20,6 +20,7 @@ let device = require("./device"),
     loadScripts = Symbol("loadScripts"),
     autoSaveUrlParam = Symbol("autoSaveUrlParam"),
     base64Fn = require('./fn/base64'),
+    myFetch = require('./resLoader/myFetch'),
     appAutoGetUrl = Symbol("appAutoGetUrl");
 
 require('./jq/extend');
@@ -312,6 +313,7 @@ let page = {
                 YJH.H5ModuleManager.openWebInApp(newUrl);
             }
         }else{
+            // this.test(url);
             if(type == 'noCatch'){
                 window.location.replace(url);
             }else{
@@ -319,6 +321,36 @@ let page = {
             }
         }
     },
+
+    async test(url){
+        let div = $('<div></div>');
+        div.css({
+            position:'fixed',
+            left:'100%',
+            width:'100%',
+            'min-height':'100vh',
+            top:0,
+            background:'#cfcfcf',
+            'z-index':1000000
+        }).addClass('hover_animate');
+
+        let html = await myFetch.getBodyHtml('./hospital_info.html');
+        let css = await myFetch.catchFile('./css/hospital_list.css');
+        let js = await myFetch.catchFile('./js/dist/hospital_info.min.js');
+
+
+
+        div.html(html);
+        $('body').append(div);
+        $('head').append('<script src="'+js+'"></script>');
+        $('head').append('<link rel="stylesheet" type="text/css" href="'+css+'">');
+
+        device.sleep(0.1);
+        div.css({
+            transform:'translateX(-414px)'
+        })
+    },
+
 
     //关闭子应用回到主界面，微信需要注入接口
     closeApp(){
@@ -358,34 +390,51 @@ let page = {
         var isHiddened = false,
             fn = [];
 
+        //app页面跳转是新开webView
+        //所有使用是否显示判断
         if(SETTING.isAPP && device.isAndroid){
-            //原生提供
-            window.addEventListener('view_visibilitychange', function(e) {
-                setTimeout(function(){
+            if(device.isAndroid){
+                //原生提供api
+                window.addEventListener('view_visibilitychange', function(e) {
+                    setTimeout(function(){
+                        for(var i= 0,l=fn.length;i<l;i++){
+                            fn[i]();
+                        }
+                    },100)
+                }, false);
+            }else{
+                document.addEventListener('visibilitychange', function(e) {
+                    if(document.hidden){
+                        isHiddened = true;
+                    }else{
+                        if(isHiddened){
+                            setTimeout(function(){
+                                for(var i= 0,l=fn.length;i<l;i++){
+                                    fn[i]();
+                                }
+                            },100);
+                        }
+                    }
+                }, false);
+            }
+        }else{
+            //浏览器是当前窗口地址跳转
+            window.addEventListener('pageshow',function(e){
+                //第一次加载时 persisted 为false
+                //从缓存读取时 persisted 为true
+                if(e.persisted){
                     for(var i= 0,l=fn.length;i<l;i++){
                         fn[i]();
                     }
-                },100)
-            }, false);
-        }else{
-            document.addEventListener('visibilitychange', function(e) {
-                if(document.hidden){
-                    isHiddened = true;
-                }else{
-                    if(isHiddened){
-                        setTimeout(function(){
-                            for(var i= 0,l=fn.length;i<l;i++){
-                                fn[i]();
-                            }
-                        },100);
-                    }
                 }
-            }, false);
+            },false);
         }
 
 
         return function(callback){
-            callback = callback || function(){};
+            callback = callback || function(){
+                window.location.reload();
+            };
             fn.push(callback);
         };
     })(),

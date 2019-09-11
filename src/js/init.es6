@@ -1,7 +1,7 @@
 
 let device = require('./lib/device');
 
-
+require('./customElement/pc/table/b_table');
 require('./customElement/pc/table/b_row');
 require('./customElement/pc/table/b_cel');
 
@@ -14,7 +14,8 @@ $(window).ready(function(){
 var page = {
 	init(){
 
-
+		let table = $('b-table').get(0);
+		table.data = [1,2,3]
 	}
 
 };

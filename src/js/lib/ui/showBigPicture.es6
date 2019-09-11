@@ -235,8 +235,8 @@ showPicture.prototype = {
 	setImgSize:function(img,div){
 		var win_width = parseInt(div.width()),
 			win_height = parseInt(div.height()),
-			img_width = img.width * window.devicePixelRatio,
-			img_height = img.height * window.devicePixelRatio,
+			img_width = img.width,
+			img_height = img.height,
 			new_size = getImageFitSize(img_width,img_height,win_width,win_height);
 
 		this.imgWidth = new_size.width;

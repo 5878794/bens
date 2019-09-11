@@ -112,7 +112,8 @@ var a = function(obj){
 	this.downfn = null;     //阻止事件冒泡和默认事件
 	this.movefn = null;
 	this.endfn = null;
-	this.scale = window.devicePixelRatio || 1;
+	// this.scale = window.devicePixelRatio || 1;
+	this.scale = 1;
 	this.runNumber = 0;
 
 	this._init();
