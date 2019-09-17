@@ -1,7 +1,7 @@
 
 
 //==========================================================
-//列表  单向数据绑定
+//容器  单向数据绑定
 //==========================================================
 
 
@@ -9,52 +9,34 @@
 //会自动加载css文件夹中的all.css
 //需要注意输出的js文件位置，有可能会被提取到公共位置
 
-// <b-list class="box_hcc" id="aa" css="../../css/common.css">
-// 	<template>      //必须有这层
-// 	    <div class="aavv" id="${rs.id}">
-		// 	<div class="dddd box_scc">
-			// 	<p>${rs.name}</p>
-			// 	<p>${rs.title}</p>
-		// 	</div>
+// html-------------------------
+
+// <b-bind id="a2" css="../../css/common.css">
+// 	<template>      //必须有该元素
+	// 	<div class="box_hcc">
+		// 	<p>${rs.title1}</p>
+		// 	<p>${rs.time1}</p>
+	// 	</div>
+	// 	<div class="box_scc">
+		// 	<p>${rs.title1}</p>
+		// 	<p>${rs.time1}</p>
 	// 	</div>
 // 	</template>
-// </b-list>
+// </b-bind>
 
 
-//js。。。。。。。。。。
 
-// let list = $('b-list').get(0);
-// 绑定数据 （单向绑定）
-// list.data = [
-// 	{id:1,name:'aa',title:'aaTitle'},
-// 	{id:2,name:'bb',title:'bbTitle'},
-// 	{id:3,name:'cc',title:'ccTitle'},
-// 	{id:4,name:'dd',title:'ddTitle'}
-// ];
-
-//事件 带的$$事件
-// list.item('.dddd').myclickok(function(){
-// 	info.show($(this).text());
+// js-------------------------
+// let bd1 = $('#a1').get(0);
+// bd1.data = {
+// 	title:'testTitle',
+// 	time:'2011-11-11'
+// };
+// bd1.item('p').myclickok(function(){
+// 	console.log($(this).text())
 // });
-//
-// list.item('.dddd').unbind(true);
-//
-//
-// list.data = [
-// 	{id:1,name:'ee',title:'aaTitle'},
-// 	{id:2,name:'ff',title:'bbTitle'},
-// 	{id:3,name:'gg',title:'ccTitle'},
-// 	{id:4,name:'hh',title:'ddTitle'}
-// ];
-//
-//
-//  添加数据，不删除原来的列表 （单向绑定）
-// list.addData = [
-// 	{id:1,name:'ii',title:'aaTitle'},
-// 	{id:2,name:'jj',title:'bbTitle'},
-// 	{id:3,name:'kk',title:'ccTitle'},
-// 	{id:4,name:'ll',title:'ddTitle'}
-// ]
+
+
 
 
 
@@ -66,10 +48,9 @@ require('@webcomponents/custom-elements');
 require('@webcomponents/shadydom');
 
 
-let slotDom = Symbol(),
-	createMainDom = Symbol('init'),
-	createList = Symbol(),
-	clearList = Symbol();
+let bindData = Symbol(),
+	clearList = Symbol(),
+	slotDom = Symbol();
 
 
 
@@ -77,7 +58,7 @@ let slotDom = Symbol(),
 
 
 
-class bList extends HTMLElement{
+class bBind extends HTMLElement{
 	//元素加入页面回调
 	connectedCallback() {
 		//挂载css
@@ -98,23 +79,16 @@ class bList extends HTMLElement{
 
 		//创建shadow容器
 		this.shadow = this.attachShadow({mode: 'open'});
-		this[createMainDom]();
-
-		this.shadow.appendChild(this[slotDom].get(0));
-	}
-
-	[createMainDom](){
 		this[slotDom] = $('<slot></slot>');
+		this.shadow.appendChild(this[slotDom].get(0));
+
 	}
 
 	set data(data){
 		this[clearList]();
-		this[createList](data);
+		this[bindData](data);
 	}
 
-	set addData(data){
-		this[createList](data);
-	}
 
 	[clearList](){
 		// this[listDom].html('');
@@ -144,21 +118,22 @@ class bList extends HTMLElement{
 		});
 	}
 
-	[createList](data){
+	[bindData](data){
 		let item = this.shadowRoot.querySelector('slot').assignedElements();
-		item = item[0].content.children;
+			item = item[0].content.children;
 		let html = '';
+
 		for(let i=0,l=item.length;i<l;i++){
 			html += item[i].outerHTML;
 		}
-		item = html;
-		item = 'return '+'`'+item+'`';
-		let func = new Function('rs',item);
 
-		data.map(rs=>{
-			let item_ = func(rs);
-			item_ = $(item_).get(0);
-			this.shadow.appendChild(item_);
+		let fun = new Function('rs','return `'+html+'`');
+		html = fun(data);
+
+		let dom = $(html),
+			_this = this;
+		dom.each(function(){
+			_this.shadow.appendChild(this);
 		});
 	}
 
@@ -172,5 +147,5 @@ class bList extends HTMLElement{
 }
 
 
-customElements.define('b-list', bList );
+customElements.define('b-bind', bBind );
 

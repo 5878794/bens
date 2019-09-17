@@ -4,3 +4,12 @@
 .dddd{
     color: red;
 }
+
+p{
+    font-size: 0.3rem;
+    color: #b4b472;
+}
+
+.box_hcc p{
+    color: red;
+}
