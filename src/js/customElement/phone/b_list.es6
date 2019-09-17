@@ -138,8 +138,6 @@ class bList extends HTMLElement{
 		}
 
 		del.map(rs=>{
-			let dom = $(rs);
-			$$(dom).unbind(true);
 			this.shadow.removeChild(rs);
 		});
 	}
