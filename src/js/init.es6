@@ -1,6 +1,7 @@
 
 let device = require('./lib/device'),
 	$$ = require('./lib/event/$$'),
+	dataFilter = require('./lib/fn/dataFilterUndefined'),
 	info = require('./lib/ui/info');
 
 require('./customElement/phone/b_list');
@@ -23,6 +24,10 @@ window.aa = function(){
 
 window.page = {
 	async init(){
+
+
+
+
 		$$('#aaa').myclickok(function(){
 			console.log('ddd')
 		});
@@ -31,13 +36,16 @@ window.page = {
 		let list = $('b-list').get(0);
 
 		// await device.sleep(2);
-
-		list.data = [
-			{id:1,name:'aa',title:'aaTitle'},
-			{id:2,name:'bb',title:'bbTitle'},
+		let data = [
+			{id:1,name:'aa',title:undefined},
+			{id:2,name:'bb',title:null},
 			{id:3,name:'cc',title:'ccTitle'},
 			{id:4,name:'dd',title:'ddTitle'}
 		];
+		data = dataFilter(data);
+		console.log(data)
+		list.data = data;
+
 		list.item('.dddd').myclickok(function(){
 			info.show($(this).text());
 		});
@@ -67,10 +75,14 @@ window.page = {
 
 
 		let bd1 = $('#a1').get(0);
-		bd1.data = {
-			title:'testTitle',
+		let data1 = {
+			title:undefined,
 			time:'2011-11-11'
 		};
+		data1 = dataFilter(data1);
+
+
+		bd1.data = data1;
 		bd1.item('p').myclickok(function(){
 			console.log($(this).text())
 		});
