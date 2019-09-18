@@ -32,9 +32,10 @@
 // 	title:'testTitle',
 // 	time:'2011-11-11'
 // };
-// bd1.item('p').myclickok(function(){
+// bd1.$$('p').myclickok(function(){
 // 	console.log($(this).text())
 // });
+//  bd1.find('p')  //返回jq对象
 
 
 
@@ -135,11 +136,18 @@ class bBind extends HTMLElement{
 		});
 	}
 
-	item(str){
+	$$(str){
 		let dom = this.shadow.querySelectorAll(str);
 		dom = $(dom);
 		return $$(dom);
 	}
+
+	find(str){
+		let dom = this.shadow.querySelectorAll(str);
+		return $(dom);
+	}
+
+
 
 
 }

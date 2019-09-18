@@ -46,13 +46,13 @@ window.page = {
 		console.log(data)
 		list.data = data;
 
-		list.item('.dddd').myclickok(function(){
+		list.$$('.dddd').myclickok(function(){
 			info.show($(this).text());
 		});
 
 		await device.sleep(1);
 
-		list.item('.dddd').unbind(true);
+		list.$$('.dddd').unbind(true);
 
 
 		list.data = [
@@ -80,18 +80,21 @@ window.page = {
 			time:'2011-11-11'
 		};
 		data1 = dataFilter(data1);
+		console.log(data1)
 
 
 		bd1.data = data1;
-		bd1.item('p').myclickok(function(){
+		bd1.$$('p').myclickok(function(){
 			console.log($(this).text())
 		});
 		let bd2 = $('#a2').get(0);
 		bd2.data = {
 			title1:'test1Title',
 			time1:'2011-12-12'
-		}
+		};
 
+		let a = bd2.find('.box_hcc').find('p').eq(0).text();
+		console.log(a)
 	},
 	test(){
 		i++;

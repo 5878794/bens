@@ -33,11 +33,11 @@
 // ];
 
 //事件 带的$$事件
-// list.item('.dddd').myclickok(function(){
+// list.$$('.dddd').myclickok(function(){
 // 	info.show($(this).text());
 // });
 //
-// list.item('.dddd').unbind(true);
+// list.$$('.dddd').unbind(true);
 //
 //
 // list.data = [
@@ -55,6 +55,9 @@
 // 	{id:3,name:'kk',title:'ccTitle'},
 // 	{id:4,name:'ll',title:'ddTitle'}
 // ]
+
+
+//  list.find('.aaa')  //返回jq对象
 
 
 
@@ -160,10 +163,15 @@ class bList extends HTMLElement{
 		});
 	}
 
-	item(str){
+	$$(str){
 		let dom = this.shadow.querySelectorAll(str);
 		dom = $(dom);
 		return $$(dom);
+	}
+
+	find(str){
+		let dom = this.shadow.querySelectorAll(str);
+		return $(dom);
 	}
 
 
