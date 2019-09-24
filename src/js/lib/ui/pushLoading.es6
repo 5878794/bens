@@ -171,7 +171,7 @@ class pushLoading{
 	[iosHandlerScroll](){
 		if(this[isLoading]){return;}
 
-		let scrollTop = document.body.scrollTop,
+		let scrollTop = $(document).scrollTop(),
 			y = scrollTop - this[maxScrollHeight];
 
 		if(y>this.loadingDomHeight){
@@ -189,7 +189,7 @@ class pushLoading{
 	[iosScroll](){
 		if(this[isLoading]){return;}
 
-		let scrollTop = document.body.scrollTop,
+		let scrollTop = $(document).scrollTop(),
 			y = scrollTop - this[maxScrollHeight];
 
 		if(y>=this.loadingDomHeight){
@@ -207,7 +207,7 @@ class pushLoading{
 			this[animateFn].stop();
 		}
 
-		if(document.body.scrollTop >= this[maxScrollHeight].toFixed(0)){
+		if($(document).scrollTop() >= this[maxScrollHeight].toFixed(0)){
 			this[y] = 0;
 			this[hasTouched] = true;
 		}
