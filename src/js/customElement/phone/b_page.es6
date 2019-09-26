@@ -24,6 +24,9 @@
 
 
 
+
+
+
 //polyfill 需要
 require('@webcomponents/custom-elements');
 require('@webcomponents/shadydom');
@@ -37,9 +40,11 @@ class bPage extends HTMLElement{
 	}
 
 	//元素删除回调
-	// disconnectedCallback(){
-	// 	console.log('删除咯');
-	// }
+	disconnectedCallback(){
+		if(this.destroy){
+			this.destroy();
+		}
+	}
 
 	constructor(){
 		super();
