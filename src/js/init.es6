@@ -95,6 +95,10 @@ window.page = {
 
 		let a = bd2.find('.box_hcc').find('p').eq(0).text();
 		console.log(a)
+
+		setTimeout(function(){
+			bd2.find('.box_hcc').find('p').eq(0).text('');
+		},1000)
 	},
 	test(){
 		i++;
