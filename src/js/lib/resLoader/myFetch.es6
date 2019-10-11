@@ -35,15 +35,18 @@ module.exports = {
 		return fileText;
 	},
 	async getBodyHtml(url){
-		let html = await this.getText(url);
-		let reg = new RegExp(/<body[^>]*?>(.*\s*?)<\/body>/,'is');
-		let rs = reg.exec(html);
+		let html = await this.getText(url),
+			reg1 = new RegExp(/<body[^>]*?>(.*\s*?)<\/body>/,'is'),
+			reg2 = new RegExp(/<head[^>]*?>(.*\s*?)<\/head>/,'is');
 
-		if(rs.length == 2){
-			return rs[1];
-		}else{
-			throw '解析错误'
-		}
+		let body = reg1.exec(html),
+			head = reg2.exec(html);
+
+		return {
+			body:(body.length == 2)? body[1] : '',
+			head:(head.length == 2)? head[1] : ''
+		};
+
 	},
 	//读取utf8的二进制数据流
 	[readTextStream](reader){

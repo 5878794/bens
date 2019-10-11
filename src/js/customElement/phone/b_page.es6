@@ -31,6 +31,8 @@
 require('@webcomponents/custom-elements');
 require('@webcomponents/shadydom');
 
+let mFetch = require('../../lib/resLoader/myFetch');
+
 class bPage extends HTMLElement{
 
 	//元素加入页面回调
@@ -58,7 +60,41 @@ class bPage extends HTMLElement{
 
 
 	async loadHtml(src){
-		this.shadow.innerHTML = await mFetch.getBodyHtml(src);
+		//获取body，head
+		let {body,head} = await mFetch.getBodyHtml(src);
+		this.shadow.innerHTML = body;
+
+		//解析头部head文件
+		head = $(head);
+		let scripts = [],
+			style = [];
+
+		//获取头部包含的script和style标签
+		head.each(function(){
+			if(this.nodeName == 'SCRIPT'){
+				scripts.push(this.src);
+			}else if(this.nodeName == 'LINK'){
+				style.push(this.href);
+			}
+		});
+
+		//加载非公用js
+		scripts.map(async rs=>{
+			let file_name = rs.substr(rs.lastIndexOf('\/')+1);
+			file_name = file_name.split('?')[0];
+			if(file_name){
+				if(SETTING.publishJS.indexOf(file_name) == -1){
+					await this.loadJs(rs);
+				}
+			}
+
+		});
+
+		//加载所有css
+		style.map(async rs=>{
+			await this.loadCss(rs);
+		});
+
 	}
 
 	async loadJs(src){

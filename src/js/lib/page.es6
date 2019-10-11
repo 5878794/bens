@@ -21,6 +21,7 @@ let device = require("./device"),
     autoSaveUrlParam = Symbol("autoSaveUrlParam"),
     base64Fn = require('./fn/base64'),
     myFetch = require('./resLoader/myFetch'),
+    openUrlFn = require('../customElement/fn/b_page_rout'),
     appAutoGetUrl = Symbol("appAutoGetUrl");
 
 require('./jq/extend');
@@ -313,11 +314,18 @@ let page = {
                 YJH.H5ModuleManager.openWebInApp(newUrl);
             }
         }else{
-            // this.test(url);
-            if(type == 'noCatch'){
-                window.location.replace(url);
+
+            if(window.location.href.indexOf('\/#\/') > -1){
+                //单页面的
+                let pageUrl = window.location.href;
+                openUrlFn.openUrl(pageUrl,url);
             }else{
-                window.location.href=url;
+                //非单页面
+                if(type == 'noCatch'){
+                    window.location.replace(url);
+                }else{
+                    window.location.href=url;
+                }
             }
         }
     },
