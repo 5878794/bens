@@ -21,10 +21,12 @@ let device = require("./device"),
     autoSaveUrlParam = Symbol("autoSaveUrlParam"),
     base64Fn = require('./fn/base64'),
     myFetch = require('./resLoader/myFetch'),
-    openUrlFn = require('../customElement/fn/b_page_rout'),
-    appAutoGetUrl = Symbol("appAutoGetUrl");
+    // openUrlFn = require('../customElement/fn/b_page_rout'),
+    appAutoGetUrl = Symbol("appAutoGetUrl"),
+    signPage = require('../lib/signPage/signPageInit');
 
 require('./jq/extend');
+
 
 let path = require('path');
 window.path = path;
@@ -47,6 +49,7 @@ let page = {
         if(!this[hasAllReady]){
             this[readyFns].push(fn);
         }else{
+            signPage.catch(fn);
             fn();
         }
     },
@@ -70,6 +73,7 @@ let page = {
         //运行队列中的函数
         this[readyFns].map(fn=>{
             fn();
+            signPage.catch(fn);
         });
 
 
@@ -318,7 +322,7 @@ let page = {
             if(window.location.href.indexOf('\/#\/') > -1){
                 //单页面的
                 let pageUrl = window.location.href;
-                openUrlFn.openUrl(pageUrl,url);
+                signPage.openUrl(pageUrl,url);
             }else{
                 //非单页面
                 if(type == 'noCatch'){
