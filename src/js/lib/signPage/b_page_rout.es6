@@ -34,11 +34,11 @@ let fn = {
 		let ids = this.catchId;
 		if(ids.indexOf(id) > -1){
 			//返回到打开过的页面
-			let nowId = ids.pop();
+			let delId = ids.pop();
 
 			// restore:id    destroy:nowId
 			this.restorePage(id);
-			this.destroyPage(nowId);
+			this.destroyPage(delId);
 
 		}else{
 			//前进 打开新的页面
