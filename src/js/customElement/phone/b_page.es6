@@ -10,7 +10,10 @@
 // page111 = page111.get(0)
 //
 // var a = async function(){
+//  //会自动加载css和非公用js
+//  //公共js在setting.js文件中定义
 // 	await page111.loadHtml('./login.html');
+
 // 	await page111.loadCss('./css/login.css')
 // 	await page111.loadJs('./js/dist/login.min.js')
 // 	await page111.loadCss('./css/all.css')
@@ -31,7 +34,8 @@
 require('@webcomponents/custom-elements');
 require('@webcomponents/shadydom');
 
-let mFetch = require('../../lib/resLoader/myFetch');
+let mFetch = require('../../lib/resLoader/myFetch'),
+	tempKey = Symbol('b-page-to-window');
 
 class bPage extends HTMLElement{
 
@@ -42,11 +46,11 @@ class bPage extends HTMLElement{
 	}
 
 	//元素删除回调
-	disconnectedCallback(){
-		if(this.destroy){
-			this.destroy();
-		}
-	}
+	// disconnectedCallback(){
+		// if(this.destroy){
+		// 	this.destroy();
+		// }
+	// }
 
 	constructor(){
 		super();
@@ -54,7 +58,7 @@ class bPage extends HTMLElement{
 		//创建shadow容器
 		this.shadow = this.attachShadow({mode: 'open'});
 
-
+		window[tempKey] = this;
 
 	}
 
@@ -125,3 +129,6 @@ class bPage extends HTMLElement{
 
 customElements.define('b-page', bPage );
 
+
+
+module.exports = tempKey;

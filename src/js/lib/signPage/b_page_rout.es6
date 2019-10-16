@@ -3,9 +3,8 @@
 //页面加载
 var path = require('path'),
 	guid = require('../fn/guid'),
-	device = require('../device');
-
-require('../../customElement/phone/b_page');
+	device = require('../device'),
+	tempKey = require('../../customElement/phone/b_page');
 
 //jquery 可以选择shadow-root里面的元素
 window.$ = require('./shadowJquery');
@@ -16,6 +15,7 @@ let bodyId = guid();
 
 let fn = {
 	catchId:[],
+	catchPageObj:{},
 	//事件监听
 	addEvent(){
 		let _this = this;
@@ -120,22 +120,72 @@ let fn = {
 
 		return loading;
 	},
+
+	//获取运行的页面名字
+	getHtmlName(){
+		let url1 = window.location.href;
+		url1 = url1.substr(url1.lastIndexOf('\/')+1);
+		url1 = url1.split('.')[0];
+		url1 = url1 || 'index';
+		return url1;
+	},
+	//保存页面js对象
+	savePageObj(obj){
+		let url1 = this.getHtmlName();
+		this.catchPageObj[url1] = obj;
+
+	},
+	//获取及运行js
+	getPageObj(){
+		let url1 = this.getHtmlName();
+
+		return this.catchPageObj[url1];
+
+	},
+	//将方法加载到<b-page>上
+	setBPageFn(pageObj,dom){
+		dom.pageRun = function(){
+			if(pageObj.init){
+				pageObj.init();
+			}
+		};
+		dom.pageDestroy = function(){
+			if(pageObj.destroy){
+				pageObj.destroy();
+			}
+		};
+		dom.pageRestore = function(){
+			if(pageObj.restore){
+				pageObj.restore();
+			}
+		};
+		dom.pagePause = function(){
+			if(pageObj.pause){
+				pageObj.pause();
+			}
+		};
+	},
+
+
 	//加载及动画
 	async loadStart(loadFn,loading,pageId){
 		loading.css({width:'90%'});
 
 		await loadFn();
 
-		document.getElementById(pageId).style.display = '';
+		let dom = document.getElementById(pageId);
+		dom.style.display = '';
 
-		let url1 = window.location.href;
-		url1 = url1.substr(url1.lastIndexOf('\/')+1);
-		url1 = url1.split('.')[0];
-		url1 = url1 || 'index';
-		if(!window.appPage){window.appPage = {}}
-		if(window.appPage[url1]){
-			window.appPage[url1]();
+
+		let page_obj = this.getPageObj();
+		if(page_obj){
+			this.setBPageFn(page_obj,dom);
+			dom.pageRun();
 		}
+
+
+
+
 
 		loading.css({
 			transition: 'all 0.2s linear',
@@ -168,6 +218,10 @@ let fn = {
 		body = body.get(0).content;
 		body = $(body);
 		body.append(prePage);
+
+		if(prePage.get(0).pagePause){
+			prePage.get(0).pagePause();
+		}
 	},
 	//加载并显示页面
 	async loadAndShowPage(url,id){
@@ -186,20 +240,43 @@ let fn = {
 
 		$('body').append(body);
 
-
-
+		if(body.get(0).pageRestore){
+			body.get(0).pageRestore();
+		}
 	},
 	//卸载页面
 	destroyPage(id){
-		//TODO
 		//js卸载
-
-		$('#'+id).remove();
+		let dom = $('#'+id);
+		if(dom.get(0).pageDestroy){
+			dom.get(0).pageDestroy();
+		}
+		dom.remove();
 	}
+
+
 };
 
 
 fn.addEvent();
 
-module.exports = fn;
+
+
+
+module.exports = {
+	startPage:function(url){
+		fn.startPage(url);
+	},
+	openUrl:function(pageUrl,url){
+		fn.openUrl(pageUrl,url);
+	},
+	registerFn:function(obj){
+		let dom = window[tempKey];
+		if(dom) {
+			fn.savePageObj(obj);
+			fn.setBPageFn(obj, dom);
+			window[tempKey] = null;
+		}
+	}
+};
 

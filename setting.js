@@ -1,21 +1,23 @@
-/**
- * Created by beens on 2017/4/18.
- */
-
-
-
 var SETTING = {
-	//服务器地址
-	serverUrl:"//phr.care4u.cn/",              //正式
-	// serverUrl:"//118.123.173.101:7001/",    //测试
-
+	//服务器地址   http://117.139.233.18
+	serverUrl:"./bens/",    //测试
+	// serverUrl:"//tcm.care4u.cn:8443/",    //正式
+	//微信api接口
+	// weChatCertificationApi:"//118.123.173.101:7001/healthweixin/wx/getJsapi.do", //正式
 
 
 	//-----------------------------------------------
 	//是否是app
-	isAPP : true,
+	isAPP : false,
 
-
+	//公共js库，单页面用
+	publishJS:[
+		'polyfill.js',
+		'jquery-3.1.1.min.js',
+		'setting.js',
+		'common.min.js',
+		'sign_page_init.min.js'
+	],
 
 	//-----------------------------------------------
 	//是否是调试
@@ -27,7 +29,7 @@ var SETTING = {
 	//是否需要初始加载js字典和服务器的配置文件
 	//需要加载的js列表
 	needLoadOtherJsList:[
-		this.serverUrl+"config/js/config.js"
+		// serverUrl+"config/js/config.js"
 	],
 
 
@@ -40,7 +42,7 @@ var SETTING = {
 	weChatCertificationApi:this.serverUrl+"healthweixin/wx/getJsapi.do",
 	//微信功能需要api列表,数组有值会自动加载js，和请求权限
 	weChatUseApiList:[
-		'closeWindow'
+		// 'closeWindow'
 		// 'onMenuShareTimeline',
 		// 'onMenuShareAppMessage',
 		// 'showAllNonBaseMenuItem'
@@ -59,10 +61,10 @@ var SETTING = {
 	//最好放每个页面都需要的参数
 	//app不支持
 	saveUrlParamList:[
-		"userToken"
+		// "userToken"
 	],
 	//页面传入token时设置的key
-	tokenKeyFromUrl:"userToken",
+	tokenKeyFromUrl:"",
 
 
 	//pug模版编译成js后相对于html的路径
@@ -76,3 +78,4 @@ var SETTING = {
 
 
 };
+

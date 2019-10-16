@@ -11,6 +11,7 @@ let device = require("./device"),
     hasAllReady = Symbol("hasAllReady"),
     readyFns = Symbol("readyFns"),
     init = Symbol("init"),
+    run = Symbol('run'),
     $$ = require('./event/$$'),
     pageReady = Symbol("pageReady"),
     appReady = Symbol("appReady"),
@@ -21,9 +22,8 @@ let device = require("./device"),
     autoSaveUrlParam = Symbol("autoSaveUrlParam"),
     base64Fn = require('./fn/base64'),
     myFetch = require('./resLoader/myFetch'),
-    // openUrlFn = require('../customElement/fn/b_page_rout'),
     appAutoGetUrl = Symbol("appAutoGetUrl"),
-    signPage = require('../lib/signPage/signPageInit');
+    signPage = require('../lib/signPage/b_page_rout');
 
 require('./jq/extend');
 
@@ -45,13 +45,23 @@ let page = {
     //缓存的readyFn的调用
     [readyFns]:[],
     //页面初始执行入口
-    isReady(fn){
+    run(obj){
         if(!this[hasAllReady]){
-            this[readyFns].push(fn);
+            this[readyFns].push(obj);
         }else{
-            signPage.catch(fn);
-            fn();
+            this[run](obj);
         }
+    },
+    [run](obj){
+        //注册函数到最近创建的<b-page>对象上
+        // b-page.pageRun           obj.init
+        // b-page.pageDestroy       obj.destroy
+        // b-page.pageRestore       obj.restore
+        // b-page.pagePause         obj.pause
+        signPage.registerFn(obj);
+
+        //运行
+        obj.init();
     },
 
 
@@ -71,9 +81,8 @@ let page = {
         callback();
 
         //运行队列中的函数
-        this[readyFns].map(fn=>{
-            fn();
-            signPage.catch(fn);
+        this[readyFns].map(obj=>{
+            this[run](obj);
         });
 
 

@@ -1,5 +1,7 @@
 
 
+require('../jq/extend');
+
 //jq选择器，支持shadowRoot
 
 let a = function(str){
