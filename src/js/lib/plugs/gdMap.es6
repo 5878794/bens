@@ -26,8 +26,11 @@ let gdMap = {
 		});
 	},
 	async create(id){
+		let dom = document.getElementsByTagName('b-page')[0];
+		dom = dom.shadowRoot.getElementById(id);
+
 		await this.loadSdk();
-		this.map = new AMap.Map(id, {
+		this.map = new AMap.Map(dom, {
 			resizeEnable: true,
 			// zooms:[10,15],
 			//地图样式
