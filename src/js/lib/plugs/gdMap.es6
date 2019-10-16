@@ -27,7 +27,11 @@ let gdMap = {
 	},
 	async create(id){
 		let dom = document.getElementsByTagName('b-page')[0];
-		dom = dom.shadowRoot.getElementById(id);
+		if(dom){
+			dom = dom.shadowRoot.getElementById(id);
+		}else{
+			dom = document.getElementById(id);
+		}
 
 		await this.loadSdk();
 		this.map = new AMap.Map(dom, {
