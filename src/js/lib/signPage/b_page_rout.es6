@@ -21,8 +21,10 @@ let fn = {
 		let _this = this;
 		window.addEventListener("popstate", function() {
 			//获取之前的页面id
-			let currentState = history.state,
+			let currentState = history.state || {},
 				id = currentState.id;
+
+			if(!id){return;}
 
 			_this.handlerEvent(id);
 		});
