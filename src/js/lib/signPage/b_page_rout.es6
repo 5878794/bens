@@ -146,7 +146,7 @@ let fn = {
 	},
 	//将方法加载到<b-page>上
 	setBPageFn(pageObj,dom){
-		dom.pageRun = function(){
+		dom.pageInit = function(){
 			if(pageObj.init){
 				pageObj.init();
 			}
@@ -156,16 +156,21 @@ let fn = {
 				pageObj.destroy();
 			}
 		};
-		dom.pageRestore = function(){
-			if(pageObj.restore){
-				pageObj.restore();
+		dom.pageShow = function(){
+			if(pageObj.show){
+				pageObj.show();
 			}
 		};
-		dom.pagePause = function(){
-			if(pageObj.pause){
-				pageObj.pause();
+		dom.pageHide = function(){
+			if(pageObj.hide){
+				pageObj.hide();
 			}
 		};
+		dom.pageRefresh = function(){
+			if(pageObj.refresh){
+				pageObj.refresh();
+			}
+		}
 	},
 
 
@@ -182,7 +187,8 @@ let fn = {
 		let page_obj = this.getPageObj();
 		if(page_obj){
 			this.setBPageFn(page_obj,dom);
-			dom.pageRun();
+			dom.pageRefresh();
+			dom.pageInit();
 		}
 
 
@@ -221,8 +227,8 @@ let fn = {
 		body = $(body);
 		body.append(prePage);
 
-		if(prePage.get(0).pagePause){
-			prePage.get(0).pagePause();
+		if(prePage.get(0).pageHide){
+			prePage.get(0).pageHide();
 		}
 	},
 	//加载并显示页面
@@ -242,8 +248,8 @@ let fn = {
 
 		$('body').append(body);
 
-		if(body.get(0).pageRestore){
-			body.get(0).pageRestore();
+		if(body.get(0).pageShow){
+			body.get(0).pageShow();
 		}
 	},
 	//卸载页面

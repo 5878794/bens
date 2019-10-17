@@ -54,11 +54,14 @@ let page = {
     },
     [run](obj){
         //注册函数到最近创建的<b-page>对象上
-        // b-page.pageRun           obj.init
+        // b-page.pageInit          obj.init
         // b-page.pageDestroy       obj.destroy
-        // b-page.pageRestore       obj.restore
-        // b-page.pagePause         obj.pause
-        signPage.registerFn(obj);
+        // b-page.pageShow          obj.show
+        // b-page.pageHide          obj.hide
+        // b-page.pageRefresh       obj.refresh
+        if((window.location.href.indexOf('\/#\/') > -1)){
+            signPage.registerFn(obj);
+        }
 
         //运行
         obj.init();
