@@ -37,8 +37,9 @@ let fn = {
 			let delId = ids.pop();
 
 			// restore:id    destroy:nowId
-			this.restorePage(id);
 			this.destroyPage(delId);
+			this.restorePage(id);
+
 
 		}else{
 			//前进 打开新的页面
