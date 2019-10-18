@@ -92,8 +92,8 @@ class bPushLoad extends HTMLElement{
 
 	//元素移除执行
 	disconnectedCallback(){
-		this[fn].destroy();
-		return function(){};
+		// this[fn].destroy();
+		// return function(){};
 	}
 
 	constructor(){
