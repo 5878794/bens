@@ -90,6 +90,12 @@ class bPushLoad extends HTMLElement{
 		// this[setParam]();
 	}
 
+	//元素移除执行
+	disconnectedCallback(){
+		this[fn].destroy();
+		return function(){};
+	}
+
 	constructor(){
 		super();
 		//创建shadow容器
@@ -188,13 +194,13 @@ class bPushLoad extends HTMLElement{
 		});
 	}
 
-	get loadOk(){
+	loadOk(){
 		this.pageIndex++;
 		this[fn].loadingEnd();
 		return function(){};
 	}
 
-	get loadEnd(){
+	loadEnd(){
 		this[fn].destroy();
 		return function(){};
 	}
@@ -231,6 +237,18 @@ class bPushLoad extends HTMLElement{
 	}
 	set index(val){
 		this.pageIndex = val;
+	}
+
+	pause(){
+		this[fn].pause();
+	}
+
+	restore(){
+		this[fn].restore();
+	}
+
+	destroy(){
+		this[fn].destroy();
 	}
 }
 

@@ -62,7 +62,7 @@ class pushLoading{
 		let bottomFixedDivHeight = opt.bottomFixedDivHeight || 0;
 		this.bottomFixedDivHeight = app.rem2Px(viewport,bottomFixedDivHeight);
 
-
+		this.canRun = true;
 
 
 		//下拉滚动条到0的时候的偏移量
@@ -98,6 +98,7 @@ class pushLoading{
 			"line-height":height+"px"
 		});
 
+		body.append(this.loadingDom);
 		return dom;
 	}
 
@@ -128,7 +129,7 @@ class pushLoading{
 		body.css({
 			"padding-bottom":this[bodyPaddingBottom]+"px"
 		});
-		body.append(this.loadingDom);
+		// body.append(this.loadingDom);
 	}
 
 	//设置参数
@@ -146,21 +147,26 @@ class pushLoading{
 		let _this = this;
 		if(!app.isAndroid){
 			window.addEventListener("scroll",this[iosScrollFn] = function(){
+				if(!_this.canRun){return;}
 				_this[iosScroll]();
 			},false);
 			document.addEventListener(app.END_EV,this[touchEndFn] = function(e){
+				if(!_this.canRun){return;}
 				_this[iosHandlerScroll]();
 			},false);
 		}else{
 			document.addEventListener(app.START_EV,this[touchStartFn] = function(e){
+				if(!_this.canRun){return;}
 				_this[androidTouchStart](e);
 
 			},false);
 			document.addEventListener(app.MOVE_EV,this[touchMoveFn] = function(e){
+				if(!_this.canRun){return;}
 				_this[androidTouchMove](e);
 
 			},false);
 			document.addEventListener(app.END_EV,this[touchEndFn] = function(e){
+				if(!_this.canRun){return;}
 				_this[androidTouchEnd]();
 			},false);
 		}
@@ -354,10 +360,21 @@ class pushLoading{
 		}
 	}
 
-
+	//列表第一次加载（搜索条件变更等因素）
 	firstLoad(){
 		this[isLoading] = true;
 		this.loadingFn.call(this.loadingDom);
+	}
+
+	//暂停
+	pause(){
+		this.canRun = false;
+	}
+
+
+	restore(){
+		this.canRun = true;
+		this[refreshParam]();
 	}
 }
 
