@@ -152,23 +152,23 @@ let fn = {
 			}
 		};
 		dom.pageDestroy = function(){
-			if(pageObj.destroy){
-				pageObj.destroy();
+			if(pageObj.pageDestroy){
+				pageObj.pageDestroy();
 			}
 		};
 		dom.pageShow = function(){
-			if(pageObj.show){
-				pageObj.show();
+			if(pageObj.pageShow){
+				pageObj.pageShow();
 			}
 		};
 		dom.pageHide = function(){
-			if(pageObj.hide){
-				pageObj.hide();
+			if(pageObj.pageHide){
+				pageObj.pageHide();
 			}
 		};
 		dom.pageRefresh = function(){
-			if(pageObj.refresh){
-				pageObj.refresh();
+			if(pageObj.pageRefresh){
+				pageObj.pageRefresh();
 			}
 		}
 	},
@@ -222,14 +222,17 @@ let fn = {
 			head.append(body);
 		}
 
+
 		let prePage = $('#'+id);
+		if(prePage.get(0).pageHide){
+			prePage.get(0).pageHide();
+		}
+
 		body = body.get(0).content;
 		body = $(body);
 		body.append(prePage);
 
-		if(prePage.get(0).pageHide){
-			prePage.get(0).pageHide();
-		}
+
 	},
 	//加载并显示页面
 	async loadAndShowPage(url,id){

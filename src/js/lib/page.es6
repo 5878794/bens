@@ -55,10 +55,10 @@ let page = {
     [run](obj){
         //注册函数到最近创建的<b-page>对象上
         // b-page.pageInit          obj.init
-        // b-page.pageDestroy       obj.destroy
-        // b-page.pageShow          obj.show
-        // b-page.pageHide          obj.hide
-        // b-page.pageRefresh       obj.refresh
+        // b-page.pageDestroy       obj.pageDestroy
+        // b-page.pageShow          obj.pageShow
+        // b-page.pageHide          obj.pageHide
+        // b-page.pageRefresh       obj.pageRefresh
         if((window.location.href.indexOf('\/#\/') > -1)){
             signPage.registerFn(obj);
         }
