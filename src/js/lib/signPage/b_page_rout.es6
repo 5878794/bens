@@ -264,6 +264,15 @@ let fn = {
 			dom.get(0).pageDestroy();
 		}
 		dom.remove();
+	},
+
+	//增加历史记录页面
+	//初始进入不是首页的时候可以用这个增加历史记录，使其能后退到首页
+	addHistory(id,url){
+		let nowUrl = window.location.href,
+			nowId = history.state.id;
+		window.history.replaceState({id:id},'',url);
+		window.history.pushState({id:nowId},'',nowUrl);
 	}
 
 
