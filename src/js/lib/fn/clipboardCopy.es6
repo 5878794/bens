@@ -7,9 +7,9 @@
 function clipboardCopy (text) {
 	// Use the Async Clipboard API when available. Requires a secure browing
 	// context (i.e. HTTPS)
-	if (navigator.clipboard) {
-		return navigator.clipboard.writeText(text);
-	}
+	// if (navigator.clipboard) {
+	// 	return navigator.clipboard.writeText(text);
+	// }
 
 	// ...Otherwise, use document.execCommand() fallback
 
@@ -50,6 +50,38 @@ function clipboardCopy (text) {
 		: Promise.reject(); // eslint-disable-line prefer-promise-reject-errors
 }
 
-
-
 module.exports = clipboardCopy;
+
+
+//
+// function fallbackCopyTextToClipboard(text) {
+// 	var textArea = document.createElement("textarea");
+// 	textArea.value = text;
+// 	document.body.appendChild(textArea);
+// 	textArea.focus();
+// 	textArea.select();
+//
+// 	try {
+// 		var successful = document.execCommand('copy');
+// 		var msg = successful ? 'successful' : 'unsuccessful';
+// 		console.log('Fallback: Copying text command was ' + msg);
+// 	} catch (err) {
+// 		console.error('Fallback: Oops, unable to copy', err);
+// 	}
+//
+// 	document.body.removeChild(textArea);
+// }
+// function copyTextToClipboard(text) {
+// 	if (!navigator.clipboard) {
+// 		fallbackCopyTextToClipboard(text);
+// 		return;
+// 	}
+// 	navigator.clipboard.writeText(text).then(function() {
+// 		console.log('Async: Copying to clipboard was successful!');
+// 	}, function(err) {
+// 		console.error('Async: Could not copy text: ', err);
+// 	});
+// }
+//
+//
+// module.exports = copyTextToClipboard;
