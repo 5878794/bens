@@ -145,7 +145,7 @@ class pushLoading{
 	//添加事件
 	[addEvent](){
 		let _this = this;
-		if(!app.isAndroid){
+		if(!app.isAndroid && navigator.userAgent.indexOf('tfsmy') == -1){
 			window.addEventListener("scroll",this[iosScrollFn] = function(){
 				if(!_this.canRun){return;}
 				_this[iosScroll]();
