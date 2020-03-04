@@ -55,15 +55,15 @@
 
 
 //配置咯参数就会显示
-let options = {
-	year: 'numeric', month: '2-digit', day: '2-digit',
-	hour: '2-digit', minute: '2-digit', second: '2-digit',
-	hour12: false
-	// weekday:'long'
-};
-//zh / en 等  分隔符'/'
-console.log(new Intl.DateTimeFormat('zh', options).format(new Date()));
-
+// let options = {
+// 	year: 'numeric', month: '2-digit', day: '2-digit',
+// 	hour: '2-digit', minute: '2-digit', second: '2-digit',
+// 	hour12: false
+// 	// weekday:'long'
+// };
+// //zh / en 等  分隔符'/'
+// console.log(new Intl.DateTimeFormat('zh', options).format(new Date()));
+//
 
 
 
