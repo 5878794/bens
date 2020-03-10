@@ -561,6 +561,40 @@ DEVICE.delHtmlTag = function(str){
 	return str.replace(/<[^>]+>/g,"");    //去掉所有的html标记
 };
 
+//全角空格转半角
+DEVICE.replaceSpaceFullAngleToHalfAngle = function(str){
+	var tmp = "";
+	for(var i=0;i<str.length;i++){
+		if (str.charCodeAt(i) == 12288){
+			tmp += String.fromCharCode(str.charCodeAt(i)-12256);
+		}else{
+			tmp += String.fromCharCode(str.charCodeAt(i));
+		}
+	}
+	return tmp;
+};
+
+//全角转半角
+DEVICE.replaceFullAngleToHalfAngle = function(str){
+	//句号 引号等未转换
+	var tmp = "";
+	for(var i=0;i<str.length;i++){
+		//转换空格
+		if (str.charCodeAt(i) == 12288){
+			tmp += String.fromCharCode(str.charCodeAt(i)-12256);
+			continue;
+		}
+		//转换其它的字符
+		if(str.charCodeAt(i) > 65280 && str.charCodeAt(i) < 65375){
+			tmp += String.fromCharCode(str.charCodeAt(i)-65248);
+		}
+		else{
+			tmp += String.fromCharCode(str.charCodeAt(i));
+		}
+	}
+	return tmp;
+};
+
 
 
 //等待几秒执行后续  单位：秒   需要在异步函数中带await调用
