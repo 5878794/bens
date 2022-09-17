@@ -1,4 +1,4 @@
-//获取vue组件的参数
+//获取vue组件的参数 bens
 import {ComputedOptions, createApp, VueElementConstructor} from "vue";
 
 const fn = {
